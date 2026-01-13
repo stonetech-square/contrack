@@ -7,6 +7,11 @@ class ProjectScreen extends StatelessWidget {
   final int projectId;
   @override
   Widget build(BuildContext context) {
-    return Column(children: [Text('Projects/$projectId')]);
+    return Column(
+      children: [
+        TextButton(onPressed: () => context.router.pop(), child: Text('Back')),
+        Text('Projects/$projectId'),
+      ],
+    );
   }
 }
