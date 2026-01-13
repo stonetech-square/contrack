@@ -10,7 +10,7 @@ class SignInEmailField extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppTextField(
       label: 'Email Address',
-      hintText: 'your.email@cpms.gov.ng',
+      hintText: 'your.email@ergp.gov.ng',
       keyboardType: TextInputType.emailAddress,
       controller: controller,
       validator: (value) {

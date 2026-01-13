@@ -50,7 +50,7 @@ class AppSidebar extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'CPMS',
+                      'ERGP',
                       style: context.textStyles.bodyLarge.copyWith(
                         fontWeight: FontWeight.bold,
                         color: context.colors.onCard,
