@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:contrack/src/app/presentation/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
 @RoutePage()
@@ -9,8 +10,8 @@ class ProjectScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        TextButton(onPressed: () => context.router.pop(), child: Text('Back')),
-        Text('Projects/$projectId'),
+        SizedBox(height: 16),
+        RouteHeader(routePath: ['Projects', '$projectId'], canPop: true),
       ],
     );
   }

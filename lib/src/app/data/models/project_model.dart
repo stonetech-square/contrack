@@ -107,7 +107,7 @@ sealed class ProjectModel with _$ProjectModel {
 
   ProjectsCompanion toDriftCompanion() {
     return ProjectsCompanion(
-      id: Value(id),
+      id: id <= 0 ? const Value.absent() : Value(id),
       code: Value(code),
       status: Value(status),
       agencyId: Value(agencyId),

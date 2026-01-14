@@ -97,7 +97,6 @@ class UserSession {
 
   Future<void> clear() async {
     await _db.delete(_db.sessions).go();
-    await _db.delete(_db.users).go();
     _userSubject.add(null);
   }
 }

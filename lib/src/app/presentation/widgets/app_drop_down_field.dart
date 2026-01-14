@@ -1,63 +1,31 @@
 import 'package:contrack/src/app/theme/app_colors.dart';
 import 'package:contrack/src/app/theme/app_typography.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
-class AppTextField extends StatelessWidget {
+class AppDropDownField<T> extends StatelessWidget {
   final String? label;
   final String? hintText;
+  final T? value;
+  final List<DropdownMenuItem<T>> items;
+  final ValueChanged<T?>? onChanged;
+  final String? Function(T?)? validator;
+  final bool isRequired;
   final String? errorText;
-  final TextEditingController? controller;
-  final ValueChanged<String>? onChanged;
-  final VoidCallback? onTap;
-  final TextInputType? keyboardType;
-  final TextInputAction? textInputAction;
-  final bool obscureText;
-  final Widget? suffixIcon;
   final Widget? prefixIcon;
   final bool enabled;
-  final bool readOnly;
-  final int? maxLines;
-  final int? minLines;
-  final int? maxLength;
-  final List<TextInputFormatter>? inputFormatters;
-  final FocusNode? focusNode;
-  final TextCapitalization textCapitalization;
-  final bool autofocus;
-  final VoidCallback? onEditingComplete;
-  final ValueChanged<String>? onSubmitted;
-  final String? Function(String?)? validator;
-  final TextStyle? hintTextStyle;
-  final bool isRequired;
-  final String? initialValue;
-  const AppTextField({
+
+  const AppDropDownField({
     super.key,
     this.label,
     this.hintText,
-    this.errorText,
-    this.controller,
+    required this.items,
+    this.value,
     this.onChanged,
-    this.onTap,
-    this.keyboardType,
-    this.textInputAction,
-    this.obscureText = false,
-    this.suffixIcon,
+    this.validator,
+    this.isRequired = false,
+    this.errorText,
     this.prefixIcon,
     this.enabled = true,
-    this.readOnly = false,
-    this.maxLines = 1,
-    this.minLines,
-    this.maxLength,
-    this.inputFormatters,
-    this.focusNode,
-    this.textCapitalization = TextCapitalization.none,
-    this.autofocus = false,
-    this.onEditingComplete,
-    this.onSubmitted,
-    this.validator,
-    this.hintTextStyle,
-    this.isRequired = false,
-    this.initialValue,
   });
 
   @override
@@ -86,41 +54,29 @@ class AppTextField extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
         ],
-        TextFormField(
-          key: key,
-          initialValue: initialValue,
-          controller: controller,
-          onChanged: onChanged,
-          onTap: onTap,
-          focusNode: focusNode,
-          keyboardType: keyboardType,
-          textInputAction: textInputAction,
-          obscureText: obscureText,
-          enabled: enabled,
-          readOnly: readOnly,
-          maxLines: maxLines,
-          minLines: minLines,
-          maxLength: maxLength,
-          inputFormatters: inputFormatters,
-          textCapitalization: textCapitalization,
-          autofocus: autofocus,
-          onEditingComplete: onEditingComplete,
-          onFieldSubmitted: onSubmitted,
+        DropdownButtonFormField<T>(
+          initialValue: value,
+          items: items,
+          onChanged: enabled ? onChanged : null,
           validator: validator,
+          icon: Icon(
+            Icons.keyboard_arrow_down_rounded,
+            color: context.colors.textSubtle,
+          ),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(color: context.colors.onSurface),
+          dropdownColor: context.colors.surface,
           decoration: InputDecoration(
             hintText: hintText,
-            hintStyle:
-                hintTextStyle ??
-                context.textStyles.bodyMedium.copyWith(
-                  color: context.colors.textSubtle,
-                  fontSize: 12,
-                ),
-            errorText: errorText,
+            hintStyle: context.textStyles.bodyMedium.copyWith(
+              color: context.colors.textSubtle,
+              fontSize: 12,
+            ),
             filled: true,
             fillColor: context.colors.surface,
-            suffixIcon: suffixIcon,
             prefixIcon: prefixIcon,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
@@ -148,7 +104,10 @@ class AppTextField extends StatelessWidget {
                 color: context.colors.border.withValues(alpha: 0.5),
               ),
             ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
+            ),
           ),
         ),
       ],

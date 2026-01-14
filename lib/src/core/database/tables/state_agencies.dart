@@ -1,6 +1,5 @@
 import 'package:drift/drift.dart';
 
-// States table
 class States extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get name => text().withLength(min: 2, max: 100).unique()();
@@ -10,8 +9,6 @@ class States extends Table {
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 }
 
-// Geopolitical Zones table
-
 class GeopoliticalZones extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get name => text().withLength(min: 5, max: 50).unique()();
@@ -20,7 +17,6 @@ class GeopoliticalZones extends Table {
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 }
 
-// Agencies table
 class Agencies extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get name => text().withLength(min: 2, max: 200).unique()();
@@ -30,7 +26,6 @@ class Agencies extends Table {
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 }
 
-// Ministries table
 class Ministries extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get name => text().withLength(min: 2, max: 200).unique()();

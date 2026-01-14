@@ -84,4 +84,17 @@ class AppDatabase extends _$AppDatabase {
       'CREATE INDEX IF NOT EXISTS idx_projects_updated_at ON projects(updated_at)',
     );
   }
+
+  Future<void> clear() async {
+    await customStatement('PRAGMA foreign_keys = OFF');
+    try {
+      await transaction(() async {
+        for (final table in allTables) {
+          await delete(table).go();
+        }
+      });
+    } finally {
+      await customStatement('PRAGMA foreign_keys = ON');
+    }
+  }
 }

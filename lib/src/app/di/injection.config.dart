@@ -41,6 +41,18 @@ import '../../features/dashboard/domain/usecase/watch_recent_projects_use_case.d
     as _i835;
 import '../../features/dashboard/presentation/bloc/dashboard_bloc.dart'
     as _i652;
+import '../../features/projects/data/datasource/projects_local_datasource.dart'
+    as _i465;
+import '../../features/projects/data/repository/projects_repository_impl.dart'
+    as _i447;
+import '../../features/projects/domain/repository/projects_repository.dart'
+    as _i605;
+import '../../features/projects/domain/usecase/create_project_use_case.dart'
+    as _i546;
+import '../../features/projects/domain/usecase/generate_project_code_use_case.dart'
+    as _i597;
+import '../../features/projects/presentation/bloc/create_new_project_bloc.dart'
+    as _i921;
 import '../data/datasource/app_local_datasource.dart' as _i293;
 import '../data/datasource/app_remote_datasource.dart' as _i245;
 import '../data/repository/app_repository_impl.dart' as _i309;
@@ -101,6 +113,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i293.AppLocalDataSource>(
       () => _i293.AppLocalDataSourceImpl(gh<_i26.UserSession>()),
     );
+    gh.lazySingleton<_i465.ProjectsLocalDataSource>(
+      () => _i465.ProjectsLocalDataSourceImpl(
+        gh<_i339.AppDatabase>(),
+        gh<_i869.ProjectCodeGenerator>(),
+      ),
+    );
     gh.lazySingleton<_i961.AuthRepository>(
       () => _i409.AuthRepositoryImpl(
         gh<_i175.AuthRemoteDataSource>(),
@@ -129,8 +147,20 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i103.SyncService>(),
       ),
     );
+    gh.lazySingleton<_i605.ProjectsRepository>(
+      () => _i447.ProjectsRepositoryImpl(
+        gh<_i465.ProjectsLocalDataSource>(),
+        gh<_i26.UserSession>(),
+      ),
+    );
     gh.lazySingleton<_i504.LogOutUseCase>(
       () => _i504.LogOutUseCase(gh<_i454.AppRepository>()),
+    );
+    gh.lazySingleton<_i546.CreateProjectUseCase>(
+      () => _i546.CreateProjectUseCase(gh<_i605.ProjectsRepository>()),
+    );
+    gh.lazySingleton<_i597.GenerateProjectCodeUseCase>(
+      () => _i597.GenerateProjectCodeUseCase(gh<_i605.ProjectsRepository>()),
     );
     gh.factory<_i135.SignInBloc>(
       () => _i135.SignInBloc(gh<_i277.SignInUseCase>()),
@@ -156,6 +186,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i835.WatchRecentProjectsWithDetailsUseCase>(
       () => _i835.WatchRecentProjectsWithDetailsUseCase(
         gh<_i275.DashboardRepository>(),
+      ),
+    );
+    gh.factory<_i921.CreateNewProjectBloc>(
+      () => _i921.CreateNewProjectBloc(
+        gh<_i597.GenerateProjectCodeUseCase>(),
+        gh<_i546.CreateProjectUseCase>(),
       ),
     );
     gh.factory<_i652.DashboardBloc>(

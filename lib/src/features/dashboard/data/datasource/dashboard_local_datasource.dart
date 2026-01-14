@@ -1,7 +1,6 @@
 import 'package:contrack/src/core/common/enums/user_role.dart';
 import 'package:contrack/src/core/database/database.dart';
-import 'package:contrack/src/features/dashboard/data/models/models.dart';
-import 'package:contrack/src/features/dashboard/data/models/project_with_details_model.dart';
+import 'package:contrack/src/app/data/models/models.dart';
 import 'package:contrack/src/core/common/enums/project_status.dart';
 import 'package:drift/drift.dart';
 import 'package:injectable/injectable.dart';

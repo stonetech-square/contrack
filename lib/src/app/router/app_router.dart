@@ -5,6 +5,7 @@ import 'package:contrack/src/app/presentation/screen/un_authenticated_shell_scre
 import 'package:contrack/src/features/auth/presentation/screen/sign_in_screen.dart';
 import 'package:contrack/src/features/dashboard/presentation/screen/dashboard_screen.dart';
 import 'package:contrack/src/features/projects/presentation/screens/all_project_screen.dart';
+import 'package:contrack/src/features/projects/presentation/screens/create_new_project.dart';
 import 'package:contrack/src/features/projects/presentation/screens/project_screen.dart';
 import 'package:contrack/src/features/reports/presentation/screen/report_screen.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +34,7 @@ class AppRouter extends RootStackRouter {
               page: AllProjectRoute.page,
               children: [
                 AutoRoute(page: ProjectRoute.page),
+                AutoRoute(page: CreateNewProjectRoute.page),
               ],
             ),
             AutoRoute(page: ReportRoute.page),

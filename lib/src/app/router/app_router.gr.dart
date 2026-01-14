@@ -59,6 +59,22 @@ class AuthenticatedShellRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [CreateNewProjectScreen]
+class CreateNewProjectRoute extends PageRouteInfo<void> {
+  const CreateNewProjectRoute({List<PageRouteInfo>? children})
+    : super(CreateNewProjectRoute.name, initialChildren: children);
+
+  static const String name = 'CreateNewProjectRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const CreateNewProjectScreen();
+    },
+  );
+}
+
+/// generated route for
 /// [DashboardScreen]
 class DashboardRoute extends PageRouteInfo<void> {
   const DashboardRoute({List<PageRouteInfo>? children})
