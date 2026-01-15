@@ -1,13 +1,15 @@
 import 'package:contrack/src/app/data/models/models.dart';
 import 'package:contrack/src/core/common/enums/project_status.dart';
-
+import 'package:contrack/src/core/common/enums/user_role.dart';
 import 'package:contrack/src/core/session/user_session.dart';
+import 'package:contrack/src/features/dashboard/domain/entities/project.dart';
 import 'package:contrack/src/features/dashboard/domain/entities/project_with_details.dart';
 import 'package:contrack/src/features/projects/data/datasource/projects_local_datasource.dart';
 import 'package:contrack/src/features/projects/domain/entities/geopolitical_zone.dart'
     as domain;
 import 'package:contrack/src/features/projects/domain/entities/implementing_agency.dart';
 import 'package:contrack/src/features/projects/domain/entities/nigerian_state.dart';
+import 'package:contrack/src/features/projects/domain/entities/sort_field.dart';
 import 'package:contrack/src/features/projects/domain/entities/supervising_ministry.dart';
 import 'package:contrack/src/features/projects/domain/repository/projects_repository.dart';
 import 'package:injectable/injectable.dart';
@@ -49,7 +51,7 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
     }
 
     final projectModel = ProjectModel(
-      id: 0, // Auto-increment handled by Drift
+      id: 0, // drift handles auto ID
       code: code,
       status: status,
       agencyId: agencyId,
@@ -111,5 +113,20 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
   Future<ProjectWithDetails?> getProjectByCode(String code) async {
     final projectModel = await _localDataSource.getProjectByCode(code);
     return projectModel?.toEntity();
+  }
+
+  @override
+  Stream<List<Project>> watchProjectsForUser({
+    String? query,
+    ProjectFilter filter = const ProjectFilter(),
+  }) {
+    final user = _userSession.currentUser;
+    if (user == null) {
+      throw Exception('User not logged in');
+    }
+
+    return _localDataSource
+        .watchProjectsForUser(user.id, user.role, query: query, filter: filter)
+        .map((models) => models.map((model) => model.toEntity()).toList());
   }
 }

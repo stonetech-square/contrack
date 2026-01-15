@@ -61,6 +61,10 @@ import '../../features/projects/domain/usecase/get_states_use_case.dart'
     as _i182;
 import '../../features/projects/domain/usecase/get_supervising_ministries_use_case.dart'
     as _i227;
+import '../../features/projects/domain/usecase/watch_projects_for_user_use_case.dart'
+    as _i1001;
+import '../../features/projects/presentation/bloc/all_projects_bloc.dart'
+    as _i259;
 import '../../features/projects/presentation/bloc/create_new_project_bloc.dart'
     as _i921;
 import '../../features/projects/presentation/bloc/project_bloc.dart' as _i205;
@@ -191,8 +195,14 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i1039.GetProjectByCodeUseCase>(
       () => _i1039.GetProjectByCodeUseCase(gh<_i605.ProjectsRepository>()),
     );
+    gh.lazySingleton<_i1001.WatchProjectsForUserUseCase>(
+      () => _i1001.WatchProjectsForUserUseCase(gh<_i605.ProjectsRepository>()),
+    );
     gh.factory<_i135.SignInBloc>(
       () => _i135.SignInBloc(gh<_i277.SignInUseCase>()),
+    );
+    gh.factory<_i259.AllProjectsBloc>(
+      () => _i259.AllProjectsBloc(gh<_i1001.WatchProjectsForUserUseCase>()),
     );
     gh.factory<_i948.SyncNowUseCase>(
       () => _i948.SyncNowUseCase(gh<_i454.AppRepository>()),
