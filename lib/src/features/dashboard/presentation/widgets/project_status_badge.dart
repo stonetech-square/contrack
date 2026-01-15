@@ -17,7 +17,7 @@ class ProjectStatusBadge extends StatelessWidget {
       margin: const EdgeInsets.only(right: 16),
       constraints: BoxConstraints(maxWidth: 79, maxHeight: 50),
       decoration: BoxDecoration(
-        color: config.backgroundColor,
+        color: config.backgroundColor.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Text(

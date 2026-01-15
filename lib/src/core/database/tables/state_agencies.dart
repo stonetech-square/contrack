@@ -5,7 +5,7 @@ class States extends Table {
   TextColumn get name => text().withLength(min: 2, max: 100).unique()();
   TextColumn get code => text().withLength(min: 2, max: 10).nullable()();
   IntColumn get zoneId => integer().references(GeopoliticalZones, #id)();
-  TextColumn get remoteId => text().nullable()();
+  TextColumn get remoteId => text().nullable() ();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 }
 
@@ -24,6 +24,7 @@ class Agencies extends Table {
   TextColumn get remoteId => text().nullable()();
   BoolColumn get isActive => boolean().withDefault(const Constant(true))();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
 }
 
 class Ministries extends Table {
@@ -34,4 +35,5 @@ class Ministries extends Table {
   IntColumn get agencyId => integer().references(Agencies, #id)();
   BoolColumn get isActive => boolean().withDefault(const Constant(true))();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
 }

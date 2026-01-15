@@ -852,6 +852,18 @@ class $AgenciesTable extends Agencies with TableInfo<$AgenciesTable, Agency> {
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -860,6 +872,7 @@ class $AgenciesTable extends Agencies with TableInfo<$AgenciesTable, Agency> {
     remoteId,
     isActive,
     createdAt,
+    updatedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -908,6 +921,12 @@ class $AgenciesTable extends Agencies with TableInfo<$AgenciesTable, Agency> {
         createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
       );
     }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
     return context;
   }
 
@@ -941,6 +960,10 @@ class $AgenciesTable extends Agencies with TableInfo<$AgenciesTable, Agency> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
       )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
     );
   }
 
@@ -957,6 +980,7 @@ class Agency extends DataClass implements Insertable<Agency> {
   final String? remoteId;
   final bool isActive;
   final DateTime createdAt;
+  final DateTime updatedAt;
   const Agency({
     required this.id,
     required this.name,
@@ -964,6 +988,7 @@ class Agency extends DataClass implements Insertable<Agency> {
     this.remoteId,
     required this.isActive,
     required this.createdAt,
+    required this.updatedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -978,6 +1003,7 @@ class Agency extends DataClass implements Insertable<Agency> {
     }
     map['is_active'] = Variable<bool>(isActive);
     map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
     return map;
   }
 
@@ -991,6 +1017,7 @@ class Agency extends DataClass implements Insertable<Agency> {
           : Value(remoteId),
       isActive: Value(isActive),
       createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
     );
   }
 
@@ -1006,6 +1033,7 @@ class Agency extends DataClass implements Insertable<Agency> {
       remoteId: serializer.fromJson<String?>(json['remoteId']),
       isActive: serializer.fromJson<bool>(json['isActive']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
   }
   @override
@@ -1018,6 +1046,7 @@ class Agency extends DataClass implements Insertable<Agency> {
       'remoteId': serializer.toJson<String?>(remoteId),
       'isActive': serializer.toJson<bool>(isActive),
       'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
     };
   }
 
@@ -1028,6 +1057,7 @@ class Agency extends DataClass implements Insertable<Agency> {
     Value<String?> remoteId = const Value.absent(),
     bool? isActive,
     DateTime? createdAt,
+    DateTime? updatedAt,
   }) => Agency(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -1035,6 +1065,7 @@ class Agency extends DataClass implements Insertable<Agency> {
     remoteId: remoteId.present ? remoteId.value : this.remoteId,
     isActive: isActive ?? this.isActive,
     createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
   );
   Agency copyWithCompanion(AgenciesCompanion data) {
     return Agency(
@@ -1044,6 +1075,7 @@ class Agency extends DataClass implements Insertable<Agency> {
       remoteId: data.remoteId.present ? data.remoteId.value : this.remoteId,
       isActive: data.isActive.present ? data.isActive.value : this.isActive,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
   }
 
@@ -1055,14 +1087,15 @@ class Agency extends DataClass implements Insertable<Agency> {
           ..write('code: $code, ')
           ..write('remoteId: $remoteId, ')
           ..write('isActive: $isActive, ')
-          ..write('createdAt: $createdAt')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
           ..write(')'))
         .toString();
   }
 
   @override
   int get hashCode =>
-      Object.hash(id, name, code, remoteId, isActive, createdAt);
+      Object.hash(id, name, code, remoteId, isActive, createdAt, updatedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1072,7 +1105,8 @@ class Agency extends DataClass implements Insertable<Agency> {
           other.code == this.code &&
           other.remoteId == this.remoteId &&
           other.isActive == this.isActive &&
-          other.createdAt == this.createdAt);
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
 }
 
 class AgenciesCompanion extends UpdateCompanion<Agency> {
@@ -1082,6 +1116,7 @@ class AgenciesCompanion extends UpdateCompanion<Agency> {
   final Value<String?> remoteId;
   final Value<bool> isActive;
   final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
   const AgenciesCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -1089,6 +1124,7 @@ class AgenciesCompanion extends UpdateCompanion<Agency> {
     this.remoteId = const Value.absent(),
     this.isActive = const Value.absent(),
     this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
   });
   AgenciesCompanion.insert({
     this.id = const Value.absent(),
@@ -1097,6 +1133,7 @@ class AgenciesCompanion extends UpdateCompanion<Agency> {
     this.remoteId = const Value.absent(),
     this.isActive = const Value.absent(),
     this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
   }) : name = Value(name);
   static Insertable<Agency> custom({
     Expression<int>? id,
@@ -1105,6 +1142,7 @@ class AgenciesCompanion extends UpdateCompanion<Agency> {
     Expression<String>? remoteId,
     Expression<bool>? isActive,
     Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1113,6 +1151,7 @@ class AgenciesCompanion extends UpdateCompanion<Agency> {
       if (remoteId != null) 'remote_id': remoteId,
       if (isActive != null) 'is_active': isActive,
       if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
     });
   }
 
@@ -1123,6 +1162,7 @@ class AgenciesCompanion extends UpdateCompanion<Agency> {
     Value<String?>? remoteId,
     Value<bool>? isActive,
     Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
   }) {
     return AgenciesCompanion(
       id: id ?? this.id,
@@ -1131,6 +1171,7 @@ class AgenciesCompanion extends UpdateCompanion<Agency> {
       remoteId: remoteId ?? this.remoteId,
       isActive: isActive ?? this.isActive,
       createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
@@ -1155,6 +1196,9 @@ class AgenciesCompanion extends UpdateCompanion<Agency> {
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
     return map;
   }
 
@@ -1166,7 +1210,8 @@ class AgenciesCompanion extends UpdateCompanion<Agency> {
           ..write('code: $code, ')
           ..write('remoteId: $remoteId, ')
           ..write('isActive: $isActive, ')
-          ..write('createdAt: $createdAt')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
           ..write(')'))
         .toString();
   }
@@ -1270,6 +1315,18 @@ class $MinistriesTable extends Ministries
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -1279,6 +1336,7 @@ class $MinistriesTable extends Ministries
     agencyId,
     isActive,
     createdAt,
+    updatedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1335,6 +1393,12 @@ class $MinistriesTable extends Ministries
         createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
       );
     }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
     return context;
   }
 
@@ -1372,6 +1436,10 @@ class $MinistriesTable extends Ministries
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
       )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
     );
   }
 
@@ -1389,6 +1457,7 @@ class Ministry extends DataClass implements Insertable<Ministry> {
   final int agencyId;
   final bool isActive;
   final DateTime createdAt;
+  final DateTime updatedAt;
   const Ministry({
     required this.id,
     required this.name,
@@ -1397,6 +1466,7 @@ class Ministry extends DataClass implements Insertable<Ministry> {
     required this.agencyId,
     required this.isActive,
     required this.createdAt,
+    required this.updatedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1412,6 +1482,7 @@ class Ministry extends DataClass implements Insertable<Ministry> {
     map['agency_id'] = Variable<int>(agencyId);
     map['is_active'] = Variable<bool>(isActive);
     map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
     return map;
   }
 
@@ -1426,6 +1497,7 @@ class Ministry extends DataClass implements Insertable<Ministry> {
       agencyId: Value(agencyId),
       isActive: Value(isActive),
       createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
     );
   }
 
@@ -1442,6 +1514,7 @@ class Ministry extends DataClass implements Insertable<Ministry> {
       agencyId: serializer.fromJson<int>(json['agencyId']),
       isActive: serializer.fromJson<bool>(json['isActive']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
   }
   @override
@@ -1455,6 +1528,7 @@ class Ministry extends DataClass implements Insertable<Ministry> {
       'agencyId': serializer.toJson<int>(agencyId),
       'isActive': serializer.toJson<bool>(isActive),
       'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
     };
   }
 
@@ -1466,6 +1540,7 @@ class Ministry extends DataClass implements Insertable<Ministry> {
     int? agencyId,
     bool? isActive,
     DateTime? createdAt,
+    DateTime? updatedAt,
   }) => Ministry(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -1474,6 +1549,7 @@ class Ministry extends DataClass implements Insertable<Ministry> {
     agencyId: agencyId ?? this.agencyId,
     isActive: isActive ?? this.isActive,
     createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
   );
   Ministry copyWithCompanion(MinistriesCompanion data) {
     return Ministry(
@@ -1484,6 +1560,7 @@ class Ministry extends DataClass implements Insertable<Ministry> {
       agencyId: data.agencyId.present ? data.agencyId.value : this.agencyId,
       isActive: data.isActive.present ? data.isActive.value : this.isActive,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
   }
 
@@ -1496,14 +1573,23 @@ class Ministry extends DataClass implements Insertable<Ministry> {
           ..write('remoteId: $remoteId, ')
           ..write('agencyId: $agencyId, ')
           ..write('isActive: $isActive, ')
-          ..write('createdAt: $createdAt')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, name, code, remoteId, agencyId, isActive, createdAt);
+  int get hashCode => Object.hash(
+    id,
+    name,
+    code,
+    remoteId,
+    agencyId,
+    isActive,
+    createdAt,
+    updatedAt,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1514,7 +1600,8 @@ class Ministry extends DataClass implements Insertable<Ministry> {
           other.remoteId == this.remoteId &&
           other.agencyId == this.agencyId &&
           other.isActive == this.isActive &&
-          other.createdAt == this.createdAt);
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
 }
 
 class MinistriesCompanion extends UpdateCompanion<Ministry> {
@@ -1525,6 +1612,7 @@ class MinistriesCompanion extends UpdateCompanion<Ministry> {
   final Value<int> agencyId;
   final Value<bool> isActive;
   final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
   const MinistriesCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -1533,6 +1621,7 @@ class MinistriesCompanion extends UpdateCompanion<Ministry> {
     this.agencyId = const Value.absent(),
     this.isActive = const Value.absent(),
     this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
   });
   MinistriesCompanion.insert({
     this.id = const Value.absent(),
@@ -1542,6 +1631,7 @@ class MinistriesCompanion extends UpdateCompanion<Ministry> {
     required int agencyId,
     this.isActive = const Value.absent(),
     this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
   }) : name = Value(name),
        agencyId = Value(agencyId);
   static Insertable<Ministry> custom({
@@ -1552,6 +1642,7 @@ class MinistriesCompanion extends UpdateCompanion<Ministry> {
     Expression<int>? agencyId,
     Expression<bool>? isActive,
     Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1561,6 +1652,7 @@ class MinistriesCompanion extends UpdateCompanion<Ministry> {
       if (agencyId != null) 'agency_id': agencyId,
       if (isActive != null) 'is_active': isActive,
       if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
     });
   }
 
@@ -1572,6 +1664,7 @@ class MinistriesCompanion extends UpdateCompanion<Ministry> {
     Value<int>? agencyId,
     Value<bool>? isActive,
     Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
   }) {
     return MinistriesCompanion(
       id: id ?? this.id,
@@ -1581,6 +1674,7 @@ class MinistriesCompanion extends UpdateCompanion<Ministry> {
       agencyId: agencyId ?? this.agencyId,
       isActive: isActive ?? this.isActive,
       createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
@@ -1608,6 +1702,9 @@ class MinistriesCompanion extends UpdateCompanion<Ministry> {
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
     return map;
   }
 
@@ -1620,7 +1717,8 @@ class MinistriesCompanion extends UpdateCompanion<Ministry> {
           ..write('remoteId: $remoteId, ')
           ..write('agencyId: $agencyId, ')
           ..write('isActive: $isActive, ')
-          ..write('createdAt: $createdAt')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
           ..write(')'))
         .toString();
   }
@@ -5687,6 +5785,7 @@ typedef $$AgenciesTableCreateCompanionBuilder =
       Value<String?> remoteId,
       Value<bool> isActive,
       Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
     });
 typedef $$AgenciesTableUpdateCompanionBuilder =
     AgenciesCompanion Function({
@@ -5696,6 +5795,7 @@ typedef $$AgenciesTableUpdateCompanionBuilder =
       Value<String?> remoteId,
       Value<bool> isActive,
       Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
     });
 
 final class $$AgenciesTableReferences
@@ -5776,6 +5876,11 @@ class $$AgenciesTableFilterComposer
 
   ColumnFilters<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -5868,6 +5973,11 @@ class $$AgenciesTableOrderingComposer
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$AgenciesTableAnnotationComposer
@@ -5896,6 +6006,9 @@ class $$AgenciesTableAnnotationComposer
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
 
   Expression<T> ministriesRefs<T extends Object>(
     Expression<T> Function($$MinistriesTableAnnotationComposer a) f,
@@ -5982,6 +6095,7 @@ class $$AgenciesTableTableManager
                 Value<String?> remoteId = const Value.absent(),
                 Value<bool> isActive = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
               }) => AgenciesCompanion(
                 id: id,
                 name: name,
@@ -5989,6 +6103,7 @@ class $$AgenciesTableTableManager
                 remoteId: remoteId,
                 isActive: isActive,
                 createdAt: createdAt,
+                updatedAt: updatedAt,
               ),
           createCompanionCallback:
               ({
@@ -5998,6 +6113,7 @@ class $$AgenciesTableTableManager
                 Value<String?> remoteId = const Value.absent(),
                 Value<bool> isActive = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
               }) => AgenciesCompanion.insert(
                 id: id,
                 name: name,
@@ -6005,6 +6121,7 @@ class $$AgenciesTableTableManager
                 remoteId: remoteId,
                 isActive: isActive,
                 createdAt: createdAt,
+                updatedAt: updatedAt,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -6098,6 +6215,7 @@ typedef $$MinistriesTableCreateCompanionBuilder =
       required int agencyId,
       Value<bool> isActive,
       Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
     });
 typedef $$MinistriesTableUpdateCompanionBuilder =
     MinistriesCompanion Function({
@@ -6108,6 +6226,7 @@ typedef $$MinistriesTableUpdateCompanionBuilder =
       Value<int> agencyId,
       Value<bool> isActive,
       Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
     });
 
 final class $$MinistriesTableReferences
@@ -6189,6 +6308,11 @@ class $$MinistriesTableFilterComposer
 
   ColumnFilters<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -6280,6 +6404,11 @@ class $$MinistriesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$AgenciesTableOrderingComposer get agencyId {
     final $$AgenciesTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -6330,6 +6459,9 @@ class $$MinistriesTableAnnotationComposer
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
 
   $$AgenciesTableAnnotationComposer get agencyId {
     final $$AgenciesTableAnnotationComposer composer = $composerBuilder(
@@ -6415,6 +6547,7 @@ class $$MinistriesTableTableManager
                 Value<int> agencyId = const Value.absent(),
                 Value<bool> isActive = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
               }) => MinistriesCompanion(
                 id: id,
                 name: name,
@@ -6423,6 +6556,7 @@ class $$MinistriesTableTableManager
                 agencyId: agencyId,
                 isActive: isActive,
                 createdAt: createdAt,
+                updatedAt: updatedAt,
               ),
           createCompanionCallback:
               ({
@@ -6433,6 +6567,7 @@ class $$MinistriesTableTableManager
                 required int agencyId,
                 Value<bool> isActive = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
               }) => MinistriesCompanion.insert(
                 id: id,
                 name: name,
@@ -6441,6 +6576,7 @@ class $$MinistriesTableTableManager
                 agencyId: agencyId,
                 isActive: isActive,
                 createdAt: createdAt,
+                updatedAt: updatedAt,
               ),
           withReferenceMapper: (p0) => p0
               .map(

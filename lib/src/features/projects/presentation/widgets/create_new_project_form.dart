@@ -2,6 +2,7 @@ import 'package:contrack/src/app/presentation/widgets/widgets.dart';
 import 'package:contrack/src/app/theme/app_colors.dart';
 import 'package:contrack/src/app/theme/app_typography.dart';
 import 'package:contrack/src/core/common/enums/project_status.dart';
+import 'package:contrack/src/core/utils/currency_formatter.dart';
 import 'package:contrack/src/features/projects/presentation/bloc/create_new_project_bloc.dart';
 import 'package:contrack/src/features/projects/presentation/widgets/create_new_project_entry_card.dart';
 import 'package:flutter/material.dart';
@@ -93,16 +94,14 @@ class CreateNewProjectForm extends StatelessWidget {
                             value: state.implementingAgencyId.value == 0
                                 ? null
                                 : state.implementingAgencyId.value,
-                            items: const [
-                              DropdownMenuItem(
-                                value: 1,
-                                child: Text('Agency A'),
-                              ),
-                              DropdownMenuItem(
-                                value: 2,
-                                child: Text('Agency B'),
-                              ),
-                            ],
+                            items: state.agencies
+                                .map(
+                                  (e) => DropdownMenuItem(
+                                    value: e.id,
+                                    child: Text(e.name),
+                                  ),
+                                )
+                                .toList(),
                             onChanged: (value) {
                               if (value != null) {
                                 context.read<CreateNewProjectBloc>().add(
@@ -125,16 +124,14 @@ class CreateNewProjectForm extends StatelessWidget {
                             value: state.supervisingMinistryId.value == 0
                                 ? null
                                 : state.supervisingMinistryId.value,
-                            items: const [
-                              DropdownMenuItem(
-                                value: 1,
-                                child: Text('Ministry A'),
-                              ),
-                              DropdownMenuItem(
-                                value: 2,
-                                child: Text('Ministry B'),
-                              ),
-                            ],
+                            items: state.ministries
+                                .map(
+                                  (e) => DropdownMenuItem(
+                                    value: e.id,
+                                    child: Text(e.name),
+                                  ),
+                                )
+                                .toList(),
                             onChanged: (value) {
                               if (value != null) {
                                 context.read<CreateNewProjectBloc>().add(
@@ -162,16 +159,14 @@ class CreateNewProjectForm extends StatelessWidget {
                             value: state.geopoliticalZoneId.value == 0
                                 ? null
                                 : state.geopoliticalZoneId.value,
-                            items: const [
-                              DropdownMenuItem(
-                                value: 1,
-                                child: Text('South West'),
-                              ),
-                              DropdownMenuItem(
-                                value: 2,
-                                child: Text('North Central'),
-                              ),
-                            ],
+                            items: state.zones
+                                .map(
+                                  (e) => DropdownMenuItem(
+                                    value: e.id,
+                                    child: Text(e.name),
+                                  ),
+                                )
+                                .toList(),
                             onChanged: (value) {
                               if (value != null) {
                                 context.read<CreateNewProjectBloc>().add(
@@ -194,16 +189,14 @@ class CreateNewProjectForm extends StatelessWidget {
                             value: state.stateId.value == 0
                                 ? null
                                 : state.stateId.value,
-                            items: const [
-                              DropdownMenuItem(
-                                value: 1,
-                                child: Text('Lago State'),
-                              ),
-                              DropdownMenuItem(
-                                value: 2,
-                                child: Text('Abuja FCT'),
-                              ),
-                            ],
+                            items: state.states
+                                .map(
+                                  (e) => DropdownMenuItem(
+                                    value: e.id,
+                                    child: Text(e.name),
+                                  ),
+                                )
+                                .toList(),
                             onChanged: (value) {
                               if (value != null) {
                                 context.read<CreateNewProjectBloc>().add(
@@ -274,11 +267,17 @@ class CreateNewProjectForm extends StatelessWidget {
                                 flex: 2,
                                 child: AppTextField(
                                   label: 'Budget Allocation',
-                                  hintText: 'N',
+                                  hintText: '₦',
                                   keyboardType: TextInputType.number,
+                                  inputFormatters: [CurrencyInputFormatter()],
                                   onChanged: (value) {
+                                    // Remove commas before parsing
+                                    final cleanValue = value.replaceAll(
+                                      ',',
+                                      '',
+                                    );
                                     final budget =
-                                        double.tryParse(value) ?? 0.0;
+                                        double.tryParse(cleanValue) ?? 0.0;
                                     context.read<CreateNewProjectBloc>().add(
                                       CreateNewProjectBugetChangedEvent(
                                         budget: budget,

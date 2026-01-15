@@ -57,8 +57,24 @@ class AppDropDownField<T> extends StatelessWidget {
           const SizedBox(height: 8),
         ],
         DropdownButtonFormField<T>(
+          isExpanded: true,
           initialValue: value,
           items: items,
+          selectedItemBuilder: (context) {
+            return items.map((item) {
+              return Align(
+                alignment: Alignment.centerLeft,
+                child: DefaultTextStyle(
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    color: context.colors.onSurface,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  maxLines: 1,
+                  child: item.child,
+                ),
+              );
+            }).toList();
+          },
           onChanged: enabled ? onChanged : null,
           validator: validator,
           icon: Icon(

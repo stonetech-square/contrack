@@ -51,6 +51,14 @@ import '../../features/projects/domain/usecase/create_project_use_case.dart'
     as _i546;
 import '../../features/projects/domain/usecase/generate_project_code_use_case.dart'
     as _i597;
+import '../../features/projects/domain/usecase/get_geopolitical_zones_use_case.dart'
+    as _i745;
+import '../../features/projects/domain/usecase/get_implementing_agencies_use_case.dart'
+    as _i922;
+import '../../features/projects/domain/usecase/get_states_use_case.dart'
+    as _i182;
+import '../../features/projects/domain/usecase/get_supervising_ministries_use_case.dart'
+    as _i227;
 import '../../features/projects/presentation/bloc/create_new_project_bloc.dart'
     as _i921;
 import '../data/datasource/app_local_datasource.dart' as _i293;
@@ -94,17 +102,18 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i175.AuthRemoteDataSource>(
       () => _i175.AuthRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
     );
-    gh.lazySingleton<_i964.DatabaseSeeder>(
-      () => _i964.DatabaseSeeder(
-        gh<_i339.AppDatabase>(),
-        gh<_i454.SupabaseClient>(),
-      ),
-    );
     gh.lazySingleton<_i103.SyncService>(
       () => _i103.SyncServiceImpl(
         gh<_i892.NetworkInfo>(),
         gh<_i339.AppDatabase>(),
         gh<_i889.SyncAction>(),
+        gh<_i454.SupabaseClient>(),
+      ),
+    );
+    gh.lazySingleton<_i964.DatabaseSeeder>(
+      () => _i964.DatabaseSeeder(
+        gh<_i339.AppDatabase>(),
+        gh<_i454.SupabaseClient>(),
       ),
     );
     gh.singleton<_i26.UserSession>(
@@ -156,6 +165,20 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i504.LogOutUseCase>(
       () => _i504.LogOutUseCase(gh<_i454.AppRepository>()),
     );
+    gh.factory<_i745.GetGeopoliticalZonesUseCase>(
+      () => _i745.GetGeopoliticalZonesUseCase(gh<_i605.ProjectsRepository>()),
+    );
+    gh.factory<_i922.GetImplementingAgenciesUseCase>(
+      () =>
+          _i922.GetImplementingAgenciesUseCase(gh<_i605.ProjectsRepository>()),
+    );
+    gh.factory<_i182.GetStatesUseCase>(
+      () => _i182.GetStatesUseCase(gh<_i605.ProjectsRepository>()),
+    );
+    gh.factory<_i227.GetSupervisingMinistriesUseCase>(
+      () =>
+          _i227.GetSupervisingMinistriesUseCase(gh<_i605.ProjectsRepository>()),
+    );
     gh.lazySingleton<_i546.CreateProjectUseCase>(
       () => _i546.CreateProjectUseCase(gh<_i605.ProjectsRepository>()),
     );
@@ -188,12 +211,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i275.DashboardRepository>(),
       ),
     );
-    gh.factory<_i921.CreateNewProjectBloc>(
-      () => _i921.CreateNewProjectBloc(
-        gh<_i597.GenerateProjectCodeUseCase>(),
-        gh<_i546.CreateProjectUseCase>(),
-      ),
-    );
     gh.factory<_i652.DashboardBloc>(
       () => _i652.DashboardBloc(
         gh<_i862.WatchDashboardStatsUseCase>(),
@@ -208,6 +225,16 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i528.WatchAppSyncStatusUseCase>(),
         gh<_i948.SyncNowUseCase>(),
         gh<_i964.DatabaseSeeder>(),
+      ),
+    );
+    gh.factory<_i921.CreateNewProjectBloc>(
+      () => _i921.CreateNewProjectBloc(
+        gh<_i597.GenerateProjectCodeUseCase>(),
+        gh<_i546.CreateProjectUseCase>(),
+        gh<_i745.GetGeopoliticalZonesUseCase>(),
+        gh<_i922.GetImplementingAgenciesUseCase>(),
+        gh<_i182.GetStatesUseCase>(),
+        gh<_i227.GetSupervisingMinistriesUseCase>(),
       ),
     );
     return this;

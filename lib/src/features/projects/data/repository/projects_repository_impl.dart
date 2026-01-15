@@ -1,10 +1,14 @@
 import 'package:contrack/src/app/data/models/models.dart';
-
 import 'package:contrack/src/core/common/enums/project_status.dart';
-import 'package:contrack/src/features/projects/data/datasource/projects_local_datasource.dart';
-import 'package:contrack/src/features/projects/domain/repository/projects_repository.dart';
 
 import 'package:contrack/src/core/session/user_session.dart';
+import 'package:contrack/src/features/projects/data/datasource/projects_local_datasource.dart';
+import 'package:contrack/src/features/projects/domain/entities/geopolitical_zone.dart'
+    as domain;
+import 'package:contrack/src/features/projects/domain/entities/implementing_agency.dart';
+import 'package:contrack/src/features/projects/domain/entities/nigerian_state.dart';
+import 'package:contrack/src/features/projects/domain/entities/supervising_ministry.dart';
+import 'package:contrack/src/features/projects/domain/repository/projects_repository.dart';
 import 'package:injectable/injectable.dart';
 
 @LazySingleton(as: ProjectsRepository)
@@ -60,5 +64,45 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
       updatedAt: DateTime.now(),
     );
     await _localDataSource.createProject(projectModel);
+  }
+
+  @override
+  Future<List<domain.GeopoliticalZone>> getGeopoliticalZones() async {
+    final zones = await _localDataSource.getAllGeopoliticalZones();
+    return zones
+        .map((e) => domain.GeopoliticalZone(id: e.id, name: e.name))
+        .toList();
+  }
+
+  @override
+  Future<List<ImplementingAgency>> getImplementingAgencies() async {
+    final agencies = await _localDataSource.getAllImplementingAgencies();
+    return agencies
+        .map((e) => ImplementingAgency(id: e.id, name: e.name))
+        .toList();
+  }
+
+  @override
+  Future<List<NigerianState>> getStates(int zoneId) async {
+    final states = await _localDataSource.getAllStatesByGeopoliticalZoneId(
+      zoneId,
+    );
+    return states
+        .map((e) => NigerianState(id: e.id, name: e.name, zoneId: e.zoneId))
+        .toList();
+  }
+
+  @override
+  Future<List<SupervisingMinistry>> getSupervisingMinistries(
+    int agencyId,
+  ) async {
+    final ministries = await _localDataSource
+        .getAllSupervisingMinistriesByImplementingAgencyId(agencyId);
+    return ministries
+        .map(
+          (e) =>
+              SupervisingMinistry(id: e.id, name: e.name, agencyId: e.agencyId),
+        )
+        .toList();
   }
 }

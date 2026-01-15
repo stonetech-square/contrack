@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:contrack/src/core/common/enums/user_role.dart';
 import 'package:contrack/src/core/database/database.dart';
 import 'package:contrack/src/core/network/network_info.dart';
 import 'package:contrack/src/core/sync/app_sync_status.dart';
@@ -8,6 +9,7 @@ import 'package:injectable/injectable.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:logging/logging.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract class SyncService {
   Stream<bool> get isSyncing;
@@ -21,6 +23,7 @@ class SyncServiceImpl implements SyncService {
   final NetworkInfo _networkInfo;
   final AppDatabase _database;
   final SyncAction _syncAction;
+  final SupabaseClient _supabase;
   final Logger _logger = Logger('SyncServiceImpl');
 
   final _isSyncingController = BehaviorSubject<bool>.seeded(false);
@@ -31,7 +34,12 @@ class SyncServiceImpl implements SyncService {
   static const _syncInterval = Duration(minutes: 15);
   static const _batchSize = 50;
 
-  SyncServiceImpl(this._networkInfo, this._database, this._syncAction) {
+  SyncServiceImpl(
+    this._networkInfo,
+    this._database,
+    this._syncAction,
+    this._supabase,
+  ) {
     _networkSubscription = _networkInfo.onStatusChange.listen((status) {
       if (status == InternetStatus.connected) {
         _startPeriodicSync();
@@ -115,12 +123,115 @@ class SyncServiceImpl implements SyncService {
   }
 
   Future<void> _performSync() async {
+    try {
+      await _performPushSync();
+    } catch (e, stackTrace) {
+      _logger.severe('Push sync failed', e, stackTrace);
+    }
+
+    if (!_isDisposed) {
+      try {
+        await _performPullSync();
+      } catch (e, stackTrace) {
+        _logger.severe('Pull sync failed', e, stackTrace);
+      }
+    }
+  }
+
+  Future<void> _performPushSync() async {
     final projectsSynced = await _performProjectSync();
     final usersSynced = await _performUserSync();
     final totalSynced = projectsSynced + usersSynced;
 
     if (totalSynced > 0) {
-      _logger.info('Synced $totalSynced items');
+      _logger.info('Pushed $totalSynced items');
+    }
+  }
+
+  Future<void> _performPullSync() async {
+    await _pullAndSyncGeopoliticalZones();
+    await _pullAndSyncAgencies();
+    await _pullAndSyncMinistries();
+    await _pullAndSyncStates();
+
+    final session =
+        await (_database.select(_database.sessions)
+              ..limit(1)
+              ..orderBy([
+                (t) => OrderingTerm(
+                  expression: t.createdAt,
+                  mode: OrderingMode.desc,
+                ),
+              ]))
+            .getSingleOrNull();
+
+    if (session != null && session.activeUserId != null) {
+      final user = await (_database.select(
+        _database.users,
+      )..where((t) => t.id.equals(session.activeUserId!))).getSingleOrNull();
+
+      if (user != null &&
+          (user.role == UserRole.admin || user.role == UserRole.superAdmin)) {
+        await _pullAndSyncProfiles();
+      }
+
+      await _pullAndSyncProjects(currentUserId: session.activeUserId);
+    }
+  }
+
+  Future<void> _pullAndSyncProjects({required int? currentUserId}) async {
+    try {
+      final response = await _supabase.from('projects').select();
+      final projectsData = response as List<dynamic>;
+
+      for (final projectData in projectsData) {
+        if (_isDisposed) break;
+        try {
+          await _syncAction.updateLocalFromRemoteProject(
+            projectData as Map<String, dynamic>,
+            currentUserId,
+          );
+        } catch (e, stackTrace) {
+          _logger.warning('Failed to sync incoming project', e, stackTrace);
+        }
+      }
+    } catch (e, stackTrace) {
+      _logger.severe('Failed to pull projects', e, stackTrace);
+    }
+  }
+
+  Future<void> _pullAndSyncGeopoliticalZones() async {
+    final response = await _supabase.from('geopolitical_zones').select();
+    for (final item in response) {
+      await _syncAction.updateLocalFromRemoteGeopoliticalZone(item);
+    }
+  }
+
+  Future<void> _pullAndSyncAgencies() async {
+    final response = await _supabase.from('agencies').select();
+    for (final item in response) {
+      await _syncAction.updateLocalFromRemoteAgency(item);
+    }
+  }
+
+  Future<void> _pullAndSyncMinistries() async {
+    final response = await _supabase.from('ministries').select();
+    for (final item in response) {
+      await _syncAction.updateLocalFromRemoteMinistry(item);
+    }
+  }
+
+  Future<void> _pullAndSyncStates() async {
+    final response = await _supabase.from('states').select();
+    for (final item in response) {
+      await _syncAction.updateLocalFromRemoteState(item);
+    }
+  }
+
+  Future<void> _pullAndSyncProfiles() async {
+    final response = await _supabase.from('profiles').select();
+    for (final item in response) {
+      await _syncAction.updateLocalFromRemoteProfile(item);
     }
   }
 

@@ -28,6 +28,10 @@ sealed class CreateNewProjectState with _$CreateNewProjectState {
     @Default(RequiredDate.pure()) RequiredDate startDate,
     @Default(RequiredDate.pure()) RequiredDate endDate,
     @Default(false) bool showErrors,
+    @Default([]) List<ImplementingAgency> agencies,
+    @Default([]) List<SupervisingMinistry> ministries,
+    @Default([]) List<GeopoliticalZone> zones,
+    @Default([]) List<NigerianState> states,
   }) = _CreateNewProjectState;
 
   const CreateNewProjectState._();

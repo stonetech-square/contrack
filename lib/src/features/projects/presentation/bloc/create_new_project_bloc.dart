@@ -1,6 +1,15 @@
 import 'package:contrack/src/core/common/enums/project_status.dart';
+import 'package:contrack/src/core/usecase/usecase.dart';
+import 'package:contrack/src/features/projects/domain/entities/geopolitical_zone.dart';
+import 'package:contrack/src/features/projects/domain/entities/implementing_agency.dart';
+import 'package:contrack/src/features/projects/domain/entities/nigerian_state.dart';
+import 'package:contrack/src/features/projects/domain/entities/supervising_ministry.dart';
 import 'package:contrack/src/features/projects/domain/usecase/create_project_use_case.dart';
 import 'package:contrack/src/features/projects/domain/usecase/generate_project_code_use_case.dart';
+import 'package:contrack/src/features/projects/domain/usecase/get_geopolitical_zones_use_case.dart';
+import 'package:contrack/src/features/projects/domain/usecase/get_implementing_agencies_use_case.dart';
+import 'package:contrack/src/features/projects/domain/usecase/get_states_use_case.dart';
+import 'package:contrack/src/features/projects/domain/usecase/get_supervising_ministries_use_case.dart';
 import 'package:contrack/src/features/projects/presentation/bloc/inputs/inputs.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,10 +26,18 @@ class CreateNewProjectBloc
     extends Bloc<CreateNewProjectEvent, CreateNewProjectState> {
   final GenerateProjectCodeUseCase _generateProjectCodeUseCase;
   final CreateProjectUseCase _createProjectUseCase;
+  final GetGeopoliticalZonesUseCase _getGeopoliticalZonesUseCase;
+  final GetImplementingAgenciesUseCase _getImplementingAgenciesUseCase;
+  final GetStatesUseCase _getStatesUseCase;
+  final GetSupervisingMinistriesUseCase _getSupervisingMinistriesUseCase;
 
   CreateNewProjectBloc(
     this._generateProjectCodeUseCase,
     this._createProjectUseCase,
+    this._getGeopoliticalZonesUseCase,
+    this._getImplementingAgenciesUseCase,
+    this._getStatesUseCase,
+    this._getSupervisingMinistriesUseCase,
   ) : super(const CreateNewProjectState()) {
     on<CreateNewProjectStartedEvent>(_onStarted);
     on<CreateNewProjectStatusChangedEvent>(_onStatusChanged);
@@ -38,15 +55,20 @@ class CreateNewProjectBloc
     on<CreateNewProjectCancelledEvent>(_onCancelled);
   }
 
-  void _onStarted(
+  Future<void> _onStarted(
     CreateNewProjectStartedEvent event,
     Emitter<CreateNewProjectState> emit,
-  ) {
+  ) async {
     try {
       final code = _generateProjectCodeUseCase(GenerateProjectCodeParams());
+      final zones = await _getGeopoliticalZonesUseCase(NoParams());
+      final agencies = await _getImplementingAgenciesUseCase(NoParams());
+
       emit(
         state.copyWith(
           projectCode: code,
+          zones: zones,
+          agencies: agencies,
           viewStatus: CreateProjectViewStatus.filling,
         ),
       );
@@ -67,15 +89,34 @@ class CreateNewProjectBloc
     emit(state.copyWith(status: RequiredProjectStatus.dirty(event.status)));
   }
 
-  void _onAgencyChanged(
+  Future<void> _onAgencyChanged(
     CreateNewProjectImplementingAgencyChangedEvent event,
     Emitter<CreateNewProjectState> emit,
-  ) {
+  ) async {
     emit(
       state.copyWith(
         implementingAgencyId: RequiredId.dirty(event.implementingAgencyId),
+        supervisingMinistryId: RequiredId.dirty(0),
       ),
     );
+    final ministries = await _getSupervisingMinistriesUseCase(
+      event.implementingAgencyId,
+    );
+    emit(state.copyWith(ministries: ministries));
+  }
+
+  Future<void> _onZoneChanged(
+    CreateNewProjectGeopoliticalZoneChangedEvent event,
+    Emitter<CreateNewProjectState> emit,
+  ) async {
+    emit(
+      state.copyWith(
+        geopoliticalZoneId: RequiredId.dirty(event.geopoliticalZoneId),
+        stateId: RequiredId.dirty(0),
+      ),
+    );
+    final states = await _getStatesUseCase(event.geopoliticalZoneId);
+    emit(state.copyWith(states: states));
   }
 
   void _onMinistryChanged(
@@ -94,17 +135,6 @@ class CreateNewProjectBloc
     Emitter<CreateNewProjectState> emit,
   ) {
     emit(state.copyWith(stateId: RequiredId.dirty(event.stateId)));
-  }
-
-  void _onZoneChanged(
-    CreateNewProjectGeopoliticalZoneChangedEvent event,
-    Emitter<CreateNewProjectState> emit,
-  ) {
-    emit(
-      state.copyWith(
-        geopoliticalZoneId: RequiredId.dirty(event.geopoliticalZoneId),
-      ),
-    );
   }
 
   void _onConstituencyChanged(
