@@ -2,6 +2,7 @@ import 'package:contrack/src/app/data/models/models.dart';
 import 'package:contrack/src/core/common/enums/project_status.dart';
 
 import 'package:contrack/src/core/session/user_session.dart';
+import 'package:contrack/src/features/dashboard/domain/entities/project_with_details.dart';
 import 'package:contrack/src/features/projects/data/datasource/projects_local_datasource.dart';
 import 'package:contrack/src/features/projects/domain/entities/geopolitical_zone.dart'
     as domain;
@@ -104,5 +105,11 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
               SupervisingMinistry(id: e.id, name: e.name, agencyId: e.agencyId),
         )
         .toList();
+  }
+
+  @override
+  Future<ProjectWithDetails?> getProjectByCode(String code) async {
+    final projectModel = await _localDataSource.getProjectByCode(code);
+    return projectModel?.toEntity();
   }
 }

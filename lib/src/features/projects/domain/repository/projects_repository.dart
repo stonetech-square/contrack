@@ -1,4 +1,5 @@
 import 'package:contrack/src/core/common/enums/project_status.dart';
+import 'package:contrack/src/features/dashboard/domain/entities/project_with_details.dart';
 import 'package:contrack/src/features/projects/domain/entities/geopolitical_zone.dart';
 import 'package:contrack/src/features/projects/domain/entities/implementing_agency.dart';
 import 'package:contrack/src/features/projects/domain/entities/nigerian_state.dart';
@@ -25,4 +26,5 @@ abstract class ProjectsRepository {
   Future<List<NigerianState>> getStates(int zoneId);
   Future<List<ImplementingAgency>> getImplementingAgencies();
   Future<List<SupervisingMinistry>> getSupervisingMinistries(int agencyId);
+  Future<ProjectWithDetails?> getProjectByCode(String code);
 }

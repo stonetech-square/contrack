@@ -23,8 +23,9 @@ class RecentProjectsTableRow extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
+        key: ValueKey(project.code),
         onTap: () => context.router.navigate(
-          AllProjectRoute(children: [ProjectRoute(projectId: project.id)]),
+          AllProjectRoute(children: [ProjectRoute(projectCode: project.code)]),
         ),
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),

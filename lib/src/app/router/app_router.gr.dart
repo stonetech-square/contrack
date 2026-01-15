@@ -95,11 +95,11 @@ class DashboardRoute extends PageRouteInfo<void> {
 class ProjectRoute extends PageRouteInfo<ProjectRouteArgs> {
   ProjectRoute({
     Key? key,
-    required int projectId,
+    required String projectCode,
     List<PageRouteInfo>? children,
   }) : super(
          ProjectRoute.name,
-         args: ProjectRouteArgs(key: key, projectId: projectId),
+         args: ProjectRouteArgs(key: key, projectCode: projectCode),
          initialChildren: children,
        );
 
@@ -109,32 +109,32 @@ class ProjectRoute extends PageRouteInfo<ProjectRouteArgs> {
     name,
     builder: (data) {
       final args = data.argsAs<ProjectRouteArgs>();
-      return ProjectScreen(key: args.key, projectId: args.projectId);
+      return ProjectScreen(key: args.key, projectCode: args.projectCode);
     },
   );
 }
 
 class ProjectRouteArgs {
-  const ProjectRouteArgs({this.key, required this.projectId});
+  const ProjectRouteArgs({this.key, required this.projectCode});
 
   final Key? key;
 
-  final int projectId;
+  final String projectCode;
 
   @override
   String toString() {
-    return 'ProjectRouteArgs{key: $key, projectId: $projectId}';
+    return 'ProjectRouteArgs{key: $key, projectCode: $projectCode}';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! ProjectRouteArgs) return false;
-    return key == other.key && projectId == other.projectId;
+    return key == other.key && projectCode == other.projectCode;
   }
 
   @override
-  int get hashCode => key.hashCode ^ projectId.hashCode;
+  int get hashCode => key.hashCode ^ projectCode.hashCode;
 }
 
 /// generated route for

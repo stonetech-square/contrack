@@ -55,12 +55,15 @@ import '../../features/projects/domain/usecase/get_geopolitical_zones_use_case.d
     as _i745;
 import '../../features/projects/domain/usecase/get_implementing_agencies_use_case.dart'
     as _i922;
+import '../../features/projects/domain/usecase/get_project_by_code_use_case.dart'
+    as _i1039;
 import '../../features/projects/domain/usecase/get_states_use_case.dart'
     as _i182;
 import '../../features/projects/domain/usecase/get_supervising_ministries_use_case.dart'
     as _i227;
 import '../../features/projects/presentation/bloc/create_new_project_bloc.dart'
     as _i921;
+import '../../features/projects/presentation/bloc/project_bloc.dart' as _i205;
 import '../data/datasource/app_local_datasource.dart' as _i293;
 import '../data/datasource/app_remote_datasource.dart' as _i245;
 import '../data/repository/app_repository_impl.dart' as _i309;
@@ -185,6 +188,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i597.GenerateProjectCodeUseCase>(
       () => _i597.GenerateProjectCodeUseCase(gh<_i605.ProjectsRepository>()),
     );
+    gh.lazySingleton<_i1039.GetProjectByCodeUseCase>(
+      () => _i1039.GetProjectByCodeUseCase(gh<_i605.ProjectsRepository>()),
+    );
     gh.factory<_i135.SignInBloc>(
       () => _i135.SignInBloc(gh<_i277.SignInUseCase>()),
     );
@@ -199,6 +205,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i353.WatchAppUserUseCase>(
       () => _i353.WatchAppUserUseCase(gh<_i454.AppRepository>()),
+    );
+    gh.factory<_i205.ProjectBloc>(
+      () => _i205.ProjectBloc(gh<_i1039.GetProjectByCodeUseCase>()),
     );
     gh.lazySingleton<_i862.WatchDashboardStatsUseCase>(
       () => _i862.WatchDashboardStatsUseCase(gh<_i275.DashboardRepository>()),
