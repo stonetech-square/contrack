@@ -154,6 +154,22 @@ class ReportRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [ShellProjectScreen]
+class ShellProjectRoute extends PageRouteInfo<void> {
+  const ShellProjectRoute({List<PageRouteInfo>? children})
+    : super(ShellProjectRoute.name, initialChildren: children);
+
+  static const String name = 'ShellProjectRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const ShellProjectScreen();
+    },
+  );
+}
+
+/// generated route for
 /// [SignInScreen]
 class SignInRoute extends PageRouteInfo<void> {
   const SignInRoute({List<PageRouteInfo>? children})

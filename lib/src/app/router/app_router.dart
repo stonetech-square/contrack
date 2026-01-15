@@ -7,6 +7,7 @@ import 'package:contrack/src/features/dashboard/presentation/screen/dashboard_sc
 import 'package:contrack/src/features/projects/presentation/screens/all_project_screen.dart';
 import 'package:contrack/src/features/projects/presentation/screens/create_new_project.dart';
 import 'package:contrack/src/features/projects/presentation/screens/project_screen.dart';
+import 'package:contrack/src/features/projects/presentation/screens/shell_project_screen.dart';
 import 'package:contrack/src/features/reports/presentation/screen/report_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -30,9 +31,11 @@ class AppRouter extends RootStackRouter {
           page: AuthenticatedShellRoute.page,
           children: [
             AutoRoute(page: DashboardRoute.page),
+            // TODO: fix shell routing bug
             AutoRoute(
-              page: AllProjectRoute.page,
+              page: ShellProjectRoute.page,
               children: [
+                AutoRoute(page: AllProjectRoute.page, initial: true),
                 AutoRoute(page: ProjectRoute.page),
                 AutoRoute(page: CreateNewProjectRoute.page),
               ],

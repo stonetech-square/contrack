@@ -1,6 +1,5 @@
 import 'package:contrack/src/app/data/models/models.dart';
 import 'package:contrack/src/core/common/enums/project_status.dart';
-import 'package:contrack/src/core/common/enums/user_role.dart';
 import 'package:contrack/src/core/session/user_session.dart';
 import 'package:contrack/src/features/dashboard/domain/entities/project.dart';
 import 'package:contrack/src/features/dashboard/domain/entities/project_with_details.dart';

@@ -38,7 +38,7 @@ class DashboardView extends StatelessWidget {
         SizedBox(height: 44),
         FilledButton.icon(
           onPressed: () => context.router.navigate(
-            AllProjectRoute(children: [CreateNewProjectRoute()]),
+            ShellProjectRoute(children: [CreateNewProjectRoute()]),
           ),
           style: FilledButton.styleFrom(
             maximumSize: const Size(230, 56),
