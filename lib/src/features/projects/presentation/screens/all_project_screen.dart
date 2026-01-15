@@ -26,6 +26,10 @@ class AllProjectsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        const SizedBox(height: 16),
+        RouteHeader(routePath: ['Projects'], canPop: false),
+        SizedBox(height: 23),
+        //TODO replace all below with actual UI
         AppTextField(
           controller: TextEditingController(),
           onChanged: (value) {

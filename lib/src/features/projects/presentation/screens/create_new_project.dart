@@ -30,11 +30,16 @@ class CreateNewProjectView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<CreateNewProjectBloc, CreateNewProjectState>(
       listener: (context, state) {
-        if (state.viewStatus == CreateProjectViewStatus.success ||
-            state.viewStatus == CreateProjectViewStatus.cancelled) {
+        if (state.viewStatus == CreateProjectViewStatus.success) {
+          context.toast.success(
+            'Project created successfully',
+            title: 'New Entry',
+          );
           context.pop();
         }
-
+        if (state.viewStatus == CreateProjectViewStatus.cancelled) {
+          context.pop();
+        }
         if (state.viewStatus == CreateProjectViewStatus.failure) {
           context.toast.error(
             state.errorMessage,
