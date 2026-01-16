@@ -5,6 +5,7 @@ import 'package:contrack/src/core/common/enums/project_status.dart';
 import 'package:contrack/src/core/errors/failures.dart';
 import 'package:contrack/src/core/services/project_import_service.dart';
 import 'package:contrack/src/core/session/user_session.dart';
+import 'package:contrack/src/core/utils/project_code_generator.dart';
 import 'package:contrack/src/features/dashboard/data/datasource/dashboard_local_datasource.dart';
 import 'package:contrack/src/features/dashboard/domain/entities/import_result.dart';
 import 'package:contrack/src/features/dashboard/domain/entities/project.dart';
@@ -19,13 +20,19 @@ class DashboardRepositoryImpl implements DashboardRepository {
   final DashboardLocalDataSource _localDataSource;
   final UserSession _userSession;
   final ProjectImportService _importService;
+  final ProjectCodeGenerator _codeGenerator;
   final Logger _logger = Logger('DashboardRepositoryImpl');
 
   DashboardRepositoryImpl(
     this._localDataSource,
     this._userSession,
     this._importService,
+    this._codeGenerator,
   );
+
+  static final _codePattern = RegExp(r'^ERGP-39-\d{4}-\d{4}-\d{3}$');
+
+  bool _isValidProjectCode(String code) => _codePattern.hasMatch(code);
 
   @override
   Stream<List<Project>> watchRecentProjects() {
@@ -180,9 +187,13 @@ class DashboardRepositoryImpl implements DashboardRepository {
           orElse: () => ProjectStatus.notStarted,
         );
 
+        final code = _isValidProjectCode(dto.code)
+            ? dto.code
+            : _codeGenerator.generate(user.uid, DateTime.now());
+
         final projectModel = ProjectModel(
           id: 0, // drfit auto id
-          code: dto.code,
+          code: code,
           status: status,
           agencyId: agencyId,
           ministryId: ministryId,
