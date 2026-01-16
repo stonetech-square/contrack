@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:contrack/src/app/presentation/widgets/widgets.dart';
 import 'package:contrack/src/app/router/app_router.dart';
+import 'package:contrack/src/app/theme/app_colors.dart';
 
 import 'package:contrack/src/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:contrack/src/features/dashboard/presentation/bloc/dashboard_event.dart';
@@ -36,16 +37,36 @@ class DashboardView extends StatelessWidget {
         SizedBox(height: 23),
         DashboardOverView(),
         SizedBox(height: 44),
-        FilledButton.icon(
-          onPressed: () => context.router.navigate(
-            ShellProjectRoute(children: [CreateNewProjectRoute()]),
-          ),
-          style: FilledButton.styleFrom(
-            maximumSize: const Size(230, 56),
-            minimumSize: const Size(200, 56),
-          ),
-          icon: const Icon(Icons.add_circle_outline_rounded),
-          label: const Text('Add New Project Entry'),
+        Row(
+          children: [
+            FilledButton.icon(
+              onPressed: () => context.router.navigate(
+                ShellProjectRoute(children: [CreateNewProjectRoute()]),
+              ),
+              style: FilledButton.styleFrom(
+                maximumSize: const Size(230, 56),
+                minimumSize: const Size(200, 56),
+              ),
+
+              icon: const Icon(Icons.add_circle_outline_rounded),
+              label: const Text('Add New Project Entry'),
+            ),
+            const SizedBox(width: 16),
+            FilledButton.icon(
+              onPressed: () {},
+              style: FilledButton.styleFrom(
+                maximumSize: const Size(250, 56),
+                minimumSize: const Size(220, 56),
+                backgroundColor: context.colors.neutralInverted.withValues(
+                  alpha: 0.5,
+                ),
+
+                foregroundColor: context.colors.neutral,
+              ),
+              icon: const Icon(Icons.file_upload_rounded),
+              label: const Text('Import New Project Entry'),
+            ),
+          ],
         ),
         SizedBox(height: 32),
         Expanded(flex: 20, child: RecentProjects()),

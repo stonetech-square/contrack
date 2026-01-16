@@ -13,7 +13,7 @@ import 'package:contrack/src/features/projects/domain/entities/nigerian_state.da
 import 'package:contrack/src/features/projects/domain/entities/sort_field.dart';
 import 'package:contrack/src/features/projects/domain/entities/supervising_ministry.dart';
 import 'package:contrack/src/features/projects/domain/repository/projects_repository.dart';
-import 'package:contrack/src/features/projects/domain/services/project_export_service.dart';
+import 'package:contrack/src/core/services/project_export_service.dart';
 import 'package:injectable/injectable.dart';
 
 @LazySingleton(as: ProjectsRepository)

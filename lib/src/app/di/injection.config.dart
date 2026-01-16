@@ -18,6 +18,10 @@ import '../../core/audit/audit_service_impl.dart' as _i782;
 import '../../core/database/database.dart' as _i339;
 import '../../core/database/seed.dart' as _i964;
 import '../../core/network/network_info.dart' as _i892;
+import '../../core/services/project_export_service.dart' as _i445;
+import '../../core/services/project_export_service_impl.dart' as _i726;
+import '../../core/services/project_import_service.dart' as _i820;
+import '../../core/services/project_import_service_impl.dart' as _i978;
 import '../../core/session/user_session.dart' as _i26;
 import '../../core/sync/sync_action.dart' as _i889;
 import '../../core/sync/sync_service.dart' as _i103;
@@ -37,6 +41,8 @@ import '../../features/dashboard/data/repository/dashboard_repository_impl.dart'
     as _i604;
 import '../../features/dashboard/domain/repository/dashboard_repository.dart'
     as _i275;
+import '../../features/dashboard/domain/usecase/import_projects_use_case.dart'
+    as _i304;
 import '../../features/dashboard/domain/usecase/watch_dashboard_stats_use_case.dart'
     as _i862;
 import '../../features/dashboard/domain/usecase/watch_recent_projects_use_case.dart'
@@ -47,12 +53,8 @@ import '../../features/projects/data/datasource/projects_local_datasource.dart'
     as _i465;
 import '../../features/projects/data/repository/projects_repository_impl.dart'
     as _i447;
-import '../../features/projects/data/services/project_export_service_impl.dart'
-    as _i826;
 import '../../features/projects/domain/repository/projects_repository.dart'
     as _i605;
-import '../../features/projects/domain/services/project_export_service.dart'
-    as _i2;
 import '../../features/projects/domain/usecase/create_project_use_case.dart'
     as _i546;
 import '../../features/projects/domain/usecase/export_all_projects_use_case.dart'
@@ -106,17 +108,20 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i642.DashboardLocalDataSource>(
       () => _i642.DashboardLocalDataSourceImpl(gh<_i339.AppDatabase>()),
     );
+    gh.lazySingleton<_i445.ProjectExportService>(
+      () => _i726.ProjectExportServiceImpl(),
+    );
     gh.lazySingleton<_i889.SyncAction>(
       () => _i889.SyncActionImpl(
         gh<_i339.AppDatabase>(),
         gh<_i454.SupabaseClient>(),
       ),
     );
+    gh.lazySingleton<_i820.ProjectImportService>(
+      () => _i978.ProjectImportServiceImpl(),
+    );
     gh.lazySingleton<_i245.AppRemoteDatasource>(
       () => _i245.AppRemoteDatasourceImpl(gh<_i454.SupabaseClient>()),
-    );
-    gh.lazySingleton<_i2.ProjectExportService>(
-      () => _i826.ProjectExportServiceImpl(),
     );
     gh.lazySingleton<_i892.NetworkInfo>(() => _i892.NetworkInfoImpl());
     gh.lazySingleton<_i175.AuthRemoteDataSource>(
@@ -161,7 +166,7 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i447.ProjectsRepositoryImpl(
         gh<_i465.ProjectsLocalDataSource>(),
         gh<_i26.UserSession>(),
-        gh<_i2.ProjectExportService>(),
+        gh<_i445.ProjectExportService>(),
         gh<_i355.AuditService>(),
       ),
     );
@@ -169,6 +174,8 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i604.DashboardRepositoryImpl(
         gh<_i642.DashboardLocalDataSource>(),
         gh<_i26.UserSession>(),
+        gh<_i605.ProjectsRepository>(),
+        gh<_i820.ProjectImportService>(),
       ),
     );
     gh.lazySingleton<_i335.ChangePasswordUseCase>(
@@ -186,6 +193,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i245.AppRemoteDatasource>(),
         gh<_i103.SyncService>(),
       ),
+    );
+    gh.lazySingleton<_i304.ImportProjectsUseCase>(
+      () => _i304.ImportProjectsUseCase(gh<_i275.DashboardRepository>()),
     );
     gh.lazySingleton<_i504.LogOutUseCase>(
       () => _i504.LogOutUseCase(gh<_i454.AppRepository>()),
