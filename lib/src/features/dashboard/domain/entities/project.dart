@@ -42,6 +42,67 @@ class Project extends Equatable {
     this.remoteId,
   });
 
+  factory Project.empty(String code) {
+    return Project(
+      id: 0,
+      code: code,
+      status: ProjectStatus.notStarted,
+      agencyId: 0,
+      ministryId: 0,
+      stateId: 0,
+      zoneId: 0,
+      constituency: '',
+      amount: 0,
+      title: '',
+      createdBy: 0,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+      isSynced: false,
+    );
+  }
+
+  Project copyWith({
+    int? id,
+    String? code,
+    ProjectStatus? status,
+    int? agencyId,
+    int? ministryId,
+    int? stateId,
+    int? zoneId,
+    String? constituency,
+    double? amount,
+    String? sponsor,
+    String? title,
+    int? createdBy,
+    int? modifiedBy,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    bool? isSynced,
+    DateTime? lastSyncedAt,
+    String? remoteId,
+  }) {
+    return Project(
+      id: id ?? this.id,
+      code: code ?? this.code,
+      status: status ?? this.status,
+      agencyId: agencyId ?? this.agencyId,
+      ministryId: ministryId ?? this.ministryId,
+      stateId: stateId ?? this.stateId,
+      zoneId: zoneId ?? this.zoneId,
+      constituency: constituency ?? this.constituency,
+      amount: amount ?? this.amount,
+      sponsor: sponsor ?? this.sponsor,
+      title: title ?? this.title,
+      createdBy: createdBy ?? this.createdBy,
+      modifiedBy: modifiedBy ?? this.modifiedBy,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      isSynced: isSynced ?? this.isSynced,
+      lastSyncedAt: lastSyncedAt ?? this.lastSyncedAt,
+      remoteId: remoteId ?? this.remoteId,
+    );
+  }
+
   @override
   List<Object?> get props => [
     id,

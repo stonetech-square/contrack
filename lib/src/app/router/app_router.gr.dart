@@ -60,18 +60,53 @@ class AuthenticatedShellRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [CreateNewProjectScreen]
-class CreateNewProjectRoute extends PageRouteInfo<void> {
-  const CreateNewProjectRoute({List<PageRouteInfo>? children})
-    : super(CreateNewProjectRoute.name, initialChildren: children);
+class CreateNewProjectRoute extends PageRouteInfo<CreateNewProjectRouteArgs> {
+  CreateNewProjectRoute({
+    Key? key,
+    List<Project>? projects,
+    List<PageRouteInfo>? children,
+  }) : super(
+         CreateNewProjectRoute.name,
+         args: CreateNewProjectRouteArgs(key: key, projects: projects),
+         initialChildren: children,
+       );
 
   static const String name = 'CreateNewProjectRoute';
 
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      return const CreateNewProjectScreen();
+      final args = data.argsAs<CreateNewProjectRouteArgs>(
+        orElse: () => const CreateNewProjectRouteArgs(),
+      );
+      return CreateNewProjectScreen(key: args.key, projects: args.projects);
     },
   );
+}
+
+class CreateNewProjectRouteArgs {
+  const CreateNewProjectRouteArgs({this.key, this.projects});
+
+  final Key? key;
+
+  final List<Project>? projects;
+
+  @override
+  String toString() {
+    return 'CreateNewProjectRouteArgs{key: $key, projects: $projects}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! CreateNewProjectRouteArgs) return false;
+    return key == other.key &&
+        const ListEquality<Project>().equals(projects, other.projects);
+  }
+
+  @override
+  int get hashCode =>
+      key.hashCode ^ const ListEquality<Project>().hash(projects);
 }
 
 /// generated route for

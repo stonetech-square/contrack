@@ -1,5 +1,6 @@
 import 'package:contrack/src/core/common/enums/project_status.dart';
 import 'package:contrack/src/core/usecase/usecase.dart';
+import 'package:contrack/src/features/dashboard/domain/entities/project.dart';
 import 'package:contrack/src/features/projects/domain/entities/geopolitical_zone.dart';
 import 'package:contrack/src/features/projects/domain/entities/implementing_agency.dart';
 import 'package:contrack/src/features/projects/domain/entities/nigerian_state.dart';
@@ -39,34 +40,30 @@ class CreateNewProjectBloc
     this._getStatesUseCase,
     this._getSupervisingMinistriesUseCase,
   ) : super(const CreateNewProjectState()) {
-    on<CreateNewProjectStartedEvent>(_onStarted);
-    on<CreateNewProjectStatusChangedEvent>(_onStatusChanged);
-    on<CreateNewProjectImplementingAgencyChangedEvent>(_onAgencyChanged);
-    on<CreateNewProjectSupervisingMinistryChangedEvent>(_onMinistryChanged);
-    on<CreateNewProjectStateChangedEvent>(_onStateChanged);
-    on<CreateNewProjectGeopoliticalZoneChangedEvent>(_onZoneChanged);
-    on<CreateNewProjectConstituencyChangedEvent>(_onConstituencyChanged);
-    on<CreateNewProjectTitleChangedEvent>(_onTitleChanged);
-    on<CreateNewProjectSponsorChangedEvent>(_onSponsorChanged);
-    on<CreateNewProjectBugetChangedEvent>(_onBudgetChanged);
-    on<CreateNewProjectStartDateChangedEvent>(_onStartDateChanged);
-    on<CreateNewProjectEndDateChangedEvent>(_onEndDateChanged);
-    on<CreateNewProjectSubmittedEvent>(_onSubmitted);
-    on<CreateNewProjectCancelledEvent>(_onCancelled);
+    on<CreateNewProjectStarted>(_onStarted);
+    on<EntryAdded>(_onEntryAdded);
+    on<EntryRemoved>(_onEntryRemoved);
+    on<EntrySelected>(_onEntrySelected);
+    on<EntryFieldChanged>(_onEntryFieldChanged);
+    on<CreateNewProjectSubmitted>(_onSubmitted);
+    on<CreateNewProjectCancelled>(_onCancelled);
   }
 
   Future<void> _onStarted(
-    CreateNewProjectStartedEvent event,
+    CreateNewProjectStarted event,
     Emitter<CreateNewProjectState> emit,
   ) async {
     try {
-      final code = _generateProjectCodeUseCase(GenerateProjectCodeParams());
       final zones = await _getGeopoliticalZonesUseCase(NoParams());
       final agencies = await _getImplementingAgenciesUseCase(NoParams());
 
+      final entries = event.projects != null
+          ? await _projectsToEntries(event.projects!)
+          : [_createEmptyEntry()];
+
       emit(
         state.copyWith(
-          projectCode: code,
+          entries: entries,
           zones: zones,
           agencies: agencies,
           viewStatus: CreateProjectViewStatus.filling,
@@ -82,105 +79,170 @@ class CreateNewProjectBloc
     }
   }
 
-  void _onStatusChanged(
-    CreateNewProjectStatusChangedEvent event,
-    Emitter<CreateNewProjectState> emit,
-  ) {
-    emit(state.copyWith(status: RequiredProjectStatus.dirty(event.status)));
+  Future<List<ProjectEntryFormData>> _projectsToEntries(
+    List<Project> projects,
+  ) async {
+    final entries = <ProjectEntryFormData>[];
+    for (final project in projects) {
+      final ministries = project.agencyId > 0
+          ? await _getSupervisingMinistriesUseCase(project.agencyId)
+          : <SupervisingMinistry>[];
+      final states = project.zoneId > 0
+          ? await _getStatesUseCase(project.zoneId)
+          : <NigerianState>[];
+
+      entries.add(
+        ProjectEntryFormData(
+          code: project.code,
+          status: RequiredProjectStatus.dirty(project.status),
+          implementingAgencyId: RequiredId.dirty(project.agencyId),
+          supervisingMinistryId: RequiredId.dirty(project.ministryId),
+          geopoliticalZoneId: RequiredId.dirty(project.zoneId),
+          stateId: RequiredId.dirty(project.stateId),
+          constituency: RequiredText.dirty(project.constituency),
+          title: RequiredText.dirty(project.title),
+          sponsor: project.sponsor ?? '',
+          budget: RequiredDouble.dirty(project.amount),
+          startDate: const RequiredDate.pure(),
+          endDate: const RequiredDate.pure(),
+          ministries: ministries,
+          states: states,
+        ),
+      );
+    }
+    return entries;
   }
 
-  Future<void> _onAgencyChanged(
-    CreateNewProjectImplementingAgencyChangedEvent event,
+  ProjectEntryFormData _createEmptyEntry() {
+    final code = _generateProjectCodeUseCase(GenerateProjectCodeParams());
+    return ProjectEntryFormData(code: code);
+  }
+
+  void _onEntryAdded(EntryAdded event, Emitter<CreateNewProjectState> emit) {
+    final newEntry = _createEmptyEntry();
+    final updatedEntries = [...state.entries, newEntry];
+    emit(
+      state.copyWith(
+        entries: updatedEntries,
+        currentEntryIndex: updatedEntries.length - 1,
+      ),
+    );
+  }
+
+  void _onEntryRemoved(
+    EntryRemoved event,
+    Emitter<CreateNewProjectState> emit,
+  ) {
+    if (state.entries.length <= 1) return;
+
+    final updatedEntries = [...state.entries]..removeAt(event.index);
+    final newIndex = state.currentEntryIndex >= updatedEntries.length
+        ? updatedEntries.length - 1
+        : state.currentEntryIndex;
+
+    emit(state.copyWith(entries: updatedEntries, currentEntryIndex: newIndex));
+  }
+
+  void _onEntrySelected(
+    EntrySelected event,
+    Emitter<CreateNewProjectState> emit,
+  ) {
+    if (event.index < 0 || event.index >= state.entries.length) return;
+    emit(state.copyWith(currentEntryIndex: event.index));
+  }
+
+  Future<void> _onEntryFieldChanged(
+    EntryFieldChanged event,
     Emitter<CreateNewProjectState> emit,
   ) async {
-    emit(
-      state.copyWith(
-        implementingAgencyId: RequiredId.dirty(event.implementingAgencyId),
-        supervisingMinistryId: RequiredId.dirty(0),
-      ),
-    );
-    final ministries = await _getSupervisingMinistriesUseCase(
-      event.implementingAgencyId,
-    );
-    emit(state.copyWith(ministries: ministries));
+    if (event.index < 0 || event.index >= state.entries.length) return;
+
+    var entry = state.entries[event.index];
+
+    if (event.status != null) {
+      entry = entry.copyWith(status: RequiredProjectStatus.dirty(event.status));
+    }
+
+    if (event.implementingAgencyId != null) {
+      entry = entry.copyWith(
+        implementingAgencyId: RequiredId.dirty(event.implementingAgencyId!),
+        supervisingMinistryId: const RequiredId.pure(),
+        ministries: [],
+      );
+      _emitUpdatedEntry(emit, event.index, entry);
+
+      final ministries = await _getSupervisingMinistriesUseCase(
+        event.implementingAgencyId!,
+      );
+      entry = state.entries[event.index].copyWith(ministries: ministries);
+      _emitUpdatedEntry(emit, event.index, entry);
+      return;
+    }
+
+    if (event.supervisingMinistryId != null) {
+      entry = entry.copyWith(
+        supervisingMinistryId: RequiredId.dirty(event.supervisingMinistryId!),
+      );
+    }
+
+    if (event.geopoliticalZoneId != null) {
+      entry = entry.copyWith(
+        geopoliticalZoneId: RequiredId.dirty(event.geopoliticalZoneId!),
+        stateId: const RequiredId.pure(),
+        states: [],
+      );
+      _emitUpdatedEntry(emit, event.index, entry);
+
+      final states = await _getStatesUseCase(event.geopoliticalZoneId!);
+      entry = state.entries[event.index].copyWith(states: states);
+      _emitUpdatedEntry(emit, event.index, entry);
+      return;
+    }
+
+    if (event.stateId != null) {
+      entry = entry.copyWith(stateId: RequiredId.dirty(event.stateId!));
+    }
+
+    if (event.constituency != null) {
+      entry = entry.copyWith(
+        constituency: RequiredText.dirty(event.constituency!),
+      );
+    }
+
+    if (event.title != null) {
+      entry = entry.copyWith(title: RequiredText.dirty(event.title!));
+    }
+
+    if (event.sponsor != null) {
+      entry = entry.copyWith(sponsor: event.sponsor!);
+    }
+
+    if (event.budget != null) {
+      entry = entry.copyWith(budget: RequiredDouble.dirty(event.budget!));
+    }
+
+    if (event.startDate != null) {
+      entry = entry.copyWith(startDate: RequiredDate.dirty(event.startDate!));
+    }
+
+    if (event.endDate != null) {
+      entry = entry.copyWith(endDate: RequiredDate.dirty(event.endDate!));
+    }
+
+    _emitUpdatedEntry(emit, event.index, entry);
   }
 
-  Future<void> _onZoneChanged(
-    CreateNewProjectGeopoliticalZoneChangedEvent event,
+  void _emitUpdatedEntry(
     Emitter<CreateNewProjectState> emit,
-  ) async {
-    emit(
-      state.copyWith(
-        geopoliticalZoneId: RequiredId.dirty(event.geopoliticalZoneId),
-        stateId: RequiredId.dirty(0),
-      ),
-    );
-    final states = await _getStatesUseCase(event.geopoliticalZoneId);
-    emit(state.copyWith(states: states));
-  }
-
-  void _onMinistryChanged(
-    CreateNewProjectSupervisingMinistryChangedEvent event,
-    Emitter<CreateNewProjectState> emit,
+    int index,
+    ProjectEntryFormData entry,
   ) {
-    emit(
-      state.copyWith(
-        supervisingMinistryId: RequiredId.dirty(event.supervisingMinistryId),
-      ),
-    );
-  }
-
-  void _onStateChanged(
-    CreateNewProjectStateChangedEvent event,
-    Emitter<CreateNewProjectState> emit,
-  ) {
-    emit(state.copyWith(stateId: RequiredId.dirty(event.stateId)));
-  }
-
-  void _onConstituencyChanged(
-    CreateNewProjectConstituencyChangedEvent event,
-    Emitter<CreateNewProjectState> emit,
-  ) {
-    emit(state.copyWith(constituency: RequiredText.dirty(event.constituency)));
-  }
-
-  void _onTitleChanged(
-    CreateNewProjectTitleChangedEvent event,
-    Emitter<CreateNewProjectState> emit,
-  ) {
-    emit(state.copyWith(title: RequiredText.dirty(event.title)));
-  }
-
-  void _onSponsorChanged(
-    CreateNewProjectSponsorChangedEvent event,
-    Emitter<CreateNewProjectState> emit,
-  ) {
-    emit(state.copyWith(sponsor: event.sponsor));
-  }
-
-  void _onBudgetChanged(
-    CreateNewProjectBugetChangedEvent event,
-    Emitter<CreateNewProjectState> emit,
-  ) {
-    emit(state.copyWith(budget: RequiredDouble.dirty(event.budget)));
-  }
-
-  void _onStartDateChanged(
-    CreateNewProjectStartDateChangedEvent event,
-    Emitter<CreateNewProjectState> emit,
-  ) {
-    emit(state.copyWith(startDate: RequiredDate.dirty(event.startDate)));
-  }
-
-  void _onEndDateChanged(
-    CreateNewProjectEndDateChangedEvent event,
-    Emitter<CreateNewProjectState> emit,
-  ) {
-    emit(state.copyWith(endDate: RequiredDate.dirty(event.endDate)));
+    final updatedEntries = [...state.entries]..[index] = entry;
+    emit(state.copyWith(entries: updatedEntries));
   }
 
   Future<void> _onSubmitted(
-    CreateNewProjectSubmittedEvent event,
+    CreateNewProjectSubmitted event,
     Emitter<CreateNewProjectState> emit,
   ) async {
     if (!state.isValid) {
@@ -196,22 +258,8 @@ class CreateNewProjectBloc
     );
 
     try {
-      await _createProjectUseCase(
-        CreateProjectParams(
-          code: state.projectCode,
-          status: state.status.value!,
-          agencyId: state.implementingAgencyId.value,
-          ministryId: state.supervisingMinistryId.value,
-          stateId: state.stateId.value,
-          zoneId: state.geopoliticalZoneId.value,
-          constituency: state.constituency.value,
-          amount: state.budget.value,
-          sponsor: state.sponsor.isEmpty ? null : state.sponsor,
-          title: state.title.value,
-          startDate: state.startDate.value!,
-          endDate: state.endDate.value!,
-        ),
-      );
+      final projects = state.entries.map((e) => e.toProject(0)).toList();
+      await _createProjectUseCase(CreateProjectParams(projects: projects));
       emit(state.copyWith(viewStatus: CreateProjectViewStatus.success));
     } catch (e) {
       emit(
@@ -224,7 +272,9 @@ class CreateNewProjectBloc
   }
 
   void _onCancelled(
-    CreateNewProjectCancelledEvent event,
+    CreateNewProjectCancelled event,
     Emitter<CreateNewProjectState> emit,
-  ) => emit(state.copyWith(viewStatus: CreateProjectViewStatus.cancelled));
+  ) {
+    emit(state.copyWith(viewStatus: CreateProjectViewStatus.cancelled));
+  }
 }

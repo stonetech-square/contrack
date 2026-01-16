@@ -1,6 +1,5 @@
 import 'package:contrack/src/app/data/models/models.dart';
 import 'package:contrack/src/core/audit/audit_service.dart';
-import 'package:contrack/src/core/common/enums/project_status.dart';
 import 'package:contrack/src/core/database/tables/export_history.dart';
 import 'package:contrack/src/core/session/user_session.dart';
 import 'package:contrack/src/features/dashboard/domain/entities/project.dart';
@@ -40,42 +39,19 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
   }
 
   @override
-  Future<void> createProject({
-    required String code,
-    required ProjectStatus status,
-    required int agencyId,
-    required int ministryId,
-    required int stateId,
-    required int zoneId,
-    required String constituency,
-    required String title,
-    required double amount,
-    String? sponsor,
-    required DateTime startDate,
-    required DateTime endDate,
-  }) async {
+  Future<void> createProject(List<Project> projects) async {
     final user = _userSession.currentUser;
     if (user == null) {
       throw Exception('User not logged in');
     }
 
-    final projectModel = ProjectModel(
-      id: 0, // drift handles auto ID
-      code: code,
-      status: status,
-      agencyId: agencyId,
-      ministryId: ministryId,
-      stateId: stateId,
-      zoneId: zoneId,
-      constituency: constituency,
-      title: title,
-      amount: amount,
-      sponsor: sponsor,
-      createdBy: user.id,
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
-    );
-    await _localDataSource.createProject(projectModel);
+    final projectModels = projects
+        .map(
+          (project) =>
+              ProjectModel.fromEntity(project.copyWith(createdBy: user.id)),
+        )
+        .toList();
+    await _localDataSource.createProject(projectModels);
   }
 
   @override

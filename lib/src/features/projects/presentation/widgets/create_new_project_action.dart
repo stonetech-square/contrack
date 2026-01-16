@@ -12,10 +12,30 @@ class CreateNewProjectAction extends StatelessWidget {
       buildWhen: (previous, current) =>
           previous.viewStatus != current.viewStatus ||
           previous.showErrors != current.showErrors ||
-          previous.isValid != current.isValid,
+          previous.isValid != current.isValid ||
+          previous.entries.length != current.entries.length,
       builder: (context, state) {
+        final isSubmitting =
+            state.viewStatus == CreateProjectViewStatus.submitting;
+
         return Row(
           children: [
+            FilledButton.icon(
+              style: FilledButton.styleFrom(
+                minimumSize: const Size(240, 44.28),
+                maximumSize: const Size(250, 44.28),
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  side: BorderSide(color: context.colors.border, width: 1),
+                ),
+              ),
+              onPressed: () =>
+                  context.read<CreateNewProjectBloc>().add(const EntryAdded()),
+              icon: const Icon(Icons.add),
+              label: const Text('Add Another Project Entry'),
+            ),
+            const SizedBox(width: 16),
             FilledButton.icon(
               style: FilledButton.styleFrom(
                 minimumSize: const Size(110, 44.28),
@@ -28,17 +48,17 @@ class CreateNewProjectAction extends StatelessWidget {
                   side: BorderSide(color: context.colors.border, width: 1),
                 ),
               ),
-              label: Text('Cancel'),
-              icon: Icon(Icons.close),
+              label: const Text('Cancel'),
+              icon: const Icon(Icons.close),
               onPressed: () => context.read<CreateNewProjectBloc>().add(
-                const CreateNewProjectCancelledEvent(),
+                const CreateNewProjectCancelled(),
               ),
             ),
-            SizedBox(width: 12),
+            const SizedBox(width: 12),
             FilledButton.icon(
               style: FilledButton.styleFrom(
-                minimumSize: const Size(110, 44.28),
-                maximumSize: const Size(120, 44.28),
+                minimumSize: const Size(130, 44.28),
+                maximumSize: const Size(140, 44.28),
                 backgroundColor: context.colors.primary,
                 foregroundColor: context.colors.neutralInverted,
                 disabledBackgroundColor: context.colors.primary.withValues(
@@ -52,7 +72,7 @@ class CreateNewProjectAction extends StatelessWidget {
                   side: BorderSide(color: context.colors.border, width: 1),
                 ),
               ),
-              label: state.viewStatus == CreateProjectViewStatus.submitting
+              label: isSubmitting
                   ? SizedBox(
                       width: 20,
                       height: 20,
@@ -61,18 +81,18 @@ class CreateNewProjectAction extends StatelessWidget {
                         color: context.colors.neutralInverted,
                       ),
                     )
-                  : Text('Create'),
-              icon: state.viewStatus == CreateProjectViewStatus.submitting
-                  ? SizedBox.shrink()
-                  : Icon(Icons.save),
-              onPressed:
-                  state.isValid &&
-                      state.viewStatus != CreateProjectViewStatus.submitting
-                  ? () {
-                      context.read<CreateNewProjectBloc>().add(
-                        const CreateNewProjectSubmittedEvent(),
-                      );
-                    }
+                  : Text(
+                      state.entries.length > 1
+                          ? 'Create (${state.entries.length})'
+                          : 'Create',
+                    ),
+              icon: isSubmitting
+                  ? const SizedBox.shrink()
+                  : const Icon(Icons.save),
+              onPressed: state.isValid && !isSubmitting
+                  ? () => context.read<CreateNewProjectBloc>().add(
+                      const CreateNewProjectSubmitted(),
+                    )
                   : null,
             ),
           ],

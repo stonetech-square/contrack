@@ -1,117 +1,90 @@
 part of 'create_new_project_bloc.dart';
 
-abstract class CreateNewProjectEvent extends Equatable {
+sealed class CreateNewProjectEvent extends Equatable {
   const CreateNewProjectEvent();
 
   @override
   List<Object?> get props => [];
 }
 
-class CreateNewProjectStartedEvent extends CreateNewProjectEvent {
-  const CreateNewProjectStartedEvent();
-}
-
-class CreateNewProjectStatusChangedEvent extends CreateNewProjectEvent {
-  final ProjectStatus status;
-  const CreateNewProjectStatusChangedEvent({required this.status});
+final class CreateNewProjectStarted extends CreateNewProjectEvent {
+  const CreateNewProjectStarted([this.projects]);
+  final List<Project>? projects;
 
   @override
-  List<Object?> get props => [status];
+  List<Object?> get props => [projects];
 }
 
-class CreateNewProjectImplementingAgencyChangedEvent
-    extends CreateNewProjectEvent {
-  final int implementingAgencyId;
-  const CreateNewProjectImplementingAgencyChangedEvent({
-    required this.implementingAgencyId,
+final class EntryAdded extends CreateNewProjectEvent {
+  const EntryAdded();
+}
+
+final class EntryRemoved extends CreateNewProjectEvent {
+  const EntryRemoved(this.index);
+  final int index;
+
+  @override
+  List<Object?> get props => [index];
+}
+
+final class EntrySelected extends CreateNewProjectEvent {
+  const EntrySelected(this.index);
+  final int index;
+
+  @override
+  List<Object?> get props => [index];
+}
+
+final class EntryFieldChanged extends CreateNewProjectEvent {
+  const EntryFieldChanged({
+    required this.index,
+    this.status,
+    this.implementingAgencyId,
+    this.supervisingMinistryId,
+    this.geopoliticalZoneId,
+    this.stateId,
+    this.constituency,
+    this.title,
+    this.sponsor,
+    this.budget,
+    this.startDate,
+    this.endDate,
   });
 
-  @override
-  List<Object?> get props => [implementingAgencyId];
-}
-
-class CreateNewProjectSupervisingMinistryChangedEvent
-    extends CreateNewProjectEvent {
-  final int supervisingMinistryId;
-  const CreateNewProjectSupervisingMinistryChangedEvent({
-    required this.supervisingMinistryId,
-  });
-
-  @override
-  List<Object?> get props => [supervisingMinistryId];
-}
-
-class CreateNewProjectStateChangedEvent extends CreateNewProjectEvent {
-  final int stateId;
-  const CreateNewProjectStateChangedEvent({required this.stateId});
+  final int index;
+  final ProjectStatus? status;
+  final int? implementingAgencyId;
+  final int? supervisingMinistryId;
+  final int? geopoliticalZoneId;
+  final int? stateId;
+  final String? constituency;
+  final String? title;
+  final String? sponsor;
+  final double? budget;
+  final DateTime? startDate;
+  final DateTime? endDate;
 
   @override
-  List<Object?> get props => [stateId];
+  List<Object?> get props => [
+        index,
+        status,
+        implementingAgencyId,
+        supervisingMinistryId,
+        geopoliticalZoneId,
+        stateId,
+        constituency,
+        title,
+        sponsor,
+        budget,
+        startDate,
+        endDate,
+      ];
 }
 
-class CreateNewProjectGeopoliticalZoneChangedEvent
-    extends CreateNewProjectEvent {
-  final int geopoliticalZoneId;
-  const CreateNewProjectGeopoliticalZoneChangedEvent({
-    required this.geopoliticalZoneId,
-  });
-
-  @override
-  List<Object?> get props => [geopoliticalZoneId];
+final class CreateNewProjectSubmitted extends CreateNewProjectEvent {
+  const CreateNewProjectSubmitted();
 }
 
-class CreateNewProjectConstituencyChangedEvent extends CreateNewProjectEvent {
-  final String constituency;
-  const CreateNewProjectConstituencyChangedEvent({required this.constituency});
-
-  @override
-  List<Object?> get props => [constituency];
-}
-
-class CreateNewProjectTitleChangedEvent extends CreateNewProjectEvent {
-  final String title;
-  const CreateNewProjectTitleChangedEvent({required this.title});
-
-  @override
-  List<Object?> get props => [title];
-}
-
-class CreateNewProjectSponsorChangedEvent extends CreateNewProjectEvent {
-  final String sponsor;
-  const CreateNewProjectSponsorChangedEvent({required this.sponsor});
-
-  @override
-  List<Object?> get props => [sponsor];
-}
-
-class CreateNewProjectBugetChangedEvent extends CreateNewProjectEvent {
-  final double budget;
-  const CreateNewProjectBugetChangedEvent({required this.budget});
-
-  @override
-  List<Object?> get props => [budget];
-}
-
-class CreateNewProjectStartDateChangedEvent extends CreateNewProjectEvent {
-  final DateTime startDate;
-  const CreateNewProjectStartDateChangedEvent({required this.startDate});
-
-  @override
-  List<Object?> get props => [startDate];
-}
-
-class CreateNewProjectEndDateChangedEvent extends CreateNewProjectEvent {
-  final DateTime endDate;
-  const CreateNewProjectEndDateChangedEvent({required this.endDate});
-
-  @override
-  List<Object?> get props => [endDate];
-}
-
-class CreateNewProjectSubmittedEvent extends CreateNewProjectEvent {
-  const CreateNewProjectSubmittedEvent();
-}
-
-class CreateNewProjectCancelledEvent extends CreateNewProjectEvent {
-  const CreateNewProjectCancelledEvent();
+final class CreateNewProjectCancelled extends CreateNewProjectEvent {
+  const CreateNewProjectCancelled();
 }

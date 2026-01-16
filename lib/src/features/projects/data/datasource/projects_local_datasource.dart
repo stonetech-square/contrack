@@ -10,7 +10,7 @@ import 'package:injectable/injectable.dart';
 
 abstract class ProjectsLocalDataSource {
   String generateProjectCode(String userId, {DateTime? date});
-  Future<void> createProject(ProjectModel project);
+  Future<void> createProject(List<ProjectModel> projects);
   Future<ProjectWithDetailsModel?> getProjectByCode(String code);
   Stream<List<ProjectModel>> watchProjectsForUser(
     int userId,
@@ -53,9 +53,14 @@ class ProjectsLocalDataSourceImpl implements ProjectsLocalDataSource {
   }
 
   @override
-  Future<void> createProject(ProjectModel project) async => await _database
-      .into(_database.projects)
-      .insert(project.toDriftCompanion());
+  Future<void> createProject(List<ProjectModel> projects) async {
+    await _database.batch((batch) {
+      batch.insertAll(
+        _database.projects,
+        projects.map((project) => project.toDriftCompanion()),
+      );
+    });
+  }
 
   @override
   List<ProjectStatus> getAllProjectStatus() => ProjectStatus.values.toList();

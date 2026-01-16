@@ -1,4 +1,3 @@
-import 'package:contrack/src/core/common/enums/project_status.dart';
 import 'package:contrack/src/core/database/tables/export_history.dart';
 import 'package:contrack/src/features/dashboard/domain/entities/project.dart';
 import 'package:contrack/src/features/dashboard/domain/entities/project_with_details.dart';
@@ -10,20 +9,7 @@ import 'package:contrack/src/features/projects/domain/entities/supervising_minis
 
 abstract class ProjectsRepository {
   String generateProjectCode({DateTime? date});
-  Future<void> createProject({
-    required String code,
-    required ProjectStatus status,
-    required int agencyId,
-    required int ministryId,
-    required int stateId,
-    required int zoneId,
-    required String constituency,
-    required String title,
-    required double amount,
-    String? sponsor,
-    required DateTime startDate,
-    required DateTime endDate,
-  });
+  Future<void> createProject(List<Project> projects);
 
   Future<List<GeopoliticalZone>> getGeopoliticalZones();
   Future<List<NigerianState>> getStates(int zoneId);

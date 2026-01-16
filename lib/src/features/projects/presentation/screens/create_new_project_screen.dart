@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:contrack/src/app/presentation/widgets/widgets.dart';
 import 'package:contrack/src/core/utils/toast_extension.dart';
+import 'package:contrack/src/features/dashboard/domain/entities/project.dart';
 
 import 'package:contrack/src/features/projects/presentation/bloc/create_new_project_bloc.dart';
 import 'package:contrack/src/features/projects/presentation/widgets/create_new_project_action.dart';
@@ -12,12 +13,14 @@ import 'package:get_it/get_it.dart';
 
 @RoutePage()
 class CreateNewProjectScreen extends StatelessWidget {
-  const CreateNewProjectScreen({super.key});
+  const CreateNewProjectScreen({super.key, this.projects});
+  final List<Project>? projects;
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) =>
-          GetIt.I<CreateNewProjectBloc>()..add(CreateNewProjectStartedEvent()),
+          GetIt.I<CreateNewProjectBloc>()
+            ..add(CreateNewProjectStarted(projects)),
       child: const CreateNewProjectView(),
     );
   }
@@ -60,7 +63,7 @@ class CreateNewProjectView extends StatelessWidget {
               children: [CreatNewProjectHeader(), CreateNewProjectAction()],
             ),
             SizedBox(height: 23),
-            CreateNewProjectForm(),
+            CreateNewProjectForms(),
           ],
         ),
       ),

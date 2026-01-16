@@ -10,12 +10,9 @@ enum CreateProjectViewStatus {
 }
 
 @freezed
-sealed class CreateNewProjectState with _$CreateNewProjectState {
-  const factory CreateNewProjectState({
-    @Default(CreateProjectViewStatus.initial)
-    CreateProjectViewStatus viewStatus,
-    @Default('') String errorMessage,
-    @Default('') String projectCode,
+sealed class ProjectEntryFormData with _$ProjectEntryFormData {
+  const factory ProjectEntryFormData({
+    required String code,
     @Default(RequiredProjectStatus.pure()) RequiredProjectStatus status,
     @Default(RequiredId.pure()) RequiredId implementingAgencyId,
     @Default(RequiredId.pure()) RequiredId supervisingMinistryId,
@@ -27,14 +24,11 @@ sealed class CreateNewProjectState with _$CreateNewProjectState {
     @Default(RequiredDouble.pure()) RequiredDouble budget,
     @Default(RequiredDate.pure()) RequiredDate startDate,
     @Default(RequiredDate.pure()) RequiredDate endDate,
-    @Default(false) bool showErrors,
-    @Default([]) List<ImplementingAgency> agencies,
     @Default([]) List<SupervisingMinistry> ministries,
-    @Default([]) List<GeopoliticalZone> zones,
     @Default([]) List<NigerianState> states,
-  }) = _CreateNewProjectState;
+  }) = _ProjectEntryFormData;
 
-  const CreateNewProjectState._();
+  const ProjectEntryFormData._();
 
   bool get isValid => Formz.validate([
     status,
@@ -48,4 +42,46 @@ sealed class CreateNewProjectState with _$CreateNewProjectState {
     startDate,
     endDate,
   ]);
+
+  Project toProject(int createdBy) => Project(
+    id: 0,
+    code: code,
+    status: status.value ?? ProjectStatus.notStarted,
+    agencyId: implementingAgencyId.value,
+    ministryId: supervisingMinistryId.value,
+    stateId: stateId.value,
+    zoneId: geopoliticalZoneId.value,
+    constituency: constituency.value,
+    amount: budget.value,
+    sponsor: sponsor.isEmpty ? null : sponsor,
+    title: title.value,
+    createdBy: createdBy,
+    createdAt: DateTime.now(),
+    updatedAt: DateTime.now(),
+    isSynced: false,
+  );
+}
+
+@freezed
+sealed class CreateNewProjectState with _$CreateNewProjectState {
+  const factory CreateNewProjectState({
+    @Default(CreateProjectViewStatus.initial)
+    CreateProjectViewStatus viewStatus,
+    @Default('') String errorMessage,
+    @Default([]) List<ProjectEntryFormData> entries,
+    @Default(0) int currentEntryIndex,
+    @Default(false) bool showErrors,
+    @Default([]) List<ImplementingAgency> agencies,
+    @Default([]) List<GeopoliticalZone> zones,
+  }) = _CreateNewProjectState;
+
+  const CreateNewProjectState._();
+
+  ProjectEntryFormData? get currentEntry =>
+      entries.isNotEmpty && currentEntryIndex < entries.length
+      ? entries[currentEntryIndex]
+      : null;
+
+  bool get isValid =>
+      entries.isNotEmpty && entries.every((entry) => entry.isValid);
 }
