@@ -1,4 +1,5 @@
 import 'package:contrack/src/features/dashboard/domain/entities/dashboard_stats.dart';
+import 'package:contrack/src/features/dashboard/domain/entities/project.dart';
 import 'package:contrack/src/features/dashboard/domain/entities/project_with_details.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -12,6 +13,7 @@ sealed class DashboardState with _$DashboardState {
     required DashboardStats stats,
     String? error,
     int? userId,
+    List<Project>? importedProjects,
   }) = _DashboardState;
 
   factory DashboardState.empty() => DashboardState(
@@ -20,5 +22,6 @@ sealed class DashboardState with _$DashboardState {
     error: null,
     isLoading: false,
     userId: null,
+    importedProjects: null,
   );
 }

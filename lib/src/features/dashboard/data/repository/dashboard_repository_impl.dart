@@ -7,7 +7,7 @@ import 'package:contrack/src/core/services/project_import_service.dart';
 import 'package:contrack/src/core/session/user_session.dart';
 import 'package:contrack/src/core/utils/project_code_generator.dart';
 import 'package:contrack/src/features/dashboard/data/datasource/dashboard_local_datasource.dart';
-import 'package:contrack/src/features/dashboard/domain/entities/import_result.dart';
+
 import 'package:contrack/src/features/dashboard/domain/entities/project.dart';
 import 'package:contrack/src/features/dashboard/domain/entities/project_with_details.dart';
 import 'package:contrack/src/features/dashboard/domain/repository/dashboard_repository.dart';
@@ -115,14 +115,13 @@ class DashboardRepositoryImpl implements DashboardRepository {
   }
 
   @override
-  Future<ImportResult> importProjects(File file) async {
+  @override
+  Future<List<Project>> importProjects(File file) async {
     final user = _userSession.currentUser;
     if (user == null) throw AppFailure('User not logged in');
 
     final dtos = await _importService.importProjectsDto(file);
-    int success = 0;
-    int failure = 0;
-    final errors = <String>[];
+    final successfulProjects = <Project>[];
 
     final zoneCache = <String, int>{};
     final agencyCache = <String, int>{};
@@ -139,11 +138,8 @@ class DashboardRepositoryImpl implements DashboardRepository {
         agencyCache[a.name.toLowerCase()] = a.id;
       }
     } catch (e) {
-      return ImportResult(
-        successCount: 0,
-        failureCount: dtos.length,
-        errors: ['Failed to load metadata: $e'],
-      );
+      _logger.severe('Failed to load metadata: $e');
+      return [];
     }
 
     for (final dto in dtos) {
@@ -209,18 +205,12 @@ class DashboardRepositoryImpl implements DashboardRepository {
         );
 
         await _localDataSource.upsertProject(projectModel);
-
-        success++;
+        successfulProjects.add(projectModel.toEntity());
       } catch (e) {
-        failure++;
-        errors.add('Error importing ${dto.code}: $e');
+        _logger.warning('Error importing ${dto.code}: $e');
       }
     }
 
-    return ImportResult(
-      successCount: success,
-      failureCount: failure,
-      errors: errors,
-    );
+    return successfulProjects;
   }
 }

@@ -2,6 +2,10 @@ import 'dart:io';
 
 import 'package:equatable/equatable.dart';
 
+abstract class ProjectImportService {
+  Future<List<ProjectImportDto>> importProjectsDto(File file);
+}
+
 class ProjectImportDto extends Equatable {
   final String code;
   final String title;
@@ -40,8 +44,4 @@ class ProjectImportDto extends Equatable {
     constituency,
     sponsor,
   ];
-}
-
-abstract class ProjectImportService {
-  Future<List<ProjectImportDto>> importProjectsDto(File file);
 }

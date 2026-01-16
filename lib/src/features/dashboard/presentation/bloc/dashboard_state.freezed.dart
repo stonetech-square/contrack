@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$DashboardState {
 
- bool get isLoading; List<ProjectWithDetails> get recentProjects; DashboardStats get stats; String? get error; int? get userId;
+ bool get isLoading; List<ProjectWithDetails> get recentProjects; DashboardStats get stats; String? get error; int? get userId; List<Project>? get importedProjects;
 /// Create a copy of DashboardState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $DashboardStateCopyWith<DashboardState> get copyWith => _$DashboardStateCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DashboardState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&const DeepCollectionEquality().equals(other.recentProjects, recentProjects)&&(identical(other.stats, stats) || other.stats == stats)&&(identical(other.error, error) || other.error == error)&&(identical(other.userId, userId) || other.userId == userId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DashboardState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&const DeepCollectionEquality().equals(other.recentProjects, recentProjects)&&(identical(other.stats, stats) || other.stats == stats)&&(identical(other.error, error) || other.error == error)&&(identical(other.userId, userId) || other.userId == userId)&&const DeepCollectionEquality().equals(other.importedProjects, importedProjects));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isLoading,const DeepCollectionEquality().hash(recentProjects),stats,error,userId);
+int get hashCode => Object.hash(runtimeType,isLoading,const DeepCollectionEquality().hash(recentProjects),stats,error,userId,const DeepCollectionEquality().hash(importedProjects));
 
 @override
 String toString() {
-  return 'DashboardState(isLoading: $isLoading, recentProjects: $recentProjects, stats: $stats, error: $error, userId: $userId)';
+  return 'DashboardState(isLoading: $isLoading, recentProjects: $recentProjects, stats: $stats, error: $error, userId: $userId, importedProjects: $importedProjects)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $DashboardStateCopyWith<$Res>  {
   factory $DashboardStateCopyWith(DashboardState value, $Res Function(DashboardState) _then) = _$DashboardStateCopyWithImpl;
 @useResult
 $Res call({
- bool isLoading, List<ProjectWithDetails> recentProjects, DashboardStats stats, String? error, int? userId
+ bool isLoading, List<ProjectWithDetails> recentProjects, DashboardStats stats, String? error, int? userId, List<Project>? importedProjects
 });
 
 
@@ -62,14 +62,15 @@ class _$DashboardStateCopyWithImpl<$Res>
 
 /// Create a copy of DashboardState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? recentProjects = null,Object? stats = null,Object? error = freezed,Object? userId = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? recentProjects = null,Object? stats = null,Object? error = freezed,Object? userId = freezed,Object? importedProjects = freezed,}) {
   return _then(_self.copyWith(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,recentProjects: null == recentProjects ? _self.recentProjects : recentProjects // ignore: cast_nullable_to_non_nullable
 as List<ProjectWithDetails>,stats: null == stats ? _self.stats : stats // ignore: cast_nullable_to_non_nullable
 as DashboardStats,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
 as String?,userId: freezed == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
-as int?,
+as int?,importedProjects: freezed == importedProjects ? _self.importedProjects : importedProjects // ignore: cast_nullable_to_non_nullable
+as List<Project>?,
   ));
 }
 
@@ -151,10 +152,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  List<ProjectWithDetails> recentProjects,  DashboardStats stats,  String? error,  int? userId)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  List<ProjectWithDetails> recentProjects,  DashboardStats stats,  String? error,  int? userId,  List<Project>? importedProjects)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _DashboardState() when $default != null:
-return $default(_that.isLoading,_that.recentProjects,_that.stats,_that.error,_that.userId);case _:
+return $default(_that.isLoading,_that.recentProjects,_that.stats,_that.error,_that.userId,_that.importedProjects);case _:
   return orElse();
 
 }
@@ -172,10 +173,10 @@ return $default(_that.isLoading,_that.recentProjects,_that.stats,_that.error,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  List<ProjectWithDetails> recentProjects,  DashboardStats stats,  String? error,  int? userId)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  List<ProjectWithDetails> recentProjects,  DashboardStats stats,  String? error,  int? userId,  List<Project>? importedProjects)  $default,) {final _that = this;
 switch (_that) {
 case _DashboardState():
-return $default(_that.isLoading,_that.recentProjects,_that.stats,_that.error,_that.userId);}
+return $default(_that.isLoading,_that.recentProjects,_that.stats,_that.error,_that.userId,_that.importedProjects);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -189,10 +190,10 @@ return $default(_that.isLoading,_that.recentProjects,_that.stats,_that.error,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  List<ProjectWithDetails> recentProjects,  DashboardStats stats,  String? error,  int? userId)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  List<ProjectWithDetails> recentProjects,  DashboardStats stats,  String? error,  int? userId,  List<Project>? importedProjects)?  $default,) {final _that = this;
 switch (_that) {
 case _DashboardState() when $default != null:
-return $default(_that.isLoading,_that.recentProjects,_that.stats,_that.error,_that.userId);case _:
+return $default(_that.isLoading,_that.recentProjects,_that.stats,_that.error,_that.userId,_that.importedProjects);case _:
   return null;
 
 }
@@ -204,7 +205,7 @@ return $default(_that.isLoading,_that.recentProjects,_that.stats,_that.error,_th
 
 
 class _DashboardState implements DashboardState {
-  const _DashboardState({this.isLoading = false, final  List<ProjectWithDetails> recentProjects = const [], required this.stats, this.error, this.userId}): _recentProjects = recentProjects;
+  const _DashboardState({this.isLoading = false, final  List<ProjectWithDetails> recentProjects = const [], required this.stats, this.error, this.userId, final  List<Project>? importedProjects}): _recentProjects = recentProjects,_importedProjects = importedProjects;
   
 
 @override@JsonKey() final  bool isLoading;
@@ -218,6 +219,15 @@ class _DashboardState implements DashboardState {
 @override final  DashboardStats stats;
 @override final  String? error;
 @override final  int? userId;
+ final  List<Project>? _importedProjects;
+@override List<Project>? get importedProjects {
+  final value = _importedProjects;
+  if (value == null) return null;
+  if (_importedProjects is EqualUnmodifiableListView) return _importedProjects;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(value);
+}
+
 
 /// Create a copy of DashboardState
 /// with the given fields replaced by the non-null parameter values.
@@ -229,16 +239,16 @@ _$DashboardStateCopyWith<_DashboardState> get copyWith => __$DashboardStateCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DashboardState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&const DeepCollectionEquality().equals(other._recentProjects, _recentProjects)&&(identical(other.stats, stats) || other.stats == stats)&&(identical(other.error, error) || other.error == error)&&(identical(other.userId, userId) || other.userId == userId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DashboardState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&const DeepCollectionEquality().equals(other._recentProjects, _recentProjects)&&(identical(other.stats, stats) || other.stats == stats)&&(identical(other.error, error) || other.error == error)&&(identical(other.userId, userId) || other.userId == userId)&&const DeepCollectionEquality().equals(other._importedProjects, _importedProjects));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isLoading,const DeepCollectionEquality().hash(_recentProjects),stats,error,userId);
+int get hashCode => Object.hash(runtimeType,isLoading,const DeepCollectionEquality().hash(_recentProjects),stats,error,userId,const DeepCollectionEquality().hash(_importedProjects));
 
 @override
 String toString() {
-  return 'DashboardState(isLoading: $isLoading, recentProjects: $recentProjects, stats: $stats, error: $error, userId: $userId)';
+  return 'DashboardState(isLoading: $isLoading, recentProjects: $recentProjects, stats: $stats, error: $error, userId: $userId, importedProjects: $importedProjects)';
 }
 
 
@@ -249,7 +259,7 @@ abstract mixin class _$DashboardStateCopyWith<$Res> implements $DashboardStateCo
   factory _$DashboardStateCopyWith(_DashboardState value, $Res Function(_DashboardState) _then) = __$DashboardStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool isLoading, List<ProjectWithDetails> recentProjects, DashboardStats stats, String? error, int? userId
+ bool isLoading, List<ProjectWithDetails> recentProjects, DashboardStats stats, String? error, int? userId, List<Project>? importedProjects
 });
 
 
@@ -266,14 +276,15 @@ class __$DashboardStateCopyWithImpl<$Res>
 
 /// Create a copy of DashboardState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? recentProjects = null,Object? stats = null,Object? error = freezed,Object? userId = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? recentProjects = null,Object? stats = null,Object? error = freezed,Object? userId = freezed,Object? importedProjects = freezed,}) {
   return _then(_DashboardState(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,recentProjects: null == recentProjects ? _self._recentProjects : recentProjects // ignore: cast_nullable_to_non_nullable
 as List<ProjectWithDetails>,stats: null == stats ? _self.stats : stats // ignore: cast_nullable_to_non_nullable
 as DashboardStats,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
 as String?,userId: freezed == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
-as int?,
+as int?,importedProjects: freezed == importedProjects ? _self._importedProjects : importedProjects // ignore: cast_nullable_to_non_nullable
+as List<Project>?,
   ));
 }
 
