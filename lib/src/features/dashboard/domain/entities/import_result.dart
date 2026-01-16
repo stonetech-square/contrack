@@ -8,4 +8,9 @@ class ImportResult {
     required this.failureCount,
     required this.errors,
   });
+
+  @override
+  String toString() {
+    return 'ImportResult(successCount: $successCount, failureCount: $failureCount, errors: $errors)';
+  }
 }

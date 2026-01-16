@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:contrack/src/app/data/models/models.dart';
 import 'package:contrack/src/core/common/enums/project_status.dart';
 import 'package:contrack/src/core/errors/failures.dart';
 import 'package:contrack/src/core/services/project_import_service.dart';
@@ -9,7 +10,6 @@ import 'package:contrack/src/features/dashboard/domain/entities/import_result.da
 import 'package:contrack/src/features/dashboard/domain/entities/project.dart';
 import 'package:contrack/src/features/dashboard/domain/entities/project_with_details.dart';
 import 'package:contrack/src/features/dashboard/domain/repository/dashboard_repository.dart';
-import 'package:contrack/src/features/projects/domain/repository/projects_repository.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 import 'package:rxdart/rxdart.dart';
@@ -18,14 +18,12 @@ import 'package:rxdart/rxdart.dart';
 class DashboardRepositoryImpl implements DashboardRepository {
   final DashboardLocalDataSource _localDataSource;
   final UserSession _userSession;
-  final ProjectsRepository _projectsRepository;
   final ProjectImportService _importService;
   final Logger _logger = Logger('DashboardRepositoryImpl');
 
   DashboardRepositoryImpl(
     this._localDataSource,
     this._userSession,
-    this._projectsRepository,
     this._importService,
   );
 
@@ -109,10 +107,11 @@ class DashboardRepositoryImpl implements DashboardRepository {
     });
   }
 
-
-
   @override
   Future<ImportResult> importProjects(File file) async {
+    final user = _userSession.currentUser;
+    if (user == null) throw AppFailure('User not logged in');
+
     final dtos = await _importService.importProjectsDto(file);
     int success = 0;
     int failure = 0;
@@ -124,11 +123,11 @@ class DashboardRepositoryImpl implements DashboardRepository {
     final ministryCache = <int, Map<String, int>>{};
 
     try {
-      final zones = await _projectsRepository.getGeopoliticalZones();
+      final zones = await _localDataSource.getAllGeopoliticalZones();
       for (final z in zones) {
         zoneCache[z.name.toLowerCase()] = z.id;
       }
-      final agencies = await _projectsRepository.getImplementingAgencies();
+      final agencies = await _localDataSource.getAllImplementingAgencies();
       for (final a in agencies) {
         agencyCache[a.name.toLowerCase()] = a.id;
       }
@@ -146,7 +145,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
         if (zoneId == null) throw Exception('Zone not found: ${dto.zone}');
 
         if (!stateCache.containsKey(zoneId)) {
-          final states = await _projectsRepository.getStates(zoneId);
+          final states = await _localDataSource.getStatesByZoneId(zoneId);
           stateCache[zoneId] = {
             for (var s in states) s.name.toLowerCase(): s.id,
           };
@@ -162,7 +161,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
         }
 
         if (!ministryCache.containsKey(agencyId)) {
-          final ministries = await _projectsRepository.getSupervisingMinistries(
+          final ministries = await _localDataSource.getMinistriesByAgencyId(
             agencyId,
           );
           ministryCache[agencyId] = {
@@ -181,7 +180,8 @@ class DashboardRepositoryImpl implements DashboardRepository {
           orElse: () => ProjectStatus.notStarted,
         );
 
-        await _projectsRepository.createProject(
+        final projectModel = ProjectModel(
+          id: 0, // drfit auto id
           code: dto.code,
           status: status,
           agencyId: agencyId,
@@ -192,9 +192,12 @@ class DashboardRepositoryImpl implements DashboardRepository {
           title: dto.title,
           amount: dto.amount,
           sponsor: dto.sponsor,
-          startDate: DateTime.now(),
-          endDate: DateTime.now().add(const Duration(days: 365)),
+          createdBy: user.id,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
         );
+
+        await _localDataSource.upsertProject(projectModel);
 
         success++;
       } catch (e) {

@@ -174,7 +174,6 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i604.DashboardRepositoryImpl(
         gh<_i642.DashboardLocalDataSource>(),
         gh<_i26.UserSession>(),
-        gh<_i605.ProjectsRepository>(),
         gh<_i820.ProjectImportService>(),
       ),
     );
@@ -270,12 +269,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i159.ExportProjectUseCase>(),
       ),
     );
-    gh.factory<_i652.DashboardBloc>(
-      () => _i652.DashboardBloc(
-        gh<_i862.WatchDashboardStatsUseCase>(),
-        gh<_i835.WatchRecentProjectsWithDetailsUseCase>(),
-      ),
-    );
     gh.lazySingleton<_i813.AppBloc>(
       () => _i813.AppBloc(
         gh<_i353.WatchAppUserUseCase>(),
@@ -294,6 +287,13 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i922.GetImplementingAgenciesUseCase>(),
         gh<_i182.GetStatesUseCase>(),
         gh<_i227.GetSupervisingMinistriesUseCase>(),
+      ),
+    );
+    gh.factory<_i652.DashboardBloc>(
+      () => _i652.DashboardBloc(
+        gh<_i862.WatchDashboardStatsUseCase>(),
+        gh<_i835.WatchRecentProjectsWithDetailsUseCase>(),
+        gh<_i304.ImportProjectsUseCase>(),
       ),
     );
     return this;

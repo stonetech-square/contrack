@@ -8,3 +8,12 @@ sealed class DashboardEvent extends Equatable {
 }
 
 class DashboardStarted extends DashboardEvent {}
+
+class DashboardProjectImported extends DashboardEvent {
+  final String path;
+
+  const DashboardProjectImported(this.path);
+
+  @override
+  List<Object?> get props => [path];
+}

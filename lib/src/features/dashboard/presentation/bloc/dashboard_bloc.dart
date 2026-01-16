@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:contrack/src/core/errors/failures.dart';
 import 'package:contrack/src/core/usecase/usecase.dart';
+import 'package:contrack/src/features/dashboard/domain/usecase/import_projects_use_case.dart';
 import 'package:contrack/src/features/dashboard/domain/usecase/watch_dashboard_stats_use_case.dart';
 import 'package:contrack/src/features/dashboard/domain/usecase/watch_recent_projects_use_case.dart';
 import 'package:contrack/src/features/dashboard/presentation/bloc/dashboard_event.dart';
@@ -13,13 +15,17 @@ import 'package:rxdart/rxdart.dart';
 @injectable
 class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   final WatchDashboardStatsUseCase _watchDashboardStatsUseCase;
-  final WatchRecentProjectsWithDetailsUseCase _watchRecentProjectsWithDetailsUseCase;
+  final WatchRecentProjectsWithDetailsUseCase
+  _watchRecentProjectsWithDetailsUseCase;
+  final ImportProjectsUseCase _importProjectsUseCase;
 
   DashboardBloc(
     this._watchDashboardStatsUseCase,
     this._watchRecentProjectsWithDetailsUseCase,
+    this._importProjectsUseCase,
   ) : super(DashboardState.empty()) {
     on<DashboardStarted>(_onStarted);
+    on<DashboardProjectImported>(_onProjectImported);
   }
 
   Future<void> _onStarted(
@@ -49,5 +55,24 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
         return state.copyWith(error: failure.message, isLoading: false);
       },
     );
+  }
+
+  Future<void> _onProjectImported(
+    DashboardProjectImported event,
+    Emitter<DashboardState> emit,
+  ) async {
+    try {
+      final file = File(event.path);
+      final result = await _importProjectsUseCase(file);
+      print(
+        'Import Result: Success=${result.successCount}, Failure=${result.failureCount}',
+      );
+      if (result.errors.isNotEmpty) {
+        print('Import Errors: ${result.errors}');
+      }
+    } catch (e, s) {
+      print('Import Failed: $e');
+      print(s);
+    }
   }
 }

@@ -23,6 +23,12 @@ abstract class DashboardLocalDataSource {
     int userId,
     UserRole role,
   );
+
+  Future<List<GeopoliticalZone>> getAllGeopoliticalZones();
+  Future<List<Agency>> getAllImplementingAgencies();
+  Future<List<State>> getStatesByZoneId(int zoneId);
+  Future<List<Ministry>> getMinistriesByAgencyId(int agencyId);
+  Future<void> upsertProject(ProjectModel project);
 }
 
 @LazySingleton(as: DashboardLocalDataSource)
@@ -163,5 +169,45 @@ class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
 
       return counts;
     });
+  }
+
+  @override
+  Future<List<GeopoliticalZone>> getAllGeopoliticalZones() async {
+    return await database.select(database.geopoliticalZones).get();
+  }
+
+  @override
+  Future<List<Agency>> getAllImplementingAgencies() async {
+    return await database.select(database.agencies).get();
+  }
+
+  @override
+  Future<List<State>> getStatesByZoneId(int zoneId) async {
+    return await (database.select(
+      database.states,
+    )..where((t) => t.zoneId.equals(zoneId))).get();
+  }
+
+  @override
+  Future<List<Ministry>> getMinistriesByAgencyId(int agencyId) async {
+    return await (database.select(
+      database.ministries,
+    )..where((t) => t.agencyId.equals(agencyId))).get();
+  }
+
+  @override
+  Future<void> upsertProject(ProjectModel project) async {
+    await database
+        .into(database.projects)
+        .insert(
+          project.toDriftCompanion(),
+          onConflict: DoUpdate(
+            (old) => project.toDriftCompanion().copyWith(
+              id: const Value.absent(),
+              createdAt: const Value.absent(),
+            ),
+            target: [database.projects.code],
+          ),
+        );
   }
 }

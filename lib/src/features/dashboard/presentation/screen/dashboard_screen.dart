@@ -53,7 +53,14 @@ class DashboardView extends StatelessWidget {
             ),
             const SizedBox(width: 16),
             FilledButton.icon(
-              onPressed: () {},
+              onPressed: () {
+                // TODO: Replace with file picker or actual path
+                const path =
+                    '/Users/codeswot/Downloads/projects_export_1768530453037.csv';
+                context.read<DashboardBloc>().add(
+                  const DashboardProjectImported(path),
+                );
+              },
               style: FilledButton.styleFrom(
                 maximumSize: const Size(250, 56),
                 minimumSize: const Size(220, 56),
