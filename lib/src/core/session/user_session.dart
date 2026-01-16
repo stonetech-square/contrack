@@ -1,15 +1,21 @@
+import 'dart:async';
+
 import 'package:contrack/src/core/common/enums/user_role.dart';
 import 'package:contrack/src/core/database/database.dart';
 import 'package:drift/drift.dart';
 import 'package:injectable/injectable.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 
 @singleton
 class UserSession {
   final AppDatabase _db;
+  final supabase.SupabaseClient _supabase;
   final _userSubject = BehaviorSubject<User?>();
+  // ignore: unused_field
+  StreamSubscription<supabase.AuthState>? _authSubscription;
 
-  UserSession(this._db);
+  UserSession(this._db, this._supabase);
 
   Stream<User?> get userStream => _userSubject.stream;
   User? get currentUser => _userSubject.valueOrNull;
@@ -28,6 +34,19 @@ class UserSession {
     } catch (e) {
       _userSubject.add(null);
     }
+
+    _listenToAuthChanges();
+  }
+
+  void _listenToAuthChanges() {
+    _authSubscription = _supabase.auth.onAuthStateChange.listen((data) {
+      final event = data.event;
+      if (event == supabase.AuthChangeEvent.signedOut ||
+          (event == supabase.AuthChangeEvent.tokenRefreshed &&
+              data.session == null)) {
+        clear();
+      }
+    });
   }
 
   Future<void> setSession(int userId) async {

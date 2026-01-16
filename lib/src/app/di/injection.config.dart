@@ -127,6 +127,10 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i175.AuthRemoteDataSource>(
       () => _i175.AuthRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
     );
+    gh.singleton<_i26.UserSession>(
+      () =>
+          _i26.UserSession(gh<_i339.AppDatabase>(), gh<_i454.SupabaseClient>()),
+    );
     gh.lazySingleton<_i103.SyncService>(
       () => _i103.SyncServiceImpl(
         gh<_i892.NetworkInfo>(),
@@ -143,9 +147,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i339.AppDatabase>(),
         gh<_i454.SupabaseClient>(),
       ),
-    );
-    gh.singleton<_i26.UserSession>(
-      () => _i26.UserSession(gh<_i339.AppDatabase>()),
     );
     gh.lazySingleton<_i293.AppLocalDataSource>(
       () => _i293.AppLocalDataSourceImpl(gh<_i26.UserSession>()),

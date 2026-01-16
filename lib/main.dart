@@ -28,13 +28,13 @@ Future<void> main() async {
     await windowManager.focus();
   });
 
-  configureDependencies();
-  await GetIt.I<UserSession>().initialize();
-
   await Supabase.initialize(
     url: AppConstants.supabaseUrl,
     anonKey: AppConstants.supabaseAnonKey,
   );
+
+  configureDependencies();
+  await GetIt.I<UserSession>().initialize();
 
   Logger.root.level = Level.ALL;
   Logger.root.onRecord.listen((record) {
