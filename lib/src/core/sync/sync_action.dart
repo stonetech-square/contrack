@@ -237,6 +237,25 @@ class SyncActionImpl implements SyncAction {
     final code = data['code'] as String;
     final createdAt = DateTime.parse(data['created_at'] as String);
 
+    final localRecord = await (_database.select(
+      _database.geopoliticalZones,
+    )..where((t) => t.remoteId.equals(remoteId))).getSingleOrNull();
+
+    if (localRecord != null) {
+      final localDigest = _computeGeopoliticalZoneDigest(
+        localRecord.name,
+        localRecord.code,
+        localRecord.createdAt,
+      );
+      final remoteDigest = _computeGeopoliticalZoneDigest(
+        name,
+        code,
+        createdAt,
+      );
+
+      if (localDigest == remoteDigest) return;
+    }
+
     final companion = db.GeopoliticalZonesCompanion(
       remoteId: Value(remoteId),
       name: Value(name),
@@ -274,6 +293,31 @@ class SyncActionImpl implements SyncAction {
         'Cannot sync ministry $name: Agency $agencyIdStr not found locally',
       );
       return;
+    }
+
+    final localRecord = await (_database.select(
+      _database.ministries,
+    )..where((t) => t.remoteId.equals(remoteId))).getSingleOrNull();
+
+    if (localRecord != null) {
+      final localDigest = _computeMinistryDigest(
+        localRecord.name,
+        localRecord.code,
+        localRecord.isActive,
+        localRecord.agencyId,
+        localRecord.createdAt,
+        localRecord.updatedAt,
+      );
+      final remoteDigest = _computeMinistryDigest(
+        name,
+        code,
+        isActive ?? true,
+        agency.id,
+        createdAt,
+        updatedAt,
+      );
+
+      if (localDigest == remoteDigest) return;
     }
 
     final companion = db.MinistriesCompanion(
@@ -316,6 +360,22 @@ class SyncActionImpl implements SyncAction {
       return;
     }
 
+    final localRecord = await (_database.select(
+      _database.states,
+    )..where((t) => t.remoteId.equals(remoteId))).getSingleOrNull();
+
+    if (localRecord != null) {
+      final localDigest = _computeStateDigest(
+        localRecord.name,
+        localRecord.code,
+        localRecord.zoneId,
+        localRecord.createdAt,
+      );
+      final remoteDigest = _computeStateDigest(name, code, zone.id, createdAt);
+
+      if (localDigest == remoteDigest) return;
+    }
+
     final companion = db.StatesCompanion(
       remoteId: Value(remoteId),
       name: Value(name),
@@ -352,6 +412,29 @@ class SyncActionImpl implements SyncAction {
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
     );
+
+    final localRecord = await (_database.select(
+      _database.agencies,
+    )..where((t) => t.remoteId.equals(remoteId))).getSingleOrNull();
+
+    if (localRecord != null) {
+      final localDigest = _computeAgencyDigest(
+        localRecord.name,
+        localRecord.code,
+        localRecord.isActive,
+        localRecord.createdAt,
+        localRecord.updatedAt,
+      );
+      final remoteDigest = _computeAgencyDigest(
+        name,
+        code,
+        isActive ?? true,
+        createdAt,
+        updatedAt,
+      );
+
+      if (localDigest == remoteDigest) return;
+    }
 
     await _database
         .into(_database.agencies)
@@ -393,6 +476,33 @@ class SyncActionImpl implements SyncAction {
       isSynced: Value(true),
       lastSyncedAt: Value(DateTime.now()),
     );
+
+    final localRecord = await (_database.select(
+      _database.users,
+    )..where((t) => t.remoteId.equals(remoteId))).getSingleOrNull();
+
+    if (localRecord != null) {
+      final localDigest = _computeUserDigest(
+        localRecord.email,
+        localRecord.fullName,
+        localRecord.username,
+        localRecord.isActive,
+        localRecord.lastLoginAt,
+        localRecord.createdAt,
+        localRecord.updatedAt,
+      );
+      final remoteDigest = _computeUserDigest(
+        email,
+        fullName ?? '',
+        username ?? email.split('@')[0],
+        isActive ?? true,
+        lastLoginAt,
+        createdAt,
+        updatedAt,
+      );
+
+      if (localDigest == remoteDigest) return;
+    }
 
     await _database
         .into(_database.users)
@@ -477,18 +587,55 @@ class SyncActionImpl implements SyncAction {
       return;
     }
 
-    if (currentUserId != null && createdByUser.id == currentUserId) {
-      final localProject = await (_database.select(
-        _database.projects,
-      )..where((t) => t.remoteId.equals(remoteId))).getSingleOrNull();
+    final localProject = await (_database.select(
+      _database.projects,
+    )..where((t) => t.remoteId.equals(remoteId))).getSingleOrNull();
 
-      if (localProject != null) {
-        if (localProject.createdBy == currentUserId) {
-          _logger.info(
-            'Skipping update for project $code as it is owned by current user',
-          );
-          return;
-        }
+    if (localProject != null) {
+      if (currentUserId != null && localProject.createdBy == currentUserId) {
+        _logger.info(
+          'Skipping update for project $code as it is owned by current user',
+        );
+        return;
+      }
+
+      final localDigest = _computeProjectDigest(
+        localProject.code,
+        localProject.status,
+        localProject.agencyId,
+        localProject.ministryId,
+        localProject.stateId,
+        localProject.zoneId,
+        localProject.constituency,
+        localProject.amount,
+        localProject.title,
+        localProject.sponsor,
+        localProject.createdBy,
+        localProject.modifiedBy,
+        localProject.startDate,
+        localProject.endDate,
+      );
+
+      final remoteDigest = _computeProjectDigest(
+        code,
+        status,
+        agency.id,
+        ministry.id,
+        state.id,
+        zone.id,
+        constituency,
+        amount,
+        title,
+        sponsor,
+        createdByUser.id,
+        modifiedByUser?.id,
+        startDate,
+        endDate,
+      );
+
+      if (localDigest == remoteDigest) {
+        _logger.info('Skipping update for project $code as it is identical');
+        return;
       }
     }
 
@@ -523,5 +670,97 @@ class SyncActionImpl implements SyncAction {
             target: [_database.projects.remoteId],
           ),
         );
+  }
+
+  int _computeProjectDigest(
+    String code,
+    ProjectStatus status,
+    int agencyId,
+    int ministryId,
+    int stateId,
+    int zoneId,
+    String constituency,
+    double amount,
+    String title,
+    String? sponsor,
+    int createdBy,
+    int? modifiedBy,
+    DateTime? startDate,
+    DateTime? endDate,
+  ) {
+    return Object.hash(
+      code,
+      status,
+      agencyId,
+      ministryId,
+      stateId,
+      zoneId,
+      constituency,
+      amount,
+      title,
+      sponsor,
+      createdBy,
+      modifiedBy,
+      startDate,
+      endDate,
+    );
+  }
+
+  int _computeGeopoliticalZoneDigest(
+    String? name,
+    String? code,
+    DateTime createdAt,
+  ) {
+    return Object.hash(name, code, createdAt);
+  }
+
+  int _computeMinistryDigest(
+    String? name,
+    String? code,
+    bool? isActive,
+    int? agencyId,
+    DateTime createdAt,
+    DateTime updatedAt,
+  ) {
+    return Object.hash(name, code, isActive, agencyId, createdAt, updatedAt);
+  }
+
+  int _computeStateDigest(
+    String? name,
+    String? code,
+    int? zoneId,
+    DateTime createdAt,
+  ) {
+    return Object.hash(name, code, zoneId, createdAt);
+  }
+
+  int _computeAgencyDigest(
+    String? name,
+    String? code,
+    bool? isActive,
+    DateTime createdAt,
+    DateTime updatedAt,
+  ) {
+    return Object.hash(name, code, isActive, createdAt, updatedAt);
+  }
+
+  int _computeUserDigest(
+    String email,
+    String? fullName,
+    String? username,
+    bool isActive,
+    DateTime? lastLoginAt,
+    DateTime createdAt,
+    DateTime updatedAt,
+  ) {
+    return Object.hash(
+      email,
+      fullName,
+      username,
+      isActive,
+      lastLoginAt,
+      createdAt,
+      updatedAt,
+    );
   }
 }

@@ -24,9 +24,10 @@ class AuthenticatedShellScreen extends StatelessWidget {
         return AutoTabsRouter(
           routes: [
             const DashboardRoute(),
-            const AllProjectRoute(),
+            const ShellProjectRoute(),
             if (state.user?.role == UserRole.admin) ...[const ReportRoute()],
           ],
+          lazyLoad: false,
           transitionBuilder: (context, child, animation) =>
               FadeTransition(opacity: animation, child: child),
           builder: (context, child) {
@@ -36,7 +37,15 @@ class AuthenticatedShellScreen extends StatelessWidget {
                 children: [
                   AppSidebar(
                     selectedIndex: tabsRouter.activeIndex,
-                    onDestinationSelected: tabsRouter.setActiveIndex,
+                    onDestinationSelected: (index) {
+                      final currentRouter = tabsRouter.stackRouterOfIndex(
+                        tabsRouter.activeIndex,
+                      );
+                      if (currentRouter != null && currentRouter.canPop()) {
+                        currentRouter.popUntilRoot();
+                      }
+                      tabsRouter.setActiveIndex(index);
+                    },
                     destinations: [
                       AppSidebarDestination.dashboard,
                       AppSidebarDestination.projects,

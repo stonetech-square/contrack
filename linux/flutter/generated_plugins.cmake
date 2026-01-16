@@ -4,6 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   gtk
+  printing
   screen_retriever_linux
   sqlcipher_flutter_libs
   url_launcher_linux

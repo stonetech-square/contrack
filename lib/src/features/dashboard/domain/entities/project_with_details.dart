@@ -9,9 +9,11 @@ class ProjectWithDetails extends Equatable {
   final int agencyId;
   final String agencyName;
   final int ministryId;
+  final String ministryName;
   final int stateId;
   final String stateName;
   final int zoneId;
+  final String zoneName;
   final String constituency;
   final double amount;
   final String? sponsor;
@@ -31,9 +33,11 @@ class ProjectWithDetails extends Equatable {
     required this.agencyId,
     required this.agencyName,
     required this.ministryId,
+    required this.ministryName,
     required this.stateId,
     required this.stateName,
     required this.zoneId,
+    required this.zoneName,
     required this.constituency,
     required this.amount,
     this.sponsor,
@@ -55,9 +59,11 @@ class ProjectWithDetails extends Equatable {
         agencyId,
         agencyName,
         ministryId,
+        ministryName,
         stateId,
         stateName,
         zoneId,
+        zoneName,
         constituency,
         amount,
         sponsor,

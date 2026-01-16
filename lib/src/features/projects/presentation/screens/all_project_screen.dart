@@ -39,6 +39,8 @@ class AllProjectsView extends StatelessWidget {
           },
         ),
         BlocBuilder<AllProjectsBloc, AllProjectsState>(
+          buildWhen: (previous, current) =>
+              previous.projects != current.projects,
           builder: (context, state) {
             return Column(
               children: [
