@@ -24,7 +24,11 @@ class AuthenticatedShellScreen extends StatelessWidget {
           routes: [
             const DashboardRoute(),
             const ShellProjectRoute(),
-            if (state.user?.role.isAnyAdmin ?? false) ...[const ReportRoute()],
+            if (state.user?.role.isAnyAdmin ?? false) ...const [
+              ReportRoute(),
+              UserManagementRoute(),
+              MasterDataRoute(),
+            ],
           ],
           lazyLoad: false,
           transitionBuilder: (context, child, animation) =>
@@ -50,7 +54,6 @@ class AuthenticatedShellScreen extends StatelessWidget {
                       AppSidebarDestination.projects,
                       if (state.user?.role.isAnyAdmin ?? false) ...[
                         AppSidebarDestination.reports,
-                        AppSidebarDestination.syncStatus,
                         AppSidebarDestination.userManagement,
                         AppSidebarDestination.masterData,
                       ],

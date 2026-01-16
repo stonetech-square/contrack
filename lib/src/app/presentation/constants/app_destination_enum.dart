@@ -4,7 +4,6 @@ enum AppSidebarDestination {
   dashboard,
   projects,
   reports,
-  syncStatus,
   userManagement,
   masterData;
 
@@ -16,8 +15,6 @@ enum AppSidebarDestination {
         return 'Projects';
       case AppSidebarDestination.reports:
         return 'Reports';
-      case AppSidebarDestination.syncStatus:
-        return 'Sync Status';
       case AppSidebarDestination.userManagement:
         return 'User Management';
       case AppSidebarDestination.masterData:
@@ -33,8 +30,6 @@ enum AppSidebarDestination {
         return Icons.folder;
       case AppSidebarDestination.reports:
         return Icons.receipt;
-      case AppSidebarDestination.syncStatus:
-        return Icons.sync;
       case AppSidebarDestination.userManagement:
         return Icons.people;
       case AppSidebarDestination.masterData:

@@ -6,8 +6,8 @@ import 'package:contrack/src/features/dashboard/presentation/widgets/dashboard_r
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class DashboardOverView extends StatelessWidget {
-  const DashboardOverView({super.key});
+class RegularDashboardOverView extends StatelessWidget {
+  const RegularDashboardOverView({super.key});
 
   @override
   Widget build(BuildContext context) {

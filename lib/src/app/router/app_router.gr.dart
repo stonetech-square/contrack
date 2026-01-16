@@ -91,6 +91,22 @@ class DashboardRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [MasterDataScreen]
+class MasterDataRoute extends PageRouteInfo<void> {
+  const MasterDataRoute({List<PageRouteInfo>? children})
+    : super(MasterDataRoute.name, initialChildren: children);
+
+  static const String name = 'MasterDataRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const MasterDataScreen();
+    },
+  );
+}
+
+/// generated route for
 /// [ProjectScreen]
 class ProjectRoute extends PageRouteInfo<ProjectRouteArgs> {
   ProjectRoute({
@@ -197,6 +213,22 @@ class UnAuthenticatedShellRoute extends PageRouteInfo<void> {
     name,
     builder: (data) {
       return const UnAuthenticatedShellScreen();
+    },
+  );
+}
+
+/// generated route for
+/// [UserManagementScreen]
+class UserManagementRoute extends PageRouteInfo<void> {
+  const UserManagementRoute({List<PageRouteInfo>? children})
+    : super(UserManagementRoute.name, initialChildren: children);
+
+  static const String name = 'UserManagementRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const UserManagementScreen();
     },
   );
 }
