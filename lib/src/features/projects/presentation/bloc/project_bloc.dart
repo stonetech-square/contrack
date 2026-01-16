@@ -1,4 +1,5 @@
 import 'package:contrack/src/core/database/tables/export_history.dart';
+import 'package:contrack/src/core/errors/failures.dart';
 import 'package:contrack/src/features/dashboard/domain/entities/project_with_details.dart';
 import 'package:contrack/src/features/projects/domain/usecase/export_project_use_case.dart';
 import 'package:contrack/src/features/projects/domain/usecase/get_project_by_code_use_case.dart';
@@ -16,10 +17,8 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
   final GetProjectByCodeUseCase _getProjectByCodeUseCase;
   final ExportProjectUseCase _exportProjectUseCase;
 
-  ProjectBloc(
-    this._getProjectByCodeUseCase,
-    this._exportProjectUseCase,
-  ) : super(const ProjectState()) {
+  ProjectBloc(this._getProjectByCodeUseCase, this._exportProjectUseCase)
+    : super(const ProjectState()) {
     on<ProjectFetchByCodeEvent>(_onFetchByCode);
     on<ProjectExportRequestedEvent>(_onExportRequested);
   }
@@ -59,11 +58,14 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
           ),
         );
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      final failure = e is Failure
+          ? e
+          : AppFailure.fromException(e, stackTrace);
       emit(
         state.copyWith(
           isLoading: false,
-          errorMessage: e.toString(),
+          errorMessage: failure.message,
           projectCode: event.code,
         ),
       );
@@ -95,10 +97,7 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
 
     try {
       final filePath = await _exportProjectUseCase(
-        ExportProjectParams(
-          project: state.project!,
-          format: event.format,
-        ),
+        ExportProjectParams(project: state.project!, format: event.format),
       );
 
       emit(
@@ -108,11 +107,14 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
           exportError: null,
         ),
       );
-    } catch (e) {
+    } catch (e, stackTrace) {
+      final failure = e is Failure
+          ? e
+          : AppFailure.fromException(e, stackTrace);
       emit(
         state.copyWith(
           isExporting: false,
-          exportError: 'Export failed: ${e.toString()}',
+          exportError: failure.message,
           exportFilePath: null,
         ),
       );

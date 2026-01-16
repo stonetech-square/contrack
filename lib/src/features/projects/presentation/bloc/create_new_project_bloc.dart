@@ -1,4 +1,5 @@
 import 'package:contrack/src/core/common/enums/project_status.dart';
+import 'package:contrack/src/core/errors/failures.dart';
 import 'package:contrack/src/core/usecase/usecase.dart';
 import 'package:contrack/src/features/dashboard/domain/entities/project.dart';
 import 'package:contrack/src/features/projects/domain/entities/geopolitical_zone.dart';
@@ -69,11 +70,14 @@ class CreateNewProjectBloc
           viewStatus: CreateProjectViewStatus.filling,
         ),
       );
-    } catch (e) {
+    } catch (e, stackTrace) {
+      final failure = e is Failure
+          ? e
+          : AppFailure.fromException(e, stackTrace);
       emit(
         state.copyWith(
           viewStatus: CreateProjectViewStatus.failure,
-          errorMessage: e.toString(),
+          errorMessage: failure.message,
         ),
       );
     }
@@ -261,11 +265,14 @@ class CreateNewProjectBloc
       final projects = state.entries.map((e) => e.toProject(0)).toList();
       await _createProjectUseCase(CreateProjectParams(projects: projects));
       emit(state.copyWith(viewStatus: CreateProjectViewStatus.success));
-    } catch (e) {
+    } catch (e, stackTrace) {
+      final failure = e is Failure
+          ? e
+          : AppFailure.fromException(e, stackTrace);
       emit(
         state.copyWith(
           viewStatus: CreateProjectViewStatus.failure,
-          errorMessage: e.toString(),
+          errorMessage: failure.message,
         ),
       );
     }

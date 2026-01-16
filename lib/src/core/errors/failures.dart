@@ -55,7 +55,11 @@ class AppFailure extends Failure {
     }
 
     if (_isServerError(errorMessage)) {
-      return const AppFailure('Server error. Please try again later.');
+      return const AppFailure('An error occurred. Please try again later.');
+    }
+
+    if (_isSqlError(errorMessage)) {
+      return _mapSqlError(errorMessage);
     }
 
     return const AppFailure();
@@ -99,5 +103,23 @@ class AppFailure extends Failure {
       return const AppFailure('Please verify your email address');
     }
     return const AppFailure('Authentication failed. Please try again.');
+  }
+
+  static bool _isSqlError(String error) {
+    return error.contains('sqliteexception') ||
+        error.contains('sql error') ||
+        error.contains('databaseexception');
+  }
+
+  static AppFailure _mapSqlError(String error) {
+    if (error.contains('foreign key constraint failed')) {
+      return const AppFailure(
+        'Data mismatch: Some referenced categories (Zone, State, etc.) are missing. Please sync your data.',
+      );
+    }
+    if (error.contains('unique constraint failed')) {
+      return const AppFailure('Duplicate entry. This record already exists.');
+    }
+    return const AppFailure('Database operation failed. Please try again.');
   }
 }

@@ -66,8 +66,11 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
       final projects = await _importProjectsUseCase(file);
       emit(state.copyWith(importedProjects: projects));
       emit(state.copyWith(importedProjects: null));
-    } catch (e, _) {
-      emit(state.copyWith(error: 'Import Failed: $e'));
+    } catch (e, stackTrace) {
+      final failure = e is Failure
+          ? e
+          : AppFailure.fromException(e, stackTrace);
+      emit(state.copyWith(error: failure.message));
     }
   }
 }

@@ -54,10 +54,14 @@ class ProjectsLocalDataSourceImpl implements ProjectsLocalDataSource {
 
   @override
   Future<void> createProject(List<ProjectModel> projects) async {
+    final projectCompanions = projects
+        .map((project) => project.toDriftCompanion())
+        .toList();
     await _database.batch((batch) {
       batch.insertAll(
         _database.projects,
-        projects.map((project) => project.toDriftCompanion()),
+        projectCompanions,
+        mode: InsertMode.insertOrReplace,
       );
     });
   }

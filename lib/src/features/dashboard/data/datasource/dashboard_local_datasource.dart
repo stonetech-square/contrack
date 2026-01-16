@@ -29,6 +29,7 @@ abstract class DashboardLocalDataSource {
   Future<List<State>> getStatesByZoneId(int zoneId);
   Future<List<Ministry>> getMinistriesByAgencyId(int agencyId);
   Future<void> upsertProject(ProjectModel project);
+  Future<User?> getUserById(int id);
 }
 
 @LazySingleton(as: DashboardLocalDataSource)
@@ -209,5 +210,12 @@ class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
             target: [database.projects.code],
           ),
         );
+  }
+
+  @override
+  Future<User?> getUserById(int id) {
+    final query = database.select(database.users)
+      ..where((t) => t.id.equals(id));
+    return query.getSingleOrNull();
   }
 }

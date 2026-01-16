@@ -34,12 +34,14 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
         SignInParams(email: event.email, password: event.password),
       );
       emit(state.copyWith(status: FormzSubmissionStatus.success));
-    } on AppFailure catch (e) {
-      final message = e.message;
+    } catch (e, stackTrace) {
+      final failure = e is Failure
+          ? e
+          : AppFailure.fromException(e, stackTrace);
       emit(
         state.copyWith(
           status: FormzSubmissionStatus.failure,
-          errorMessage: message,
+          errorMessage: failure.message,
         ),
       );
     }

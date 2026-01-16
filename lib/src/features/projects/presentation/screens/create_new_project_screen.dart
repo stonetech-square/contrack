@@ -32,6 +32,9 @@ class CreateNewProjectView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<CreateNewProjectBloc, CreateNewProjectState>(
+      listenWhen: (previous, current) =>
+          previous.viewStatus != current.viewStatus ||
+          previous.errorMessage != current.errorMessage,
       listener: (context, state) {
         if (state.viewStatus == CreateProjectViewStatus.success) {
           context.toast.success(

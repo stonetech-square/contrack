@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:contrack/src/core/errors/failures.dart';
+
 import 'package:contrack/src/core/database/tables/export_history.dart';
 import 'package:contrack/src/features/dashboard/domain/entities/project.dart';
 import 'package:contrack/src/features/projects/domain/entities/sort_field.dart';
@@ -46,8 +48,11 @@ class AllProjectsBloc extends Bloc<AllProjectsEvent, AllProjectsState> {
         onError: (error, stackTrace) =>
             state.copyWith(isLoading: false, errorMessage: error.toString()),
       );
-    } catch (e) {
-      emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
+    } catch (e, stackTrace) {
+      final failure = e is Failure
+          ? e
+          : AppFailure.fromException(e, stackTrace);
+      emit(state.copyWith(isLoading: false, errorMessage: failure.message));
     }
   }
 
@@ -60,11 +65,13 @@ class AllProjectsBloc extends Bloc<AllProjectsEvent, AllProjectsState> {
       return;
     }
 
-    emit(state.copyWith(
-      isExporting: true,
-      exportError: null,
-      exportFilePath: null,
-    ));
+    emit(
+      state.copyWith(
+        isExporting: true,
+        exportError: null,
+        exportFilePath: null,
+      ),
+    );
 
     try {
       final filePath = await _exportAllProjectsUseCase(
@@ -75,11 +82,11 @@ class AllProjectsBloc extends Bloc<AllProjectsEvent, AllProjectsState> {
         ),
       );
       emit(state.copyWith(isExporting: false, exportFilePath: filePath));
-    } catch (e) {
-      emit(state.copyWith(
-        isExporting: false,
-        exportError: 'Export failed: ${e.toString()}',
-      ));
+    } catch (e, stackTrace) {
+      final failure = e is Failure
+          ? e
+          : AppFailure.fromException(e, stackTrace);
+      emit(state.copyWith(isExporting: false, exportError: failure.message));
     }
   }
 }

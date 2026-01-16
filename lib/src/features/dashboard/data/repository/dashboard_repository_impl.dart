@@ -115,10 +115,13 @@ class DashboardRepositoryImpl implements DashboardRepository {
   }
 
   @override
-  @override
   Future<List<Project>> importProjects(File file) async {
     final user = _userSession.currentUser;
     if (user == null) throw AppFailure('User not logged in');
+    final userFromDb = await _localDataSource.getUserById(user.id);
+    if (userFromDb == null) {
+      throw AppFailure('User not found locally. Please re-login.');
+    }
 
     final dtos = await _importService.importProjectsDto(file);
     final successfulProjects = <Project>[];
@@ -204,7 +207,6 @@ class DashboardRepositoryImpl implements DashboardRepository {
           updatedAt: DateTime.now(),
         );
 
-        await _localDataSource.upsertProject(projectModel);
         successfulProjects.add(projectModel.toEntity());
       } catch (e) {
         _logger.warning('Error importing ${dto.code}: $e');
