@@ -13,3 +13,12 @@ class ProjectFetchByCodeEvent extends ProjectEvent {
   @override
   List<Object?> get props => [code];
 }
+
+class ProjectExportRequestedEvent extends ProjectEvent {
+  final ExportFormat format;
+
+  ProjectExportRequestedEvent(this.format);
+
+  @override
+  List<Object?> get props => [format];
+}

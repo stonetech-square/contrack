@@ -7,5 +7,8 @@ sealed class ProjectState with _$ProjectState {
     ProjectWithDetails? project,
     @Default(false) bool isLoading,
     String? errorMessage,
+    @Default(false) bool isExporting,
+    String? exportFilePath,
+    String? exportError,
   }) = _ProjectState;
 }

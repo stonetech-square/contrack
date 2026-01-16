@@ -72,6 +72,14 @@ class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
               database.states,
               database.states.id.equalsExp(database.projects.stateId),
             ),
+            leftOuterJoin(
+              database.ministries,
+              database.ministries.id.equalsExp(database.projects.ministryId),
+            ),
+            leftOuterJoin(
+              database.geopoliticalZones,
+              database.geopoliticalZones.id.equalsExp(database.projects.zoneId),
+            ),
           ])
           ..where(_buildRoleBasedPredicate(userId, role))
           ..orderBy([
@@ -87,6 +95,8 @@ class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
         final project = row.readTable(database.projects);
         final agency = row.readTableOrNull(database.agencies);
         final state = row.readTableOrNull(database.states);
+        final ministry = row.readTableOrNull(database.ministries);
+        final zone = row.readTableOrNull(database.geopoliticalZones);
 
         return ProjectWithDetailsModel(
           id: project.id,
@@ -95,9 +105,11 @@ class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
           agencyId: project.agencyId,
           agencyName: agency?.name ?? 'Unknown Agency',
           ministryId: project.ministryId,
+          ministryName: ministry?.name ?? 'Unknown Ministry',
           stateId: project.stateId,
           stateName: state?.name ?? 'Unknown State',
           zoneId: project.zoneId,
+          zoneName: zone?.name ?? 'Unknown Zone',
           title: project.title,
           amount: project.amount,
           constituency: project.constituency,

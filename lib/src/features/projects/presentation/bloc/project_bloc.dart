@@ -1,4 +1,6 @@
+import 'package:contrack/src/core/database/tables/export_history.dart';
 import 'package:contrack/src/features/dashboard/domain/entities/project_with_details.dart';
+import 'package:contrack/src/features/projects/domain/usecase/export_project_use_case.dart';
 import 'package:contrack/src/features/projects/domain/usecase/get_project_by_code_use_case.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,9 +14,14 @@ part 'project_bloc.freezed.dart';
 @injectable
 class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
   final GetProjectByCodeUseCase _getProjectByCodeUseCase;
+  final ExportProjectUseCase _exportProjectUseCase;
 
-  ProjectBloc(this._getProjectByCodeUseCase) : super(const ProjectState()) {
+  ProjectBloc(
+    this._getProjectByCodeUseCase,
+    this._exportProjectUseCase,
+  ) : super(const ProjectState()) {
     on<ProjectFetchByCodeEvent>(_onFetchByCode);
+    on<ProjectExportRequestedEvent>(_onExportRequested);
   }
 
   Future<void> _onFetchByCode(
@@ -58,6 +65,55 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
           isLoading: false,
           errorMessage: e.toString(),
           projectCode: event.code,
+        ),
+      );
+    }
+  }
+
+  Future<void> _onExportRequested(
+    ProjectExportRequestedEvent event,
+    Emitter<ProjectState> emit,
+  ) async {
+    if (state.project == null) {
+      emit(
+        state.copyWith(
+          isExporting: false,
+          exportError: 'No project data to export',
+          exportFilePath: null,
+        ),
+      );
+      return;
+    }
+
+    emit(
+      state.copyWith(
+        isExporting: true,
+        exportError: null,
+        exportFilePath: null,
+      ),
+    );
+
+    try {
+      final filePath = await _exportProjectUseCase(
+        ExportProjectParams(
+          project: state.project!,
+          format: event.format,
+        ),
+      );
+
+      emit(
+        state.copyWith(
+          isExporting: false,
+          exportFilePath: filePath,
+          exportError: null,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          isExporting: false,
+          exportError: 'Export failed: ${e.toString()}',
+          exportFilePath: null,
         ),
       );
     }

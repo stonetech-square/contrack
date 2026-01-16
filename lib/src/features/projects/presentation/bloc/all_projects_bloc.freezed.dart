@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AllProjectsState {
 
- List<Project> get projects; bool get isLoading; String? get errorMessage;
+ List<Project> get projects; bool get isLoading; String? get errorMessage; bool get isExporting; String? get exportFilePath; String? get exportError;
 /// Create a copy of AllProjectsState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $AllProjectsStateCopyWith<AllProjectsState> get copyWith => _$AllProjectsStateCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AllProjectsState&&const DeepCollectionEquality().equals(other.projects, projects)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AllProjectsState&&const DeepCollectionEquality().equals(other.projects, projects)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.isExporting, isExporting) || other.isExporting == isExporting)&&(identical(other.exportFilePath, exportFilePath) || other.exportFilePath == exportFilePath)&&(identical(other.exportError, exportError) || other.exportError == exportError));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(projects),isLoading,errorMessage);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(projects),isLoading,errorMessage,isExporting,exportFilePath,exportError);
 
 @override
 String toString() {
-  return 'AllProjectsState(projects: $projects, isLoading: $isLoading, errorMessage: $errorMessage)';
+  return 'AllProjectsState(projects: $projects, isLoading: $isLoading, errorMessage: $errorMessage, isExporting: $isExporting, exportFilePath: $exportFilePath, exportError: $exportError)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $AllProjectsStateCopyWith<$Res>  {
   factory $AllProjectsStateCopyWith(AllProjectsState value, $Res Function(AllProjectsState) _then) = _$AllProjectsStateCopyWithImpl;
 @useResult
 $Res call({
- List<Project> projects, bool isLoading, String? errorMessage
+ List<Project> projects, bool isLoading, String? errorMessage, bool isExporting, String? exportFilePath, String? exportError
 });
 
 
@@ -62,11 +62,14 @@ class _$AllProjectsStateCopyWithImpl<$Res>
 
 /// Create a copy of AllProjectsState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? projects = null,Object? isLoading = null,Object? errorMessage = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? projects = null,Object? isLoading = null,Object? errorMessage = freezed,Object? isExporting = null,Object? exportFilePath = freezed,Object? exportError = freezed,}) {
   return _then(_self.copyWith(
 projects: null == projects ? _self.projects : projects // ignore: cast_nullable_to_non_nullable
 as List<Project>,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
+as String?,isExporting: null == isExporting ? _self.isExporting : isExporting // ignore: cast_nullable_to_non_nullable
+as bool,exportFilePath: freezed == exportFilePath ? _self.exportFilePath : exportFilePath // ignore: cast_nullable_to_non_nullable
+as String?,exportError: freezed == exportError ? _self.exportError : exportError // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -149,10 +152,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<Project> projects,  bool isLoading,  String? errorMessage)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<Project> projects,  bool isLoading,  String? errorMessage,  bool isExporting,  String? exportFilePath,  String? exportError)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AllProjectsState() when $default != null:
-return $default(_that.projects,_that.isLoading,_that.errorMessage);case _:
+return $default(_that.projects,_that.isLoading,_that.errorMessage,_that.isExporting,_that.exportFilePath,_that.exportError);case _:
   return orElse();
 
 }
@@ -170,10 +173,10 @@ return $default(_that.projects,_that.isLoading,_that.errorMessage);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<Project> projects,  bool isLoading,  String? errorMessage)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<Project> projects,  bool isLoading,  String? errorMessage,  bool isExporting,  String? exportFilePath,  String? exportError)  $default,) {final _that = this;
 switch (_that) {
 case _AllProjectsState():
-return $default(_that.projects,_that.isLoading,_that.errorMessage);}
+return $default(_that.projects,_that.isLoading,_that.errorMessage,_that.isExporting,_that.exportFilePath,_that.exportError);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -187,10 +190,10 @@ return $default(_that.projects,_that.isLoading,_that.errorMessage);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<Project> projects,  bool isLoading,  String? errorMessage)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<Project> projects,  bool isLoading,  String? errorMessage,  bool isExporting,  String? exportFilePath,  String? exportError)?  $default,) {final _that = this;
 switch (_that) {
 case _AllProjectsState() when $default != null:
-return $default(_that.projects,_that.isLoading,_that.errorMessage);case _:
+return $default(_that.projects,_that.isLoading,_that.errorMessage,_that.isExporting,_that.exportFilePath,_that.exportError);case _:
   return null;
 
 }
@@ -202,7 +205,7 @@ return $default(_that.projects,_that.isLoading,_that.errorMessage);case _:
 
 
 class _AllProjectsState implements AllProjectsState {
-  const _AllProjectsState({final  List<Project> projects = const [], this.isLoading = false, this.errorMessage}): _projects = projects;
+  const _AllProjectsState({final  List<Project> projects = const [], this.isLoading = false, this.errorMessage, this.isExporting = false, this.exportFilePath, this.exportError}): _projects = projects;
   
 
  final  List<Project> _projects;
@@ -214,6 +217,9 @@ class _AllProjectsState implements AllProjectsState {
 
 @override@JsonKey() final  bool isLoading;
 @override final  String? errorMessage;
+@override@JsonKey() final  bool isExporting;
+@override final  String? exportFilePath;
+@override final  String? exportError;
 
 /// Create a copy of AllProjectsState
 /// with the given fields replaced by the non-null parameter values.
@@ -225,16 +231,16 @@ _$AllProjectsStateCopyWith<_AllProjectsState> get copyWith => __$AllProjectsStat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AllProjectsState&&const DeepCollectionEquality().equals(other._projects, _projects)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AllProjectsState&&const DeepCollectionEquality().equals(other._projects, _projects)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.isExporting, isExporting) || other.isExporting == isExporting)&&(identical(other.exportFilePath, exportFilePath) || other.exportFilePath == exportFilePath)&&(identical(other.exportError, exportError) || other.exportError == exportError));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_projects),isLoading,errorMessage);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_projects),isLoading,errorMessage,isExporting,exportFilePath,exportError);
 
 @override
 String toString() {
-  return 'AllProjectsState(projects: $projects, isLoading: $isLoading, errorMessage: $errorMessage)';
+  return 'AllProjectsState(projects: $projects, isLoading: $isLoading, errorMessage: $errorMessage, isExporting: $isExporting, exportFilePath: $exportFilePath, exportError: $exportError)';
 }
 
 
@@ -245,7 +251,7 @@ abstract mixin class _$AllProjectsStateCopyWith<$Res> implements $AllProjectsSta
   factory _$AllProjectsStateCopyWith(_AllProjectsState value, $Res Function(_AllProjectsState) _then) = __$AllProjectsStateCopyWithImpl;
 @override @useResult
 $Res call({
- List<Project> projects, bool isLoading, String? errorMessage
+ List<Project> projects, bool isLoading, String? errorMessage, bool isExporting, String? exportFilePath, String? exportError
 });
 
 
@@ -262,11 +268,14 @@ class __$AllProjectsStateCopyWithImpl<$Res>
 
 /// Create a copy of AllProjectsState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? projects = null,Object? isLoading = null,Object? errorMessage = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? projects = null,Object? isLoading = null,Object? errorMessage = freezed,Object? isExporting = null,Object? exportFilePath = freezed,Object? exportError = freezed,}) {
   return _then(_AllProjectsState(
 projects: null == projects ? _self._projects : projects // ignore: cast_nullable_to_non_nullable
 as List<Project>,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
+as String?,isExporting: null == isExporting ? _self.isExporting : isExporting // ignore: cast_nullable_to_non_nullable
+as bool,exportFilePath: freezed == exportFilePath ? _self.exportFilePath : exportFilePath // ignore: cast_nullable_to_non_nullable
+as String?,exportError: freezed == exportError ? _self.exportError : exportError // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

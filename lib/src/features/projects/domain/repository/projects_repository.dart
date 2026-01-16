@@ -1,4 +1,5 @@
 import 'package:contrack/src/core/common/enums/project_status.dart';
+import 'package:contrack/src/core/database/tables/export_history.dart';
 import 'package:contrack/src/features/dashboard/domain/entities/project.dart';
 import 'package:contrack/src/features/dashboard/domain/entities/project_with_details.dart';
 import 'package:contrack/src/features/projects/domain/entities/geopolitical_zone.dart';
@@ -30,6 +31,17 @@ abstract class ProjectsRepository {
   Future<List<SupervisingMinistry>> getSupervisingMinistries(int agencyId);
   Future<ProjectWithDetails?> getProjectByCode(String code);
   Stream<List<Project>> watchProjectsForUser({
+    String? query,
+    ProjectFilter filter = const ProjectFilter(),
+  });
+
+  Future<String> exportProject({
+    required ProjectWithDetails project,
+    required ExportFormat format,
+  });
+
+  Future<String> exportAllProjects({
+    required ExportFormat format,
     String? query,
     ProjectFilter filter = const ProjectFilter(),
   });

@@ -1,5 +1,7 @@
 import 'package:contrack/src/app/data/models/models.dart';
+import 'package:contrack/src/core/audit/audit_service.dart';
 import 'package:contrack/src/core/common/enums/project_status.dart';
+import 'package:contrack/src/core/database/tables/export_history.dart';
 import 'package:contrack/src/core/session/user_session.dart';
 import 'package:contrack/src/features/dashboard/domain/entities/project.dart';
 import 'package:contrack/src/features/dashboard/domain/entities/project_with_details.dart';
@@ -11,14 +13,22 @@ import 'package:contrack/src/features/projects/domain/entities/nigerian_state.da
 import 'package:contrack/src/features/projects/domain/entities/sort_field.dart';
 import 'package:contrack/src/features/projects/domain/entities/supervising_ministry.dart';
 import 'package:contrack/src/features/projects/domain/repository/projects_repository.dart';
+import 'package:contrack/src/features/projects/domain/services/project_export_service.dart';
 import 'package:injectable/injectable.dart';
 
 @LazySingleton(as: ProjectsRepository)
 class ProjectsRepositoryImpl implements ProjectsRepository {
   final ProjectsLocalDataSource _localDataSource;
   final UserSession _userSession;
+  final ProjectExportService _exportService;
+  final AuditService _auditService;
 
-  ProjectsRepositoryImpl(this._localDataSource, this._userSession);
+  ProjectsRepositoryImpl(
+    this._localDataSource,
+    this._userSession,
+    this._exportService,
+    this._auditService,
+  );
 
   @override
   String generateProjectCode({DateTime? date}) {
@@ -127,5 +137,82 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
     return _localDataSource
         .watchProjectsForUser(user.id, user.role, query: query, filter: filter)
         .map((models) => models.map((model) => model.toEntity()).toList());
+  }
+
+  @override
+  Future<String> exportProject({
+    required ProjectWithDetails project,
+    required ExportFormat format,
+  }) async {
+    final user = _userSession.currentUser;
+    if (user == null) {
+      throw Exception('User not logged in');
+    }
+
+    final filePath = await _exportService.exportProject(project, format);
+    final fileName = filePath.split('/').last;
+
+    await _localDataSource.recordExport(
+      userId: user.id,
+      projectId: project.id,
+      format: format,
+      fileName: fileName,
+      recordCount: 1,
+    );
+
+    await _auditService.logExport(
+      userId: user.id,
+      projectId: project.id,
+      fileName: fileName,
+    );
+
+    return filePath;
+  }
+
+  @override
+  Future<String> exportAllProjects({
+    required ExportFormat format,
+    String? query,
+    ProjectFilter filter = const ProjectFilter(),
+  }) async {
+    final user = _userSession.currentUser;
+    if (user == null) {
+      throw Exception('User not logged in');
+    }
+
+    final projects = await _localDataSource.getAllProjectsWithDetails(
+      user.id,
+      user.role,
+      query: query,
+      filter: filter,
+    );
+
+    if (projects.isEmpty) {
+      throw Exception('No projects to export');
+    }
+
+    final filePath = await _exportService.exportProjects(
+      projects.map((model) => model.toEntity()).toList(),
+      format,
+    );
+    final fileName = filePath.split('/').last;
+
+    for (final project in projects) {
+      await _localDataSource.recordExport(
+        userId: user.id,
+        projectId: project.id,
+        format: format,
+        fileName: fileName,
+        recordCount: projects.length,
+      );
+
+      await _auditService.logExport(
+        userId: user.id,
+        projectId: project.id,
+        fileName: fileName,
+      );
+    }
+
+    return filePath;
   }
 }

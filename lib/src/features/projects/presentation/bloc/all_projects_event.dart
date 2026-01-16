@@ -19,3 +19,12 @@ class AllProjectsWatchStarted extends AllProjectsEvent {
   @override
   List<Object?> get props => [query, filter];
 }
+
+class AllProjectsExportRequested extends AllProjectsEvent {
+  const AllProjectsExportRequested(this.format);
+
+  final ExportFormat format;
+
+  @override
+  List<Object?> get props => [format];
+}
