@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$UserProfileModel {
 
- String get id; String get userName; String get fullName; String get email; String? get phone; DateTime get createdAt; DateTime? get lastLoginAt; List<UserRoleInfo> get userRoles;
+ String get id; String get userName; String? get fullName; String get email; String? get phone; DateTime get createdAt; DateTime? get lastLoginAt; List<UserRoleInfo> get userRoles;
 /// Create a copy of UserProfileModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $UserProfileModelCopyWith<$Res>  {
   factory $UserProfileModelCopyWith(UserProfileModel value, $Res Function(UserProfileModel) _then) = _$UserProfileModelCopyWithImpl;
 @useResult
 $Res call({
- String id, String userName, String fullName, String email, String? phone, DateTime createdAt, DateTime? lastLoginAt, List<UserRoleInfo> userRoles
+ String id, String userName, String? fullName, String email, String? phone, DateTime createdAt, DateTime? lastLoginAt, List<UserRoleInfo> userRoles
 });
 
 
@@ -65,12 +65,12 @@ class _$UserProfileModelCopyWithImpl<$Res>
 
 /// Create a copy of UserProfileModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? userName = null,Object? fullName = null,Object? email = null,Object? phone = freezed,Object? createdAt = null,Object? lastLoginAt = freezed,Object? userRoles = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? userName = null,Object? fullName = freezed,Object? email = null,Object? phone = freezed,Object? createdAt = null,Object? lastLoginAt = freezed,Object? userRoles = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,userName: null == userName ? _self.userName : userName // ignore: cast_nullable_to_non_nullable
-as String,fullName: null == fullName ? _self.fullName : fullName // ignore: cast_nullable_to_non_nullable
-as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+as String,fullName: freezed == fullName ? _self.fullName : fullName // ignore: cast_nullable_to_non_nullable
+as String?,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,phone: freezed == phone ? _self.phone : phone // ignore: cast_nullable_to_non_nullable
 as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,lastLoginAt: freezed == lastLoginAt ? _self.lastLoginAt : lastLoginAt // ignore: cast_nullable_to_non_nullable
@@ -157,7 +157,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String userName,  String fullName,  String email,  String? phone,  DateTime createdAt,  DateTime? lastLoginAt,  List<UserRoleInfo> userRoles)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String userName,  String? fullName,  String email,  String? phone,  DateTime createdAt,  DateTime? lastLoginAt,  List<UserRoleInfo> userRoles)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UserProfileModel() when $default != null:
 return $default(_that.id,_that.userName,_that.fullName,_that.email,_that.phone,_that.createdAt,_that.lastLoginAt,_that.userRoles);case _:
@@ -178,7 +178,7 @@ return $default(_that.id,_that.userName,_that.fullName,_that.email,_that.phone,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String userName,  String fullName,  String email,  String? phone,  DateTime createdAt,  DateTime? lastLoginAt,  List<UserRoleInfo> userRoles)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String userName,  String? fullName,  String email,  String? phone,  DateTime createdAt,  DateTime? lastLoginAt,  List<UserRoleInfo> userRoles)  $default,) {final _that = this;
 switch (_that) {
 case _UserProfileModel():
 return $default(_that.id,_that.userName,_that.fullName,_that.email,_that.phone,_that.createdAt,_that.lastLoginAt,_that.userRoles);}
@@ -195,7 +195,7 @@ return $default(_that.id,_that.userName,_that.fullName,_that.email,_that.phone,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String userName,  String fullName,  String email,  String? phone,  DateTime createdAt,  DateTime? lastLoginAt,  List<UserRoleInfo> userRoles)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String userName,  String? fullName,  String email,  String? phone,  DateTime createdAt,  DateTime? lastLoginAt,  List<UserRoleInfo> userRoles)?  $default,) {final _that = this;
 switch (_that) {
 case _UserProfileModel() when $default != null:
 return $default(_that.id,_that.userName,_that.fullName,_that.email,_that.phone,_that.createdAt,_that.lastLoginAt,_that.userRoles);case _:
@@ -215,7 +215,7 @@ class _UserProfileModel extends UserProfileModel {
 
 @override final  String id;
 @override final  String userName;
-@override final  String fullName;
+@override final  String? fullName;
 @override final  String email;
 @override final  String? phone;
 @override final  DateTime createdAt;
@@ -261,7 +261,7 @@ abstract mixin class _$UserProfileModelCopyWith<$Res> implements $UserProfileMod
   factory _$UserProfileModelCopyWith(_UserProfileModel value, $Res Function(_UserProfileModel) _then) = __$UserProfileModelCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String userName, String fullName, String email, String? phone, DateTime createdAt, DateTime? lastLoginAt, List<UserRoleInfo> userRoles
+ String id, String userName, String? fullName, String email, String? phone, DateTime createdAt, DateTime? lastLoginAt, List<UserRoleInfo> userRoles
 });
 
 
@@ -278,12 +278,12 @@ class __$UserProfileModelCopyWithImpl<$Res>
 
 /// Create a copy of UserProfileModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? userName = null,Object? fullName = null,Object? email = null,Object? phone = freezed,Object? createdAt = null,Object? lastLoginAt = freezed,Object? userRoles = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? userName = null,Object? fullName = freezed,Object? email = null,Object? phone = freezed,Object? createdAt = null,Object? lastLoginAt = freezed,Object? userRoles = null,}) {
   return _then(_UserProfileModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,userName: null == userName ? _self.userName : userName // ignore: cast_nullable_to_non_nullable
-as String,fullName: null == fullName ? _self.fullName : fullName // ignore: cast_nullable_to_non_nullable
-as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+as String,fullName: freezed == fullName ? _self.fullName : fullName // ignore: cast_nullable_to_non_nullable
+as String?,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,phone: freezed == phone ? _self.phone : phone // ignore: cast_nullable_to_non_nullable
 as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,lastLoginAt: freezed == lastLoginAt ? _self.lastLoginAt : lastLoginAt // ignore: cast_nullable_to_non_nullable

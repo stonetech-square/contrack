@@ -6,7 +6,6 @@ import 'package:contrack/src/app/presentation/widgets/widgets.dart';
 import 'package:contrack/src/app/router/app_router.dart';
 import 'package:contrack/src/app/theme/app_colors.dart';
 import 'package:contrack/src/app/theme/app_typography.dart';
-import 'package:contrack/src/core/common/enums/user_role.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -25,7 +24,7 @@ class AuthenticatedShellScreen extends StatelessWidget {
           routes: [
             const DashboardRoute(),
             const ShellProjectRoute(),
-            if (state.user?.role == UserRole.admin) ...[const ReportRoute()],
+            if (state.user?.role.isAnyAdmin ?? false) ...[const ReportRoute()],
           ],
           lazyLoad: false,
           transitionBuilder: (context, child, animation) =>
@@ -49,7 +48,7 @@ class AuthenticatedShellScreen extends StatelessWidget {
                     destinations: [
                       AppSidebarDestination.dashboard,
                       AppSidebarDestination.projects,
-                      if (state.user?.role == UserRole.admin) ...[
+                      if (state.user?.role.isAnyAdmin ?? false) ...[
                         AppSidebarDestination.reports,
                         AppSidebarDestination.syncStatus,
                         AppSidebarDestination.userManagement,

@@ -25,7 +25,7 @@ class AuthRepositoryImpl implements AuthRepository {
         throw AppFailure('User Profile not found');
       }
       await _userSession.setUser(
-        fullName: remoteUser.fullName,
+        fullName: remoteUser.fullName ?? remoteUser.userName,
         email: remoteUser.email,
         username: remoteUser.userName,
         uid: remoteUser.id,

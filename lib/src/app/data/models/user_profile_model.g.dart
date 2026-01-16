@@ -10,7 +10,7 @@ _UserProfileModel _$UserProfileModelFromJson(Map<String, dynamic> json) =>
     _UserProfileModel(
       id: json['id'] as String,
       userName: json['user_name'] as String,
-      fullName: json['full_name'] as String,
+      fullName: json['full_name'] as String?,
       email: json['email'] as String,
       phone: json['phone'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String),

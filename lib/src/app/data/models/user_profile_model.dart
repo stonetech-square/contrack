@@ -13,7 +13,7 @@ sealed class UserProfileModel with _$UserProfileModel {
   const factory UserProfileModel({
     required String id,
     required String userName,
-    required String fullName,
+    required String? fullName,
     required String email,
     required String? phone,
     required DateTime createdAt,
@@ -33,7 +33,7 @@ sealed class UserProfileModel with _$UserProfileModel {
       id: 0,
       uid: id,
       username: userName,
-      fullName: fullName,
+      fullName: fullName ?? userName,
       email: email,
       role: role,
       isActive: isActive,
