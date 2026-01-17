@@ -2,7 +2,6 @@ import 'package:contrack/src/core/common/enums/project_status.dart';
 import 'package:equatable/equatable.dart';
 
 class Project extends Equatable {
-  final int id;
   final String code;
   final ProjectStatus status;
   final int agencyId;
@@ -22,7 +21,6 @@ class Project extends Equatable {
   final String? remoteId;
 
   const Project({
-    required this.id,
     required this.code,
     required this.status,
     required this.agencyId,
@@ -44,7 +42,6 @@ class Project extends Equatable {
 
   factory Project.empty(String code) {
     return Project(
-      id: 0,
       code: code,
       status: ProjectStatus.notStarted,
       agencyId: 0,
@@ -62,7 +59,6 @@ class Project extends Equatable {
   }
 
   Project copyWith({
-    int? id,
     String? code,
     ProjectStatus? status,
     int? agencyId,
@@ -82,7 +78,6 @@ class Project extends Equatable {
     String? remoteId,
   }) {
     return Project(
-      id: id ?? this.id,
       code: code ?? this.code,
       status: status ?? this.status,
       agencyId: agencyId ?? this.agencyId,
@@ -105,7 +100,6 @@ class Project extends Equatable {
 
   @override
   List<Object?> get props => [
-    id,
     code,
     status,
     agencyId,
@@ -124,4 +118,9 @@ class Project extends Equatable {
     lastSyncedAt,
     remoteId,
   ];
+
+  @override
+  String toString() {
+    return 'Project(code: $code, status: $status, agencyId: $agencyId, ministryId: $ministryId, stateId: $stateId, zoneId: $zoneId, constituency: $constituency, amount: $amount, sponsor: $sponsor, title: $title, createdBy: $createdBy, modifiedBy: $modifiedBy, createdAt: $createdAt, updatedAt: $updatedAt, isSynced: $isSynced, lastSyncedAt: $lastSyncedAt, remoteId: $remoteId)';
+  }
 }

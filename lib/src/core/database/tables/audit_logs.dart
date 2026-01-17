@@ -5,7 +5,7 @@ class AuditLogs extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get userId => integer().references(Users, #id)();
   TextColumn get tableNameRef => text().withLength(min: 1, max: 50)();
-  IntColumn get recordId => integer().nullable()();
+  TextColumn get recordId => text().nullable()();
   TextColumn get action => textEnum<AuditAction>()();
   TextColumn get oldValues => text().nullable()(); // JSON string
   TextColumn get newValues => text().nullable()(); // JSON string

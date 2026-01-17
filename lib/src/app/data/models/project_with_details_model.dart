@@ -1,5 +1,6 @@
 import 'package:contrack/src/core/common/enums/project_status.dart';
 import 'package:contrack/src/features/dashboard/domain/entities/project_with_details.dart';
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'project_with_details_model.freezed.dart';
@@ -11,7 +12,6 @@ sealed class ProjectWithDetailsModel with _$ProjectWithDetailsModel {
 
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory ProjectWithDetailsModel({
-    required int id,
     required String code,
     required ProjectStatus status,
     required int agencyId,
@@ -40,7 +40,6 @@ sealed class ProjectWithDetailsModel with _$ProjectWithDetailsModel {
 
   ProjectWithDetails toEntity() {
     return ProjectWithDetails(
-      id: id,
       code: code,
       status: status,
       agencyId: agencyId,

@@ -4,8 +4,10 @@ import 'package:contrack/src/core/common/enums/project_status.dart';
 import 'package:drift/drift.dart';
 
 class Projects extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  TextColumn get code => text().withLength(min: 1, max: 100).unique()();
+  // code is the primary key - enables efficient batch upserts
+  @override
+  Set<Column> get primaryKey => {code};
+  TextColumn get code => text().withLength(min: 1, max: 100)();
   TextColumn get status => textEnum<ProjectStatus>()();
   IntColumn get agencyId => integer().references(Agencies, #id)();
   IntColumn get ministryId => integer().references(Ministries, #id)();

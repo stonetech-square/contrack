@@ -124,7 +124,7 @@ class SyncActionImpl implements SyncAction {
 
     await (_database.update(
       _database.projects,
-    )..where((t) => t.id.equals(project.id))).write(
+    )..where((t) => t.code.equals(project.code))).write(
       db.ProjectsCompanion(
         remoteId: Value(remoteId),
         isSynced: Value(true),
@@ -167,7 +167,7 @@ class SyncActionImpl implements SyncAction {
 
     await (_database.update(
       _database.projects,
-    )..where((t) => t.id.equals(project.id))).write(
+    )..where((t) => t.code.equals(project.code))).write(
       db.ProjectsCompanion(
         isSynced: Value(true),
         lastSyncedAt: Value(DateTime.now()),
@@ -640,8 +640,8 @@ class SyncActionImpl implements SyncAction {
     }
 
     final companion = db.ProjectsCompanion(
-      remoteId: Value(remoteId),
       code: Value(code),
+      remoteId: Value(remoteId),
       status: Value(status),
       agencyId: Value(agency.id),
       ministryId: Value(ministry.id),
@@ -667,7 +667,7 @@ class SyncActionImpl implements SyncAction {
           companion,
           onConflict: DoUpdate(
             (old) => companion,
-            target: [_database.projects.remoteId],
+            target: [_database.projects.code],
           ),
         );
   }

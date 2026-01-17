@@ -13,4 +13,9 @@ class NigerianState extends Equatable {
 
   @override
   List<Object> get props => [id, name, zoneId];
+
+  @override
+  String toString() {
+    return 'NigerianState(id: $id, name: $name, zoneId: $zoneId)';
+  }
 }

@@ -44,7 +44,6 @@ sealed class ProjectEntryFormData with _$ProjectEntryFormData {
   ]);
 
   Project toProject(int createdBy) => Project(
-    id: 0,
     code: code,
     status: status.value ?? ProjectStatus.notStarted,
     agencyId: implementingAgencyId.value,

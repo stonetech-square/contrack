@@ -13,7 +13,6 @@ sealed class ProjectModel with _$ProjectModel {
   const ProjectModel._();
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory ProjectModel({
-    required int id,
     required String code,
     required ProjectStatus status,
     required int agencyId,
@@ -35,7 +34,6 @@ sealed class ProjectModel with _$ProjectModel {
 
   factory ProjectModel.fromDrift(Project driftProject) {
     return ProjectModel(
-      id: driftProject.id,
       code: driftProject.code,
       status: driftProject.status,
       agencyId: driftProject.agencyId,
@@ -61,7 +59,6 @@ sealed class ProjectModel with _$ProjectModel {
 
   entity.Project toEntity() {
     return entity.Project(
-      id: id,
       code: code,
       status: status,
       agencyId: agencyId,
@@ -84,7 +81,6 @@ sealed class ProjectModel with _$ProjectModel {
 
   static ProjectModel fromEntity(entity.Project project) {
     return ProjectModel(
-      id: project.id,
       code: project.code,
       status: project.status,
       agencyId: project.agencyId,
@@ -107,7 +103,6 @@ sealed class ProjectModel with _$ProjectModel {
 
   ProjectsCompanion toDriftCompanion() {
     return ProjectsCompanion(
-      id: id <= 0 ? const Value.absent() : Value(id),
       code: Value(code),
       status: Value(status),
       agencyId: Value(agencyId),

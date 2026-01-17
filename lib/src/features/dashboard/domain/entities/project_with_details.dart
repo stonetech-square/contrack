@@ -3,7 +3,6 @@ import 'package:equatable/equatable.dart';
 
 /// Project entity enriched with related entity names from JOINs
 class ProjectWithDetails extends Equatable {
-  final int id;
   final String code;
   final ProjectStatus status;
   final int agencyId;
@@ -27,7 +26,6 @@ class ProjectWithDetails extends Equatable {
   final String? remoteId;
 
   const ProjectWithDetails({
-    required this.id,
     required this.code,
     required this.status,
     required this.agencyId,
@@ -53,27 +51,26 @@ class ProjectWithDetails extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        code,
-        status,
-        agencyId,
-        agencyName,
-        ministryId,
-        ministryName,
-        stateId,
-        stateName,
-        zoneId,
-        zoneName,
-        constituency,
-        amount,
-        sponsor,
-        title,
-        createdBy,
-        modifiedBy,
-        createdAt,
-        updatedAt,
-        isSynced,
-        lastSyncedAt,
-        remoteId,
-      ];
+    code,
+    status,
+    agencyId,
+    agencyName,
+    ministryId,
+    ministryName,
+    stateId,
+    stateName,
+    zoneId,
+    zoneName,
+    constituency,
+    amount,
+    sponsor,
+    title,
+    createdBy,
+    modifiedBy,
+    createdAt,
+    updatedAt,
+    isSynced,
+    lastSyncedAt,
+    remoteId,
+  ];
 }

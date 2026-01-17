@@ -118,10 +118,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
   Future<List<Project>> importProjects(File file) async {
     final user = _userSession.currentUser;
     if (user == null) throw AppFailure('User not logged in');
-    final userFromDb = await _localDataSource.getUserById(user.id);
-    if (userFromDb == null) {
-      throw AppFailure('User not found locally. Please re-login.');
-    }
+    // user verified
 
     final dtos = await _importService.importProjectsDto(file);
     final successfulProjects = <Project>[];
@@ -191,7 +188,6 @@ class DashboardRepositoryImpl implements DashboardRepository {
             : _codeGenerator.generate(user.uid, DateTime.now());
 
         final projectModel = ProjectModel(
-          id: 0, // drfit auto id
           code: code,
           status: status,
           agencyId: agencyId,

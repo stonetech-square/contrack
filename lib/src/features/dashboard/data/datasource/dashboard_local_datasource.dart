@@ -28,7 +28,6 @@ abstract class DashboardLocalDataSource {
   Future<List<Agency>> getAllImplementingAgencies();
   Future<List<State>> getStatesByZoneId(int zoneId);
   Future<List<Ministry>> getMinistriesByAgencyId(int agencyId);
-  Future<void> upsertProject(ProjectModel project);
   Future<User?> getUserById(int id);
 }
 
@@ -106,7 +105,6 @@ class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
         final zone = row.readTableOrNull(database.geopoliticalZones);
 
         return ProjectWithDetailsModel(
-          id: project.id,
           code: project.code,
           status: project.status,
           agencyId: project.agencyId,
@@ -141,9 +139,9 @@ class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
         unsyncedPredicate & _buildRoleBasedPredicate(userId, role);
 
     return (database.selectOnly(database.projects)
-          ..addColumns([database.projects.id.count()])
+          ..addColumns([database.projects.code.count()])
           ..where(predicate))
-        .map((row) => row.read(database.projects.id.count()) ?? 0)
+        .map((row) => row.read(database.projects.code.count()) ?? 0)
         .watchSingle();
   }
 
@@ -153,7 +151,7 @@ class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
     UserRole role,
   ) {
     final query = database.selectOnly(database.projects)
-      ..addColumns([database.projects.status, database.projects.id.count()])
+      ..addColumns([database.projects.status, database.projects.code.count()])
       ..where(_buildRoleBasedPredicate(userId, role))
       ..groupBy([database.projects.status]);
 
@@ -164,7 +162,7 @@ class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
         final statusName = row.read(database.projects.status);
         if (statusName != null) {
           final status = ProjectStatus.values.byName(statusName);
-          counts[status] = row.read(database.projects.id.count()) ?? 0;
+          counts[status] = row.read(database.projects.code.count()) ?? 0;
         }
       }
 
@@ -194,22 +192,6 @@ class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
     return await (database.select(
       database.ministries,
     )..where((t) => t.agencyId.equals(agencyId))).get();
-  }
-
-  @override
-  Future<void> upsertProject(ProjectModel project) async {
-    await database
-        .into(database.projects)
-        .insert(
-          project.toDriftCompanion(),
-          onConflict: DoUpdate(
-            (old) => project.toDriftCompanion().copyWith(
-              id: const Value.absent(),
-              createdAt: const Value.absent(),
-            ),
-            target: [database.projects.code],
-          ),
-        );
   }
 
   @override

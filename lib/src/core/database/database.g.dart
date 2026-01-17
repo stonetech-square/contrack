@@ -2481,19 +2481,6 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $ProjectsTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
-    'id',
-    aliasedName,
-    false,
-    hasAutoIncrement: true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
-  );
   static const VerificationMeta _codeMeta = const VerificationMeta('code');
   @override
   late final GeneratedColumn<String> code = GeneratedColumn<String>(
@@ -2724,7 +2711,6 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
   );
   @override
   List<GeneratedColumn> get $columns => [
-    id,
     code,
     status,
     agencyId,
@@ -2757,9 +2743,6 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
   }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
     if (data.containsKey('code')) {
       context.handle(
         _codeMeta,
@@ -2896,15 +2879,11 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {id};
+  Set<GeneratedColumn> get $primaryKey => {code};
   @override
   Project map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return Project(
-      id: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}id'],
-      )!,
       code: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}code'],
@@ -2996,7 +2975,6 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
 }
 
 class Project extends DataClass implements Insertable<Project> {
-  final int id;
   final String code;
   final ProjectStatus status;
   final int agencyId;
@@ -3017,7 +2995,6 @@ class Project extends DataClass implements Insertable<Project> {
   final DateTime? startDate;
   final DateTime? endDate;
   const Project({
-    required this.id,
     required this.code,
     required this.status,
     required this.agencyId,
@@ -3041,7 +3018,6 @@ class Project extends DataClass implements Insertable<Project> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
     map['code'] = Variable<String>(code);
     {
       map['status'] = Variable<String>(
@@ -3082,7 +3058,6 @@ class Project extends DataClass implements Insertable<Project> {
 
   ProjectsCompanion toCompanion(bool nullToAbsent) {
     return ProjectsCompanion(
-      id: Value(id),
       code: Value(code),
       status: Value(status),
       agencyId: Value(agencyId),
@@ -3123,7 +3098,6 @@ class Project extends DataClass implements Insertable<Project> {
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Project(
-      id: serializer.fromJson<int>(json['id']),
       code: serializer.fromJson<String>(json['code']),
       status: $ProjectsTable.$converterstatus.fromJson(
         serializer.fromJson<String>(json['status']),
@@ -3151,7 +3125,6 @@ class Project extends DataClass implements Insertable<Project> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
       'code': serializer.toJson<String>(code),
       'status': serializer.toJson<String>(
         $ProjectsTable.$converterstatus.toJson(status),
@@ -3177,7 +3150,6 @@ class Project extends DataClass implements Insertable<Project> {
   }
 
   Project copyWith({
-    int? id,
     String? code,
     ProjectStatus? status,
     int? agencyId,
@@ -3198,7 +3170,6 @@ class Project extends DataClass implements Insertable<Project> {
     Value<DateTime?> startDate = const Value.absent(),
     Value<DateTime?> endDate = const Value.absent(),
   }) => Project(
-    id: id ?? this.id,
     code: code ?? this.code,
     status: status ?? this.status,
     agencyId: agencyId ?? this.agencyId,
@@ -3221,7 +3192,6 @@ class Project extends DataClass implements Insertable<Project> {
   );
   Project copyWithCompanion(ProjectsCompanion data) {
     return Project(
-      id: data.id.present ? data.id.value : this.id,
       code: data.code.present ? data.code.value : this.code,
       status: data.status.present ? data.status.value : this.status,
       agencyId: data.agencyId.present ? data.agencyId.value : this.agencyId,
@@ -3255,7 +3225,6 @@ class Project extends DataClass implements Insertable<Project> {
   @override
   String toString() {
     return (StringBuffer('Project(')
-          ..write('id: $id, ')
           ..write('code: $code, ')
           ..write('status: $status, ')
           ..write('agencyId: $agencyId, ')
@@ -3281,7 +3250,6 @@ class Project extends DataClass implements Insertable<Project> {
 
   @override
   int get hashCode => Object.hash(
-    id,
     code,
     status,
     agencyId,
@@ -3306,7 +3274,6 @@ class Project extends DataClass implements Insertable<Project> {
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Project &&
-          other.id == this.id &&
           other.code == this.code &&
           other.status == this.status &&
           other.agencyId == this.agencyId &&
@@ -3329,7 +3296,6 @@ class Project extends DataClass implements Insertable<Project> {
 }
 
 class ProjectsCompanion extends UpdateCompanion<Project> {
-  final Value<int> id;
   final Value<String> code;
   final Value<ProjectStatus> status;
   final Value<int> agencyId;
@@ -3349,8 +3315,8 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
   final Value<String?> remoteId;
   final Value<DateTime?> startDate;
   final Value<DateTime?> endDate;
+  final Value<int> rowid;
   const ProjectsCompanion({
-    this.id = const Value.absent(),
     this.code = const Value.absent(),
     this.status = const Value.absent(),
     this.agencyId = const Value.absent(),
@@ -3370,9 +3336,9 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
     this.remoteId = const Value.absent(),
     this.startDate = const Value.absent(),
     this.endDate = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   ProjectsCompanion.insert({
-    this.id = const Value.absent(),
     required String code,
     required ProjectStatus status,
     required int agencyId,
@@ -3392,6 +3358,7 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
     this.remoteId = const Value.absent(),
     this.startDate = const Value.absent(),
     this.endDate = const Value.absent(),
+    this.rowid = const Value.absent(),
   }) : code = Value(code),
        status = Value(status),
        agencyId = Value(agencyId),
@@ -3403,7 +3370,6 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
        amount = Value(amount),
        title = Value(title);
   static Insertable<Project> custom({
-    Expression<int>? id,
     Expression<String>? code,
     Expression<String>? status,
     Expression<int>? agencyId,
@@ -3423,9 +3389,9 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
     Expression<String>? remoteId,
     Expression<DateTime>? startDate,
     Expression<DateTime>? endDate,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
-      if (id != null) 'id': id,
       if (code != null) 'code': code,
       if (status != null) 'status': status,
       if (agencyId != null) 'agency_id': agencyId,
@@ -3445,11 +3411,11 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
       if (remoteId != null) 'remote_id': remoteId,
       if (startDate != null) 'start_date': startDate,
       if (endDate != null) 'end_date': endDate,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   ProjectsCompanion copyWith({
-    Value<int>? id,
     Value<String>? code,
     Value<ProjectStatus>? status,
     Value<int>? agencyId,
@@ -3469,9 +3435,9 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
     Value<String?>? remoteId,
     Value<DateTime?>? startDate,
     Value<DateTime?>? endDate,
+    Value<int>? rowid,
   }) {
     return ProjectsCompanion(
-      id: id ?? this.id,
       code: code ?? this.code,
       status: status ?? this.status,
       agencyId: agencyId ?? this.agencyId,
@@ -3491,15 +3457,13 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
       remoteId: remoteId ?? this.remoteId,
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
+      rowid: rowid ?? this.rowid,
     );
   }
 
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<int>(id.value);
-    }
     if (code.present) {
       map['code'] = Variable<String>(code.value);
     }
@@ -3559,13 +3523,15 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
     if (endDate.present) {
       map['end_date'] = Variable<DateTime>(endDate.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
   @override
   String toString() {
     return (StringBuffer('ProjectsCompanion(')
-          ..write('id: $id, ')
           ..write('code: $code, ')
           ..write('status: $status, ')
           ..write('agencyId: $agencyId, ')
@@ -3584,7 +3550,8 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
           ..write('sponsor: $sponsor, ')
           ..write('remoteId: $remoteId, ')
           ..write('startDate: $startDate, ')
-          ..write('endDate: $endDate')
+          ..write('endDate: $endDate, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -3640,11 +3607,11 @@ class $AuditLogsTable extends AuditLogs
     'recordId',
   );
   @override
-  late final GeneratedColumn<int> recordId = GeneratedColumn<int>(
+  late final GeneratedColumn<String> recordId = GeneratedColumn<String>(
     'record_id',
     aliasedName,
     true,
-    type: DriftSqlType.int,
+    type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
   @override
@@ -3799,7 +3766,7 @@ class $AuditLogsTable extends AuditLogs
         data['${effectivePrefix}table_name_ref'],
       )!,
       recordId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.string,
         data['${effectivePrefix}record_id'],
       ),
       action: $AuditLogsTable.$converteraction.fromSql(
@@ -3840,7 +3807,7 @@ class AuditLog extends DataClass implements Insertable<AuditLog> {
   final int id;
   final int userId;
   final String tableNameRef;
-  final int? recordId;
+  final String? recordId;
   final AuditAction action;
   final String? oldValues;
   final String? newValues;
@@ -3864,7 +3831,7 @@ class AuditLog extends DataClass implements Insertable<AuditLog> {
     map['user_id'] = Variable<int>(userId);
     map['table_name_ref'] = Variable<String>(tableNameRef);
     if (!nullToAbsent || recordId != null) {
-      map['record_id'] = Variable<int>(recordId);
+      map['record_id'] = Variable<String>(recordId);
     }
     {
       map['action'] = Variable<String>(
@@ -3915,7 +3882,7 @@ class AuditLog extends DataClass implements Insertable<AuditLog> {
       id: serializer.fromJson<int>(json['id']),
       userId: serializer.fromJson<int>(json['userId']),
       tableNameRef: serializer.fromJson<String>(json['tableNameRef']),
-      recordId: serializer.fromJson<int?>(json['recordId']),
+      recordId: serializer.fromJson<String?>(json['recordId']),
       action: $AuditLogsTable.$converteraction.fromJson(
         serializer.fromJson<String>(json['action']),
       ),
@@ -3932,7 +3899,7 @@ class AuditLog extends DataClass implements Insertable<AuditLog> {
       'id': serializer.toJson<int>(id),
       'userId': serializer.toJson<int>(userId),
       'tableNameRef': serializer.toJson<String>(tableNameRef),
-      'recordId': serializer.toJson<int?>(recordId),
+      'recordId': serializer.toJson<String?>(recordId),
       'action': serializer.toJson<String>(
         $AuditLogsTable.$converteraction.toJson(action),
       ),
@@ -3947,7 +3914,7 @@ class AuditLog extends DataClass implements Insertable<AuditLog> {
     int? id,
     int? userId,
     String? tableNameRef,
-    Value<int?> recordId = const Value.absent(),
+    Value<String?> recordId = const Value.absent(),
     AuditAction? action,
     Value<String?> oldValues = const Value.absent(),
     Value<String?> newValues = const Value.absent(),
@@ -4027,7 +3994,7 @@ class AuditLogsCompanion extends UpdateCompanion<AuditLog> {
   final Value<int> id;
   final Value<int> userId;
   final Value<String> tableNameRef;
-  final Value<int?> recordId;
+  final Value<String?> recordId;
   final Value<AuditAction> action;
   final Value<String?> oldValues;
   final Value<String?> newValues;
@@ -4061,7 +4028,7 @@ class AuditLogsCompanion extends UpdateCompanion<AuditLog> {
     Expression<int>? id,
     Expression<int>? userId,
     Expression<String>? tableNameRef,
-    Expression<int>? recordId,
+    Expression<String>? recordId,
     Expression<String>? action,
     Expression<String>? oldValues,
     Expression<String>? newValues,
@@ -4085,7 +4052,7 @@ class AuditLogsCompanion extends UpdateCompanion<AuditLog> {
     Value<int>? id,
     Value<int>? userId,
     Value<String>? tableNameRef,
-    Value<int?>? recordId,
+    Value<String?>? recordId,
     Value<AuditAction>? action,
     Value<String?>? oldValues,
     Value<String?>? newValues,
@@ -4118,7 +4085,7 @@ class AuditLogsCompanion extends UpdateCompanion<AuditLog> {
       map['table_name_ref'] = Variable<String>(tableNameRef.value);
     }
     if (recordId.present) {
-      map['record_id'] = Variable<int>(recordId.value);
+      map['record_id'] = Variable<String>(recordId.value);
     }
     if (action.present) {
       map['action'] = Variable<String>(
@@ -4188,18 +4155,18 @@ class $ExportHistoryTable extends ExportHistory
       'REFERENCES users (id)',
     ),
   );
-  static const VerificationMeta _projectIdMeta = const VerificationMeta(
-    'projectId',
+  static const VerificationMeta _projectCodeMeta = const VerificationMeta(
+    'projectCode',
   );
   @override
-  late final GeneratedColumn<int> projectId = GeneratedColumn<int>(
-    'project_id',
+  late final GeneratedColumn<String> projectCode = GeneratedColumn<String>(
+    'project_code',
     aliasedName,
     false,
-    type: DriftSqlType.int,
+    type: DriftSqlType.string,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES projects (id)',
+      'REFERENCES projects (code) ON DELETE CASCADE',
     ),
   );
   @override
@@ -4260,7 +4227,7 @@ class $ExportHistoryTable extends ExportHistory
   List<GeneratedColumn> get $columns => [
     id,
     userId,
-    projectId,
+    projectCode,
     format,
     recordCount,
     fileName,
@@ -4290,13 +4257,16 @@ class $ExportHistoryTable extends ExportHistory
     } else if (isInserting) {
       context.missing(_userIdMeta);
     }
-    if (data.containsKey('project_id')) {
+    if (data.containsKey('project_code')) {
       context.handle(
-        _projectIdMeta,
-        projectId.isAcceptableOrUnknown(data['project_id']!, _projectIdMeta),
+        _projectCodeMeta,
+        projectCode.isAcceptableOrUnknown(
+          data['project_code']!,
+          _projectCodeMeta,
+        ),
       );
     } else if (isInserting) {
-      context.missing(_projectIdMeta);
+      context.missing(_projectCodeMeta);
     }
     if (data.containsKey('record_count')) {
       context.handle(
@@ -4346,9 +4316,9 @@ class $ExportHistoryTable extends ExportHistory
         DriftSqlType.int,
         data['${effectivePrefix}user_id'],
       )!,
-      projectId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}project_id'],
+      projectCode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}project_code'],
       )!,
       format: $ExportHistoryTable.$converterformat.fromSql(
         attachedDatabase.typeMapping.read(
@@ -4388,7 +4358,7 @@ class ExportHistoryData extends DataClass
     implements Insertable<ExportHistoryData> {
   final int id;
   final int userId;
-  final int projectId;
+  final String projectCode;
   final ExportFormat format;
   final int recordCount;
   final String fileName;
@@ -4397,7 +4367,7 @@ class ExportHistoryData extends DataClass
   const ExportHistoryData({
     required this.id,
     required this.userId,
-    required this.projectId,
+    required this.projectCode,
     required this.format,
     required this.recordCount,
     required this.fileName,
@@ -4409,7 +4379,7 @@ class ExportHistoryData extends DataClass
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['user_id'] = Variable<int>(userId);
-    map['project_id'] = Variable<int>(projectId);
+    map['project_code'] = Variable<String>(projectCode);
     {
       map['format'] = Variable<String>(
         $ExportHistoryTable.$converterformat.toSql(format),
@@ -4428,7 +4398,7 @@ class ExportHistoryData extends DataClass
     return ExportHistoryCompanion(
       id: Value(id),
       userId: Value(userId),
-      projectId: Value(projectId),
+      projectCode: Value(projectCode),
       format: Value(format),
       recordCount: Value(recordCount),
       fileName: Value(fileName),
@@ -4447,7 +4417,7 @@ class ExportHistoryData extends DataClass
     return ExportHistoryData(
       id: serializer.fromJson<int>(json['id']),
       userId: serializer.fromJson<int>(json['userId']),
-      projectId: serializer.fromJson<int>(json['projectId']),
+      projectCode: serializer.fromJson<String>(json['projectCode']),
       format: $ExportHistoryTable.$converterformat.fromJson(
         serializer.fromJson<String>(json['format']),
       ),
@@ -4463,7 +4433,7 @@ class ExportHistoryData extends DataClass
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'userId': serializer.toJson<int>(userId),
-      'projectId': serializer.toJson<int>(projectId),
+      'projectCode': serializer.toJson<String>(projectCode),
       'format': serializer.toJson<String>(
         $ExportHistoryTable.$converterformat.toJson(format),
       ),
@@ -4477,7 +4447,7 @@ class ExportHistoryData extends DataClass
   ExportHistoryData copyWith({
     int? id,
     int? userId,
-    int? projectId,
+    String? projectCode,
     ExportFormat? format,
     int? recordCount,
     String? fileName,
@@ -4486,7 +4456,7 @@ class ExportHistoryData extends DataClass
   }) => ExportHistoryData(
     id: id ?? this.id,
     userId: userId ?? this.userId,
-    projectId: projectId ?? this.projectId,
+    projectCode: projectCode ?? this.projectCode,
     format: format ?? this.format,
     recordCount: recordCount ?? this.recordCount,
     fileName: fileName ?? this.fileName,
@@ -4497,7 +4467,9 @@ class ExportHistoryData extends DataClass
     return ExportHistoryData(
       id: data.id.present ? data.id.value : this.id,
       userId: data.userId.present ? data.userId.value : this.userId,
-      projectId: data.projectId.present ? data.projectId.value : this.projectId,
+      projectCode: data.projectCode.present
+          ? data.projectCode.value
+          : this.projectCode,
       format: data.format.present ? data.format.value : this.format,
       recordCount: data.recordCount.present
           ? data.recordCount.value
@@ -4513,7 +4485,7 @@ class ExportHistoryData extends DataClass
     return (StringBuffer('ExportHistoryData(')
           ..write('id: $id, ')
           ..write('userId: $userId, ')
-          ..write('projectId: $projectId, ')
+          ..write('projectCode: $projectCode, ')
           ..write('format: $format, ')
           ..write('recordCount: $recordCount, ')
           ..write('fileName: $fileName, ')
@@ -4527,7 +4499,7 @@ class ExportHistoryData extends DataClass
   int get hashCode => Object.hash(
     id,
     userId,
-    projectId,
+    projectCode,
     format,
     recordCount,
     fileName,
@@ -4540,7 +4512,7 @@ class ExportHistoryData extends DataClass
       (other is ExportHistoryData &&
           other.id == this.id &&
           other.userId == this.userId &&
-          other.projectId == this.projectId &&
+          other.projectCode == this.projectCode &&
           other.format == this.format &&
           other.recordCount == this.recordCount &&
           other.fileName == this.fileName &&
@@ -4551,7 +4523,7 @@ class ExportHistoryData extends DataClass
 class ExportHistoryCompanion extends UpdateCompanion<ExportHistoryData> {
   final Value<int> id;
   final Value<int> userId;
-  final Value<int> projectId;
+  final Value<String> projectCode;
   final Value<ExportFormat> format;
   final Value<int> recordCount;
   final Value<String> fileName;
@@ -4560,7 +4532,7 @@ class ExportHistoryCompanion extends UpdateCompanion<ExportHistoryData> {
   const ExportHistoryCompanion({
     this.id = const Value.absent(),
     this.userId = const Value.absent(),
-    this.projectId = const Value.absent(),
+    this.projectCode = const Value.absent(),
     this.format = const Value.absent(),
     this.recordCount = const Value.absent(),
     this.fileName = const Value.absent(),
@@ -4570,21 +4542,21 @@ class ExportHistoryCompanion extends UpdateCompanion<ExportHistoryData> {
   ExportHistoryCompanion.insert({
     this.id = const Value.absent(),
     required int userId,
-    required int projectId,
+    required String projectCode,
     required ExportFormat format,
     required int recordCount,
     required String fileName,
     this.filters = const Value.absent(),
     this.createdAt = const Value.absent(),
   }) : userId = Value(userId),
-       projectId = Value(projectId),
+       projectCode = Value(projectCode),
        format = Value(format),
        recordCount = Value(recordCount),
        fileName = Value(fileName);
   static Insertable<ExportHistoryData> custom({
     Expression<int>? id,
     Expression<int>? userId,
-    Expression<int>? projectId,
+    Expression<String>? projectCode,
     Expression<String>? format,
     Expression<int>? recordCount,
     Expression<String>? fileName,
@@ -4594,7 +4566,7 @@ class ExportHistoryCompanion extends UpdateCompanion<ExportHistoryData> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (userId != null) 'user_id': userId,
-      if (projectId != null) 'project_id': projectId,
+      if (projectCode != null) 'project_code': projectCode,
       if (format != null) 'format': format,
       if (recordCount != null) 'record_count': recordCount,
       if (fileName != null) 'file_name': fileName,
@@ -4606,7 +4578,7 @@ class ExportHistoryCompanion extends UpdateCompanion<ExportHistoryData> {
   ExportHistoryCompanion copyWith({
     Value<int>? id,
     Value<int>? userId,
-    Value<int>? projectId,
+    Value<String>? projectCode,
     Value<ExportFormat>? format,
     Value<int>? recordCount,
     Value<String>? fileName,
@@ -4616,7 +4588,7 @@ class ExportHistoryCompanion extends UpdateCompanion<ExportHistoryData> {
     return ExportHistoryCompanion(
       id: id ?? this.id,
       userId: userId ?? this.userId,
-      projectId: projectId ?? this.projectId,
+      projectCode: projectCode ?? this.projectCode,
       format: format ?? this.format,
       recordCount: recordCount ?? this.recordCount,
       fileName: fileName ?? this.fileName,
@@ -4634,8 +4606,8 @@ class ExportHistoryCompanion extends UpdateCompanion<ExportHistoryData> {
     if (userId.present) {
       map['user_id'] = Variable<int>(userId.value);
     }
-    if (projectId.present) {
-      map['project_id'] = Variable<int>(projectId.value);
+    if (projectCode.present) {
+      map['project_code'] = Variable<String>(projectCode.value);
     }
     if (format.present) {
       map['format'] = Variable<String>(
@@ -4662,7 +4634,7 @@ class ExportHistoryCompanion extends UpdateCompanion<ExportHistoryData> {
     return (StringBuffer('ExportHistoryCompanion(')
           ..write('id: $id, ')
           ..write('userId: $userId, ')
-          ..write('projectId: $projectId, ')
+          ..write('projectCode: $projectCode, ')
           ..write('format: $format, ')
           ..write('recordCount: $recordCount, ')
           ..write('fileName: $fileName, ')
@@ -4958,6 +4930,16 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     exportHistory,
     sessions,
   ];
+  @override
+  StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'projects',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('export_history', kind: UpdateKind.delete)],
+    ),
+  ]);
 }
 
 typedef $$UsersTableCreateCompanionBuilder =
@@ -7483,7 +7465,6 @@ typedef $$StatesTableProcessedTableManager =
     >;
 typedef $$ProjectsTableCreateCompanionBuilder =
     ProjectsCompanion Function({
-      Value<int> id,
       required String code,
       required ProjectStatus status,
       required int agencyId,
@@ -7503,10 +7484,10 @@ typedef $$ProjectsTableCreateCompanionBuilder =
       Value<String?> remoteId,
       Value<DateTime?> startDate,
       Value<DateTime?> endDate,
+      Value<int> rowid,
     });
 typedef $$ProjectsTableUpdateCompanionBuilder =
     ProjectsCompanion Function({
-      Value<int> id,
       Value<String> code,
       Value<ProjectStatus> status,
       Value<int> agencyId,
@@ -7526,6 +7507,7 @@ typedef $$ProjectsTableUpdateCompanionBuilder =
       Value<String?> remoteId,
       Value<DateTime?> startDate,
       Value<DateTime?> endDate,
+      Value<int> rowid,
     });
 
 final class $$ProjectsTableReferences
@@ -7644,14 +7626,17 @@ final class $$ProjectsTableReferences
   static MultiTypedResultKey<$ExportHistoryTable, List<ExportHistoryData>>
   _exportHistoryRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.exportHistory,
-    aliasName: $_aliasNameGenerator(db.projects.id, db.exportHistory.projectId),
+    aliasName: $_aliasNameGenerator(
+      db.projects.code,
+      db.exportHistory.projectCode,
+    ),
   );
 
   $$ExportHistoryTableProcessedTableManager get exportHistoryRefs {
-    final manager = $$ExportHistoryTableTableManager(
-      $_db,
-      $_db.exportHistory,
-    ).filter((f) => f.projectId.id.sqlEquals($_itemColumn<int>('id')!));
+    final manager = $$ExportHistoryTableTableManager($_db, $_db.exportHistory)
+        .filter(
+          (f) => f.projectCode.code.sqlEquals($_itemColumn<String>('code')!),
+        );
 
     final cache = $_typedResult.readTableOrNull(_exportHistoryRefsTable($_db));
     return ProcessedTableManager(
@@ -7669,11 +7654,6 @@ class $$ProjectsTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<int> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
   ColumnFilters<String> get code => $composableBuilder(
     column: $table.code,
     builder: (column) => ColumnFilters(column),
@@ -7883,9 +7863,9 @@ class $$ProjectsTableFilterComposer
   ) {
     final $$ExportHistoryTableFilterComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.id,
+      getCurrentColumn: (t) => t.code,
       referencedTable: $db.exportHistory,
-      getReferencedColumn: (t) => t.projectId,
+      getReferencedColumn: (t) => t.projectCode,
       builder:
           (
             joinBuilder, {
@@ -7913,11 +7893,6 @@ class $$ProjectsTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<int> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<String> get code => $composableBuilder(
     column: $table.code,
     builder: (column) => ColumnOrderings(column),
@@ -8131,9 +8106,6 @@ class $$ProjectsTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<int> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
-
   GeneratedColumn<String> get code =>
       $composableBuilder(column: $table.code, builder: (column) => column);
 
@@ -8321,9 +8293,9 @@ class $$ProjectsTableAnnotationComposer
   ) {
     final $$ExportHistoryTableAnnotationComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.id,
+      getCurrentColumn: (t) => t.code,
       referencedTable: $db.exportHistory,
-      getReferencedColumn: (t) => t.projectId,
+      getReferencedColumn: (t) => t.projectCode,
       builder:
           (
             joinBuilder, {
@@ -8378,7 +8350,6 @@ class $$ProjectsTableTableManager
               $$ProjectsTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
-                Value<int> id = const Value.absent(),
                 Value<String> code = const Value.absent(),
                 Value<ProjectStatus> status = const Value.absent(),
                 Value<int> agencyId = const Value.absent(),
@@ -8398,8 +8369,8 @@ class $$ProjectsTableTableManager
                 Value<String?> remoteId = const Value.absent(),
                 Value<DateTime?> startDate = const Value.absent(),
                 Value<DateTime?> endDate = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
               }) => ProjectsCompanion(
-                id: id,
                 code: code,
                 status: status,
                 agencyId: agencyId,
@@ -8419,10 +8390,10 @@ class $$ProjectsTableTableManager
                 remoteId: remoteId,
                 startDate: startDate,
                 endDate: endDate,
+                rowid: rowid,
               ),
           createCompanionCallback:
               ({
-                Value<int> id = const Value.absent(),
                 required String code,
                 required ProjectStatus status,
                 required int agencyId,
@@ -8442,8 +8413,8 @@ class $$ProjectsTableTableManager
                 Value<String?> remoteId = const Value.absent(),
                 Value<DateTime?> startDate = const Value.absent(),
                 Value<DateTime?> endDate = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
               }) => ProjectsCompanion.insert(
-                id: id,
                 code: code,
                 status: status,
                 agencyId: agencyId,
@@ -8463,6 +8434,7 @@ class $$ProjectsTableTableManager
                 remoteId: remoteId,
                 startDate: startDate,
                 endDate: endDate,
+                rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -8603,7 +8575,7 @@ class $$ProjectsTableTableManager
                               ).exportHistoryRefs,
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
-                                (e) => e.projectId == item.id,
+                                (e) => e.projectCode == item.code,
                               ),
                           typedResults: items,
                         ),
@@ -8642,7 +8614,7 @@ typedef $$AuditLogsTableCreateCompanionBuilder =
       Value<int> id,
       required int userId,
       required String tableNameRef,
-      Value<int?> recordId,
+      Value<String?> recordId,
       required AuditAction action,
       Value<String?> oldValues,
       Value<String?> newValues,
@@ -8654,7 +8626,7 @@ typedef $$AuditLogsTableUpdateCompanionBuilder =
       Value<int> id,
       Value<int> userId,
       Value<String> tableNameRef,
-      Value<int?> recordId,
+      Value<String?> recordId,
       Value<AuditAction> action,
       Value<String?> oldValues,
       Value<String?> newValues,
@@ -8704,7 +8676,7 @@ class $$AuditLogsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get recordId => $composableBuilder(
+  ColumnFilters<String> get recordId => $composableBuilder(
     column: $table.recordId,
     builder: (column) => ColumnFilters(column),
   );
@@ -8778,7 +8750,7 @@ class $$AuditLogsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get recordId => $composableBuilder(
+  ColumnOrderings<String> get recordId => $composableBuilder(
     column: $table.recordId,
     builder: (column) => ColumnOrderings(column),
   );
@@ -8849,7 +8821,7 @@ class $$AuditLogsTableAnnotationComposer
     builder: (column) => column,
   );
 
-  GeneratedColumn<int> get recordId =>
+  GeneratedColumn<String> get recordId =>
       $composableBuilder(column: $table.recordId, builder: (column) => column);
 
   GeneratedColumnWithTypeConverter<AuditAction, String> get action =>
@@ -8922,7 +8894,7 @@ class $$AuditLogsTableTableManager
                 Value<int> id = const Value.absent(),
                 Value<int> userId = const Value.absent(),
                 Value<String> tableNameRef = const Value.absent(),
-                Value<int?> recordId = const Value.absent(),
+                Value<String?> recordId = const Value.absent(),
                 Value<AuditAction> action = const Value.absent(),
                 Value<String?> oldValues = const Value.absent(),
                 Value<String?> newValues = const Value.absent(),
@@ -8944,7 +8916,7 @@ class $$AuditLogsTableTableManager
                 Value<int> id = const Value.absent(),
                 required int userId,
                 required String tableNameRef,
-                Value<int?> recordId = const Value.absent(),
+                Value<String?> recordId = const Value.absent(),
                 required AuditAction action,
                 Value<String?> oldValues = const Value.absent(),
                 Value<String?> newValues = const Value.absent(),
@@ -9032,7 +9004,7 @@ typedef $$ExportHistoryTableCreateCompanionBuilder =
     ExportHistoryCompanion Function({
       Value<int> id,
       required int userId,
-      required int projectId,
+      required String projectCode,
       required ExportFormat format,
       required int recordCount,
       required String fileName,
@@ -9043,7 +9015,7 @@ typedef $$ExportHistoryTableUpdateCompanionBuilder =
     ExportHistoryCompanion Function({
       Value<int> id,
       Value<int> userId,
-      Value<int> projectId,
+      Value<String> projectCode,
       Value<ExportFormat> format,
       Value<int> recordCount,
       Value<String> fileName,
@@ -9078,19 +9050,19 @@ final class $$ExportHistoryTableReferences
     );
   }
 
-  static $ProjectsTable _projectIdTable(_$AppDatabase db) =>
+  static $ProjectsTable _projectCodeTable(_$AppDatabase db) =>
       db.projects.createAlias(
-        $_aliasNameGenerator(db.exportHistory.projectId, db.projects.id),
+        $_aliasNameGenerator(db.exportHistory.projectCode, db.projects.code),
       );
 
-  $$ProjectsTableProcessedTableManager get projectId {
-    final $_column = $_itemColumn<int>('project_id')!;
+  $$ProjectsTableProcessedTableManager get projectCode {
+    final $_column = $_itemColumn<String>('project_code')!;
 
     final manager = $$ProjectsTableTableManager(
       $_db,
       $_db.projects,
-    ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_projectIdTable($_db));
+    ).filter((f) => f.code.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_projectCodeTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
@@ -9161,12 +9133,12 @@ class $$ExportHistoryTableFilterComposer
     return composer;
   }
 
-  $$ProjectsTableFilterComposer get projectId {
+  $$ProjectsTableFilterComposer get projectCode {
     final $$ProjectsTableFilterComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.projectId,
+      getCurrentColumn: (t) => t.projectCode,
       referencedTable: $db.projects,
-      getReferencedColumn: (t) => t.id,
+      getReferencedColumn: (t) => t.code,
       builder:
           (
             joinBuilder, {
@@ -9247,12 +9219,12 @@ class $$ExportHistoryTableOrderingComposer
     return composer;
   }
 
-  $$ProjectsTableOrderingComposer get projectId {
+  $$ProjectsTableOrderingComposer get projectCode {
     final $$ProjectsTableOrderingComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.projectId,
+      getCurrentColumn: (t) => t.projectCode,
       referencedTable: $db.projects,
-      getReferencedColumn: (t) => t.id,
+      getReferencedColumn: (t) => t.code,
       builder:
           (
             joinBuilder, {
@@ -9323,12 +9295,12 @@ class $$ExportHistoryTableAnnotationComposer
     return composer;
   }
 
-  $$ProjectsTableAnnotationComposer get projectId {
+  $$ProjectsTableAnnotationComposer get projectCode {
     final $$ProjectsTableAnnotationComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.projectId,
+      getCurrentColumn: (t) => t.projectCode,
       referencedTable: $db.projects,
-      getReferencedColumn: (t) => t.id,
+      getReferencedColumn: (t) => t.code,
       builder:
           (
             joinBuilder, {
@@ -9360,7 +9332,7 @@ class $$ExportHistoryTableTableManager
           $$ExportHistoryTableUpdateCompanionBuilder,
           (ExportHistoryData, $$ExportHistoryTableReferences),
           ExportHistoryData,
-          PrefetchHooks Function({bool userId, bool projectId})
+          PrefetchHooks Function({bool userId, bool projectCode})
         > {
   $$ExportHistoryTableTableManager(_$AppDatabase db, $ExportHistoryTable table)
     : super(
@@ -9377,7 +9349,7 @@ class $$ExportHistoryTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<int> userId = const Value.absent(),
-                Value<int> projectId = const Value.absent(),
+                Value<String> projectCode = const Value.absent(),
                 Value<ExportFormat> format = const Value.absent(),
                 Value<int> recordCount = const Value.absent(),
                 Value<String> fileName = const Value.absent(),
@@ -9386,7 +9358,7 @@ class $$ExportHistoryTableTableManager
               }) => ExportHistoryCompanion(
                 id: id,
                 userId: userId,
-                projectId: projectId,
+                projectCode: projectCode,
                 format: format,
                 recordCount: recordCount,
                 fileName: fileName,
@@ -9397,7 +9369,7 @@ class $$ExportHistoryTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 required int userId,
-                required int projectId,
+                required String projectCode,
                 required ExportFormat format,
                 required int recordCount,
                 required String fileName,
@@ -9406,7 +9378,7 @@ class $$ExportHistoryTableTableManager
               }) => ExportHistoryCompanion.insert(
                 id: id,
                 userId: userId,
-                projectId: projectId,
+                projectCode: projectCode,
                 format: format,
                 recordCount: recordCount,
                 fileName: fileName,
@@ -9421,7 +9393,7 @@ class $$ExportHistoryTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({userId = false, projectId = false}) {
+          prefetchHooksCallback: ({userId = false, projectCode = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [],
@@ -9454,16 +9426,16 @@ class $$ExportHistoryTableTableManager
                               )
                               as T;
                     }
-                    if (projectId) {
+                    if (projectCode) {
                       state =
                           state.withJoin(
                                 currentTable: table,
-                                currentColumn: table.projectId,
+                                currentColumn: table.projectCode,
                                 referencedTable: $$ExportHistoryTableReferences
-                                    ._projectIdTable(db),
+                                    ._projectCodeTable(db),
                                 referencedColumn: $$ExportHistoryTableReferences
-                                    ._projectIdTable(db)
-                                    .id,
+                                    ._projectCodeTable(db)
+                                    .code,
                               )
                               as T;
                     }
@@ -9491,7 +9463,7 @@ typedef $$ExportHistoryTableProcessedTableManager =
       $$ExportHistoryTableUpdateCompanionBuilder,
       (ExportHistoryData, $$ExportHistoryTableReferences),
       ExportHistoryData,
-      PrefetchHooks Function({bool userId, bool projectId})
+      PrefetchHooks Function({bool userId, bool projectCode})
     >;
 typedef $$SessionsTableCreateCompanionBuilder =
     SessionsCompanion Function({

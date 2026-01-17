@@ -44,12 +44,12 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
     if (user == null) {
       throw Exception('User not logged in');
     }
+    final projectsWithCreatedBy = projects
+        .map((project) => project.copyWith(createdBy: user.id))
+        .toList();
 
-    final projectModels = projects
-        .map(
-          (project) =>
-              ProjectModel.fromEntity(project.copyWith(createdBy: user.id)),
-        )
+    final projectModels = projectsWithCreatedBy
+        .map((project) => ProjectModel.fromEntity(project))
         .toList();
     await _localDataSource.createProject(projectModels);
   }
@@ -76,7 +76,7 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
       zoneId,
     );
     return states
-        .map((e) => NigerianState(id: e.id, name: e.name, zoneId: e.zoneId))
+        .map((e) => NigerianState(id: e.id, name: e.name, zoneId: zoneId))
         .toList();
   }
 
@@ -89,7 +89,7 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
     return ministries
         .map(
           (e) =>
-              SupervisingMinistry(id: e.id, name: e.name, agencyId: e.agencyId),
+              SupervisingMinistry(id: e.id, name: e.name, agencyId: agencyId),
         )
         .toList();
   }
@@ -130,7 +130,7 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
 
     await _localDataSource.recordExport(
       userId: user.id,
-      projectId: project.id,
+      projectCode: project.code,
       format: format,
       fileName: fileName,
       recordCount: 1,
@@ -138,7 +138,7 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
 
     await _auditService.logExport(
       userId: user.id,
-      projectId: project.id,
+      projectCode: project.code,
       fileName: fileName,
     );
 
@@ -176,7 +176,7 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
     for (final project in projects) {
       await _localDataSource.recordExport(
         userId: user.id,
-        projectId: project.id,
+        projectCode: project.code,
         format: format,
         fileName: fileName,
         recordCount: projects.length,
@@ -184,7 +184,7 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
 
       await _auditService.logExport(
         userId: user.id,
-        projectId: project.id,
+        projectCode: project.code,
         fileName: fileName,
       );
     }

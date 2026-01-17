@@ -33,7 +33,7 @@ abstract class ProjectsLocalDataSource {
   );
   Future<void> recordExport({
     required int userId,
-    required int projectId,
+    required String projectCode,
     required ExportFormat format,
     required String fileName,
     required int recordCount,
@@ -54,15 +54,14 @@ class ProjectsLocalDataSourceImpl implements ProjectsLocalDataSource {
 
   @override
   Future<void> createProject(List<ProjectModel> projects) async {
-    final projectCompanions = projects
+    if (projects.isEmpty) return;
+
+    final companions = projects
         .map((project) => project.toDriftCompanion())
         .toList();
+
     await _database.batch((batch) {
-      batch.insertAll(
-        _database.projects,
-        projectCompanions,
-        mode: InsertMode.insertOrReplace,
-      );
+      batch.insertAllOnConflictUpdate(_database.projects, companions);
     });
   }
 
@@ -137,7 +136,6 @@ class ProjectsLocalDataSourceImpl implements ProjectsLocalDataSource {
     final zone = result.readTableOrNull(_database.geopoliticalZones);
 
     return ProjectWithDetailsModel(
-      id: project.id,
       code: project.code,
       status: project.status,
       agencyId: project.agencyId,
@@ -403,7 +401,6 @@ class ProjectsLocalDataSourceImpl implements ProjectsLocalDataSource {
       final zone = row.readTableOrNull(_database.geopoliticalZones);
 
       return ProjectWithDetailsModel(
-        id: project.id,
         code: project.code,
         status: project.status,
         agencyId: project.agencyId,
@@ -432,7 +429,7 @@ class ProjectsLocalDataSourceImpl implements ProjectsLocalDataSource {
   @override
   Future<void> recordExport({
     required int userId,
-    required int projectId,
+    required String projectCode,
     required ExportFormat format,
     required String fileName,
     required int recordCount,
@@ -442,7 +439,7 @@ class ProjectsLocalDataSourceImpl implements ProjectsLocalDataSource {
         .insert(
           ExportHistoryCompanion.insert(
             userId: userId,
-            projectId: projectId,
+            projectCode: projectCode,
             format: format,
             fileName: fileName,
             recordCount: recordCount,

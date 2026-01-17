@@ -9,7 +9,6 @@ part of 'project_with_details_model.dart';
 _ProjectWithDetailsModel _$ProjectWithDetailsModelFromJson(
   Map<String, dynamic> json,
 ) => _ProjectWithDetailsModel(
-  id: (json['id'] as num).toInt(),
   code: json['code'] as String,
   status: $enumDecode(_$ProjectStatusEnumMap, json['status']),
   agencyId: (json['agency_id'] as num).toInt(),
@@ -38,7 +37,6 @@ _ProjectWithDetailsModel _$ProjectWithDetailsModelFromJson(
 Map<String, dynamic> _$ProjectWithDetailsModelToJson(
   _ProjectWithDetailsModel instance,
 ) => <String, dynamic>{
-  'id': instance.id,
   'code': instance.code,
   'status': _$ProjectStatusEnumMap[instance.status]!,
   'agency_id': instance.agencyId,
