@@ -1,6 +1,10 @@
 import 'package:contrack/src/app/presentation/widgets/widgets.dart';
+import 'package:contrack/src/app/theme/app_colors.dart';
+import 'package:contrack/src/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:contrack/src/features/dashboard/presentation/widgets/widgets.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AdminDashboard extends StatelessWidget {
   const AdminDashboard({super.key});
@@ -15,13 +19,39 @@ class AdminDashboard extends StatelessWidget {
           children: [
             RouteHeader(routePath: ['Dashboard'], canPop: false),
             const Spacer(),
-            FilledButton(
+            FilledButton.icon(
+              icon: Icon(Icons.download_outlined),
+              style: FilledButton.styleFrom(
+                minimumSize: const Size(130, 45),
+                maximumSize: const Size(180, 45),
+                backgroundColor: context.colors.neutralInverted,
+                foregroundColor: context.colors.neutral,
+              ),
+              onPressed: () async {
+                final result = await FilePicker.platform.pickFiles(
+                  type: FileType.custom,
+                  allowedExtensions: ['csv'],
+                );
+
+                if (result != null && result.files.single.path != null) {
+                  if (context.mounted) {
+                    context.read<DashboardBloc>().add(
+                      DashboardProjectImported(result.files.single.path!),
+                    );
+                  }
+                }
+              },
+              label: const Text('Import Projects'),
+            ),
+            SizedBox(width: 16),
+            FilledButton.icon(
+              icon: Icon(Icons.add),
               style: FilledButton.styleFrom(
                 minimumSize: const Size(150, 45),
                 maximumSize: const Size(200, 45),
               ),
               onPressed: () {},
-              child: const Text('Export Projects'),
+              label: const Text('Add Projects'),
             ),
           ],
         ),

@@ -1,7 +1,9 @@
+import 'package:contrack/src/app/presentation/bloc/app_bloc.dart';
 import 'package:contrack/src/app/presentation/widgets/app_card.dart';
 import 'package:contrack/src/app/theme/app_colors.dart';
 import 'package:contrack/src/app/theme/app_typography.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class QuickActionCard extends StatelessWidget {
   const QuickActionCard({super.key});
@@ -47,7 +49,7 @@ class QuickActionCard extends StatelessWidget {
             icon: Icons.download_outlined,
             title: 'Sync Data',
             subtitle: 'Force database sync',
-            onTap: () {},
+            onTap: () => context.read<AppBloc>().add(AppSyncRequested()),
           ),
         ],
       ),
