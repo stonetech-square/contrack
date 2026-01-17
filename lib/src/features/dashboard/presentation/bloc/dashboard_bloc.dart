@@ -6,11 +6,18 @@ import 'package:contrack/src/core/usecase/usecase.dart';
 import 'package:contrack/src/features/dashboard/domain/usecase/import_projects_use_case.dart';
 import 'package:contrack/src/features/dashboard/domain/usecase/watch_dashboard_stats_use_case.dart';
 import 'package:contrack/src/features/dashboard/domain/usecase/watch_recent_projects_use_case.dart';
-import 'package:contrack/src/features/dashboard/presentation/bloc/dashboard_event.dart';
-import 'package:contrack/src/features/dashboard/presentation/bloc/dashboard_state.dart';
+import 'package:contrack/src/features/dashboard/domain/entities/dashboard_stats.dart';
+import 'package:contrack/src/features/dashboard/domain/entities/project.dart';
+import 'package:contrack/src/features/dashboard/domain/entities/project_with_details.dart';
+import 'package:equatable/equatable.dart' show Equatable;
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:rxdart/rxdart.dart';
+
+part 'dashboard_bloc.freezed.dart';
+part 'dashboard_state.dart';
+part 'dashboard_event.dart';
 
 @injectable
 class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {

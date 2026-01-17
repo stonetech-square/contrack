@@ -1,7 +1,9 @@
 export 'admin_dashboard.dart';
 export 'dashboard_overview.dart';
-export 'dashboard_regular_overview_card.dart';
+export 'project_count_card.dart';
 export 'project_status_badge.dart';
+export 'projects_stats.dart';
+export 'quick_action_card.dart';
 export 'recent_projects.dart';
 export 'recent_projects_table_body.dart';
 export 'recent_projects_table_header.dart';

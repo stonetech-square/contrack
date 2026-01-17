@@ -4,15 +4,14 @@ import 'package:contrack/src/app/router/app_router.dart';
 import 'package:contrack/src/app/theme/app_colors.dart';
 import 'package:contrack/src/app/theme/app_typography.dart';
 import 'package:contrack/src/features/dashboard/presentation/bloc/dashboard_bloc.dart';
-import 'package:contrack/src/features/dashboard/presentation/bloc/dashboard_state.dart';
 import 'package:contrack/src/features/dashboard/presentation/widgets/recent_projects_table_body.dart';
 import 'package:contrack/src/features/dashboard/presentation/widgets/recent_projects_table_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RecentProjects extends StatelessWidget {
-  const RecentProjects({super.key});
-
+  const RecentProjects({super.key, this.isAdmin = false});
+  final bool isAdmin;
   @override
   Widget build(BuildContext context) {
     return AppCard(
@@ -24,12 +23,37 @@ class RecentProjects extends StatelessWidget {
             padding: const EdgeInsets.symmetric(
               horizontal: 24,
             ).copyWith(top: 24),
-            child: Text(
-              'My Recent Entries',
-              style: context.textStyles.titleLarge.copyWith(
-                color: context.colors.textHeading,
-                fontWeight: FontWeight.w600,
-              ),
+            child: Row(
+              children: [
+                Text(
+                  'Recent Entries',
+                  style: context.textStyles.titleLarge.copyWith(
+                    color: context.colors.textHeading,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const Spacer(),
+                TextButton(
+                  onPressed: () => context.navigateTo(AllProjectRoute()),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'View all',
+                        style: context.textStyles.bodyMedium.copyWith(
+                          color: context.colors.info,
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Icon(
+                        Icons.arrow_forward,
+                        size: 16,
+                        color: context.colors.info,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
           SizedBox(height: 24),
@@ -63,46 +87,17 @@ class RecentProjects extends StatelessWidget {
 
                 return Column(
                   children: [
-                    RecentProjectsTableHeader(),
+                    RecentProjectsTableHeader(isAdmin: isAdmin),
                     Expanded(
                       flex: 2,
                       child: SingleChildScrollView(
                         child: RecentProjectsTableBody(
                           projects: state.recentProjects,
+                          isAdmin: isAdmin,
+                          currentUserId: state.userId,
                         ),
                       ),
                     ),
-                    SizedBox(height: 16),
-                    Align(
-                      alignment: Alignment.bottomLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24,
-                        ).copyWith(bottom: 16),
-                        child: TextButton(
-                          onPressed: () =>
-                              context.navigateTo(AllProjectRoute()),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                'View all my projects',
-                                style: context.textStyles.bodyMedium.copyWith(
-                                  color: context.colors.textHeading,
-                                ),
-                              ),
-                              SizedBox(width: 8),
-                              Icon(
-                                Icons.arrow_forward,
-                                size: 16,
-                                color: context.colors.textHeading,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 16),
                   ],
                 );
               },

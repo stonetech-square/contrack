@@ -13,15 +13,16 @@ class ProjectStatusBadge extends StatelessWidget {
     final config = _getStatusConfig(context);
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       margin: const EdgeInsets.only(right: 16),
-      constraints: BoxConstraints(maxWidth: 79, maxHeight: 50),
+      constraints: BoxConstraints(maxWidth: 85, maxHeight: 45),
       decoration: BoxDecoration(
         color: config.backgroundColor.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Text(
         status.displayName,
+        overflow: TextOverflow.ellipsis,
         style: context.textStyles.labelSmall.copyWith(
           color: config.textColor,
           fontSize: 11,

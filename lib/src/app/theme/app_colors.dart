@@ -42,6 +42,11 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
     required this.greenPrimary,
     required this.orangePrimary,
     required this.textHeading,
+    required this.statusOngoing,
+    required this.statusCompleted,
+    required this.statusPlanned,
+    required this.statusStalled,
+    required this.statusCancelled,
   });
 
   final Color primary;
@@ -83,6 +88,11 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
   final Color greenPrimary;
   final Color orangePrimary;
   final Color textHeading;
+  final Color statusOngoing;
+  final Color statusCompleted;
+  final Color statusPlanned;
+  final Color statusStalled;
+  final Color statusCancelled;
 
   @override
   AppColorsExtension copyWith({
@@ -125,6 +135,11 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
     Color? greenPrimary,
     Color? orangePrimary,
     Color? textHeading,
+    Color? statusOngoing,
+    Color? statusCompleted,
+    Color? statusPlanned,
+    Color? statusStalled,
+    Color? statusCancelled,
   }) {
     return AppColorsExtension(
       primary: primary ?? this.primary,
@@ -166,6 +181,11 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
       greenPrimary: greenPrimary ?? this.greenPrimary,
       orangePrimary: orangePrimary ?? this.orangePrimary,
       textHeading: textHeading ?? this.textHeading,
+      statusOngoing: statusOngoing ?? this.statusOngoing,
+      statusCompleted: statusCompleted ?? this.statusCompleted,
+      statusPlanned: statusPlanned ?? this.statusPlanned,
+      statusStalled: statusStalled ?? this.statusStalled,
+      statusCancelled: statusCancelled ?? this.statusCancelled,
     );
   }
 
@@ -218,6 +238,11 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
       greenPrimary: Color.lerp(greenPrimary, other.greenPrimary, t)!,
       orangePrimary: Color.lerp(orangePrimary, other.orangePrimary, t)!,
       textHeading: Color.lerp(textHeading, other.textHeading, t)!,
+      statusOngoing: Color.lerp(statusOngoing, other.statusOngoing, t)!,
+      statusCompleted: Color.lerp(statusCompleted, other.statusCompleted, t)!,
+      statusPlanned: Color.lerp(statusPlanned, other.statusPlanned, t)!,
+      statusStalled: Color.lerp(statusStalled, other.statusStalled, t)!,
+      statusCancelled: Color.lerp(statusCancelled, other.statusCancelled, t)!,
     );
   }
 
@@ -288,6 +313,13 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
     greenPrimary: Color(0xFF00A63E),
     orangePrimary: Color(0xFFF54900),
     textHeading: Color(0xFF101828),
+
+    // Status chart colors
+    statusOngoing: Color(0xFF1A1A1A),
+    statusCompleted: Color(0xFF22C55E),
+    statusPlanned: Color(0xFFF97316),
+    statusStalled: Color(0xFFEF4444),
+    statusCancelled: Color(0xFF6B7280),
   );
 
   // Dark Theme Colors - Grayscale with Color Semantic
@@ -358,6 +390,13 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
     greenPrimary: Color(0xFF4ADE80),
     orangePrimary: Color(0xFFFB923C),
     textHeading: Color(0xFFFFFFFF),
+
+    // Status chart colors (dark variants)
+    statusOngoing: Color(0xFFE8E8E8),
+    statusCompleted: Color(0xFF4ADE80),
+    statusPlanned: Color(0xFFFB923C),
+    statusStalled: Color(0xFFF87171),
+    statusCancelled: Color(0xFF9CA3AF),
   );
 }
 

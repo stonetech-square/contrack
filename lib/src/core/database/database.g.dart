@@ -2493,7 +2493,6 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
     ),
     type: DriftSqlType.string,
     requiredDuringInsert: true,
-    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
   );
   @override
   late final GeneratedColumnWithTypeConverter<ProjectStatus, String> status =

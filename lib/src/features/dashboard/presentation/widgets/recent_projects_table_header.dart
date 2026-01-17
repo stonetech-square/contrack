@@ -3,12 +3,14 @@ import 'package:contrack/src/app/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 
 class RecentProjectsTableHeader extends StatelessWidget {
-  const RecentProjectsTableHeader({super.key});
+  const RecentProjectsTableHeader({super.key, this.isAdmin = false});
+
+  final bool isAdmin;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       decoration: BoxDecoration(
         color: context.colors.surfaceVariant,
         border: Border(
@@ -18,12 +20,13 @@ class RecentProjectsTableHeader extends StatelessWidget {
       child: Row(
         children: [
           _HeaderCell('S/N', flex: 1),
-          _HeaderCell('PROJECT\nCODE', flex: 2),
-          _HeaderCell('AGENCY', flex: 4),
+          _HeaderCell('CODE', flex: 2),
+          _HeaderCell('AGENCY', flex: 2),
           _HeaderCell('STATE', flex: 2),
           _HeaderCell('STATUS', flex: 2),
-          _HeaderCell('LAST\nMODIFIED', flex: 2),
-          _HeaderCell('SYNC\nSTATUS', flex: 2),
+          if (isAdmin) _HeaderCell('USER', flex: 2),
+          _HeaderCell('DATE', flex: 2),
+          _HeaderCell('SYNC', flex: 2),
         ],
       ),
     );

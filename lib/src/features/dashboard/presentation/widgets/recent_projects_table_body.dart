@@ -3,9 +3,16 @@ import 'package:contrack/src/features/dashboard/presentation/widgets/recent_proj
 import 'package:flutter/material.dart';
 
 class RecentProjectsTableBody extends StatelessWidget {
-  const RecentProjectsTableBody({super.key, required this.projects});
+  const RecentProjectsTableBody({
+    super.key,
+    required this.projects,
+    this.isAdmin = false,
+    this.currentUserId,
+  });
 
   final List<ProjectWithDetails> projects;
+  final bool isAdmin;
+  final int? currentUserId;
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +23,8 @@ class RecentProjectsTableBody extends StatelessWidget {
         (index) => RecentProjectsTableRow(
           project: projects[index],
           index: index + 1,
+          isAdmin: isAdmin,
+          currentUserId: currentUserId,
         ),
       ),
     );

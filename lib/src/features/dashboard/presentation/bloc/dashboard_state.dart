@@ -1,10 +1,5 @@
-import 'package:contrack/src/features/dashboard/domain/entities/dashboard_stats.dart';
-import 'package:contrack/src/features/dashboard/domain/entities/project.dart';
-import 'package:contrack/src/features/dashboard/domain/entities/project_with_details.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'dashboard_state.freezed.dart';
-
+part of 'dashboard_bloc.dart';
 @freezed
 sealed class DashboardState with _$DashboardState {
   const factory DashboardState({

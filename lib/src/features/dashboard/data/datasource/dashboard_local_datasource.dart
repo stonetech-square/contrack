@@ -68,6 +68,9 @@ class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
     required UserRole role,
     int limit = 15,
   }) {
+    final createdByUser = database.users.createAlias('created_by_user');
+    final modifiedByUser = database.users.createAlias('modified_by_user');
+
     final query =
         database.select(database.projects).join([
             leftOuterJoin(
@@ -86,6 +89,14 @@ class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
               database.geopoliticalZones,
               database.geopoliticalZones.id.equalsExp(database.projects.zoneId),
             ),
+            leftOuterJoin(
+              createdByUser,
+              createdByUser.id.equalsExp(database.projects.createdBy),
+            ),
+            leftOuterJoin(
+              modifiedByUser,
+              modifiedByUser.id.equalsExp(database.projects.modifiedBy),
+            ),
           ])
           ..where(_buildRoleBasedPredicate(userId, role))
           ..orderBy([
@@ -103,6 +114,8 @@ class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
         final state = row.readTableOrNull(database.states);
         final ministry = row.readTableOrNull(database.ministries);
         final zone = row.readTableOrNull(database.geopoliticalZones);
+        final createdUser = row.readTableOrNull(createdByUser);
+        final modifiedUser = row.readTableOrNull(modifiedByUser);
 
         return ProjectWithDetailsModel(
           code: project.code,
@@ -120,7 +133,13 @@ class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
           constituency: project.constituency,
           sponsor: project.sponsor,
           createdBy: project.createdBy,
+          createdByName: createdUser?.fullName.isNotEmpty == true
+              ? createdUser!.fullName
+              : createdUser?.username,
           modifiedBy: project.modifiedBy,
+          modifiedByName: modifiedUser?.fullName.isNotEmpty == true
+              ? modifiedUser!.fullName
+              : modifiedUser?.username,
           createdAt: project.createdAt,
           updatedAt: project.updatedAt,
           isSynced: project.isSynced,

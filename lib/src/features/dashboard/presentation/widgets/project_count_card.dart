@@ -3,8 +3,8 @@ import 'package:contrack/src/app/theme/app_colors.dart';
 import 'package:contrack/src/app/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 
-class DashboardRegularOverViewCard extends StatelessWidget {
-  const DashboardRegularOverViewCard({
+class DashboardCountCard extends StatelessWidget {
+  const DashboardCountCard({
     super.key,
     required this.title,
     required this.count,
@@ -28,7 +28,7 @@ class DashboardRegularOverViewCard extends StatelessWidget {
             width: 48,
             height: 48,
             alignment: Alignment.center,
-            padding: EdgeInsets.all(16),
+            padding: EdgeInsets.all(12),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               color: iconBackgroundColor ?? context.colors.bgBlue,
@@ -41,7 +41,7 @@ class DashboardRegularOverViewCard extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 16),
+          SizedBox(height: 9),
           Text(
             title,
             style: context.textStyles.titleMedium.copyWith(
@@ -49,7 +49,7 @@ class DashboardRegularOverViewCard extends StatelessWidget {
               fontSize: 15,
             ),
           ),
-          SizedBox(height: 16),
+          SizedBox(height: 9),
           Text(
             '$count',
             style: context.textStyles.titleMedium.copyWith(

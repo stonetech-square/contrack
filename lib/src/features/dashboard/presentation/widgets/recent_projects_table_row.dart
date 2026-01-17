@@ -13,10 +13,14 @@ class RecentProjectsTableRow extends StatelessWidget {
     super.key,
     required this.project,
     required this.index,
+    this.isAdmin = false,
+    this.currentUserId,
   });
 
   final ProjectWithDetails project;
   final int index;
+  final bool isAdmin;
+  final int? currentUserId;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +34,7 @@ class RecentProjectsTableRow extends StatelessWidget {
           ),
         ),
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 20),
           decoration: BoxDecoration(
             border: Border(
               bottom: BorderSide(color: context.colors.border, width: 0.8),
@@ -56,7 +60,7 @@ class RecentProjectsTableRow extends StatelessWidget {
               ),
               _DataCell(
                 project.agencyName,
-                flex: 4,
+                flex: 3,
                 style: context.textStyles.bodyMedium.copyWith(
                   color: context.colors.textBody,
                 ),
@@ -72,8 +76,18 @@ class RecentProjectsTableRow extends StatelessWidget {
                 flex: 2,
                 child: ProjectStatusBadge(status: project.status),
               ),
+              if (isAdmin)
+                _DataCell(
+                  _getUpdatedByDisplayName(),
+                  flex: 2,
+                  style: context.textStyles.bodyMedium.copyWith(
+                    color: context.colors.textHeading,
+                  ),
+                ),
               _DataCell(
-                _formatDate(project.updatedAt),
+                isAdmin
+                    ? _formatRelativeDate(project.updatedAt)
+                    : _formatDate(project.updatedAt),
                 flex: 2,
                 style: context.textStyles.bodyMedium.copyWith(
                   color: context.colors.textHeading,
@@ -90,8 +104,51 @@ class RecentProjectsTableRow extends StatelessWidget {
     );
   }
 
+  String _getUpdatedByDisplayName() {
+    final modifiedById = project.modifiedBy;
+    final createdById = project.createdBy;
+
+    if (modifiedById != null) {
+      if (currentUserId != null && modifiedById == currentUserId) {
+        return 'You';
+      }
+      return project.modifiedByName ?? 'Unknown';
+    }
+
+    if (currentUserId != null && createdById == currentUserId) {
+      return 'You';
+    }
+    return project.createdByName ?? 'Unknown';
+  }
+
   String _formatDate(DateTime date) {
     return DateFormat('d MMM yyyy').format(date);
+  }
+
+  String _formatRelativeDate(DateTime date) {
+    final now = DateTime.now();
+    final difference = now.difference(date);
+
+    if (difference.inDays == 0) {
+      return 'Today';
+    } else if (difference.inDays == 1) {
+      return 'Yesterday';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays} days ago';
+    } else if (difference.inDays < 14) {
+      return '1 week ago';
+    } else if (difference.inDays < 30) {
+      final weeks = (difference.inDays / 7).floor();
+      return '$weeks weeks ago';
+    } else if (difference.inDays < 60) {
+      return '1 month ago';
+    } else if (difference.inDays < 365) {
+      final months = (difference.inDays / 30).floor();
+      return '$months months ago';
+    } else {
+      final years = (difference.inDays / 365).floor();
+      return years == 1 ? '1 year ago' : '$years years ago';
+    }
   }
 }
 

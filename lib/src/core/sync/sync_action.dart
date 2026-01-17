@@ -466,7 +466,7 @@ class SyncActionImpl implements SyncAction {
       uid: Value(remoteId),
       remoteId: Value(remoteId),
       email: Value(email),
-      fullName: Value(fullName ?? ''),
+      fullName: fullName != null ? Value(fullName) : Value.absent(),
       username: Value(username ?? email.split('@')[0]),
       isActive: Value(isActive ?? true),
       role: Value(UserRole.regular),

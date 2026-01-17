@@ -18,7 +18,9 @@ class ProjectWithDetails extends Equatable {
   final String? sponsor;
   final String title;
   final int createdBy;
+  final String? createdByName;
   final int? modifiedBy;
+  final String? modifiedByName;
   final DateTime createdAt;
   final DateTime updatedAt;
   final bool isSynced;
@@ -41,7 +43,9 @@ class ProjectWithDetails extends Equatable {
     this.sponsor,
     required this.title,
     required this.createdBy,
+    this.createdByName,
     this.modifiedBy,
+    this.modifiedByName,
     required this.createdAt,
     required this.updatedAt,
     required this.isSynced,
@@ -66,7 +70,9 @@ class ProjectWithDetails extends Equatable {
     sponsor,
     title,
     createdBy,
+    createdByName,
     modifiedBy,
+    modifiedByName,
     createdAt,
     updatedAt,
     isSynced,
