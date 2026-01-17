@@ -30,7 +30,7 @@ sealed class AppUserModel with _$AppUserModel {
       id: user.id,
       uid: user.uid,
       username: user.username,
-      fullName: user.fullName,
+      fullName: user.fullName ?? user.username,
       email: user.email,
       role: user.role,
       isActive: user.isActive,

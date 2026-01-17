@@ -29,12 +29,12 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 1;
 
   static QueryExecutor _openConnection() {
     return LazyDatabase(() async {
       final dbFolder = await getApplicationSupportDirectory();
-      final file = File(p.join(dbFolder.path, 'contrack_dev3.sqlite'));
+      final file = File(p.join(dbFolder.path, 'contrack_dev8.sqlite'));
 
       return NativeDatabase.createInBackground(
         file,

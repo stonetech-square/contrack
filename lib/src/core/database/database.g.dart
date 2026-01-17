@@ -54,13 +54,13 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
   late final GeneratedColumn<String> fullName = GeneratedColumn<String>(
     'full_name',
     aliasedName,
-    false,
+    true,
     additionalChecks: GeneratedColumn.checkTextLength(
       minTextLength: 2,
       maxTextLength: 100,
     ),
     type: DriftSqlType.string,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
   );
   static const VerificationMeta _emailMeta = const VerificationMeta('email');
   @override
@@ -224,8 +224,6 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
         _fullNameMeta,
         fullName.isAcceptableOrUnknown(data['full_name']!, _fullNameMeta),
       );
-    } else if (isInserting) {
-      context.missing(_fullNameMeta);
     }
     if (data.containsKey('email')) {
       context.handle(
@@ -307,7 +305,7 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
       fullName: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}full_name'],
-      )!,
+      ),
       email: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}email'],
@@ -362,7 +360,7 @@ class User extends DataClass implements Insertable<User> {
   final int id;
   final String uid;
   final String username;
-  final String fullName;
+  final String? fullName;
   final String email;
   final UserRole role;
   final bool isActive;
@@ -376,7 +374,7 @@ class User extends DataClass implements Insertable<User> {
     required this.id,
     required this.uid,
     required this.username,
-    required this.fullName,
+    this.fullName,
     required this.email,
     required this.role,
     required this.isActive,
@@ -393,7 +391,9 @@ class User extends DataClass implements Insertable<User> {
     map['id'] = Variable<int>(id);
     map['uid'] = Variable<String>(uid);
     map['username'] = Variable<String>(username);
-    map['full_name'] = Variable<String>(fullName);
+    if (!nullToAbsent || fullName != null) {
+      map['full_name'] = Variable<String>(fullName);
+    }
     map['email'] = Variable<String>(email);
     {
       map['role'] = Variable<String>($UsersTable.$converterrole.toSql(role));
@@ -419,7 +419,9 @@ class User extends DataClass implements Insertable<User> {
       id: Value(id),
       uid: Value(uid),
       username: Value(username),
-      fullName: Value(fullName),
+      fullName: fullName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(fullName),
       email: Value(email),
       role: Value(role),
       isActive: Value(isActive),
@@ -447,7 +449,7 @@ class User extends DataClass implements Insertable<User> {
       id: serializer.fromJson<int>(json['id']),
       uid: serializer.fromJson<String>(json['uid']),
       username: serializer.fromJson<String>(json['username']),
-      fullName: serializer.fromJson<String>(json['fullName']),
+      fullName: serializer.fromJson<String?>(json['fullName']),
       email: serializer.fromJson<String>(json['email']),
       role: $UsersTable.$converterrole.fromJson(
         serializer.fromJson<String>(json['role']),
@@ -468,7 +470,7 @@ class User extends DataClass implements Insertable<User> {
       'id': serializer.toJson<int>(id),
       'uid': serializer.toJson<String>(uid),
       'username': serializer.toJson<String>(username),
-      'fullName': serializer.toJson<String>(fullName),
+      'fullName': serializer.toJson<String?>(fullName),
       'email': serializer.toJson<String>(email),
       'role': serializer.toJson<String>(
         $UsersTable.$converterrole.toJson(role),
@@ -487,7 +489,7 @@ class User extends DataClass implements Insertable<User> {
     int? id,
     String? uid,
     String? username,
-    String? fullName,
+    Value<String?> fullName = const Value.absent(),
     String? email,
     UserRole? role,
     bool? isActive,
@@ -501,7 +503,7 @@ class User extends DataClass implements Insertable<User> {
     id: id ?? this.id,
     uid: uid ?? this.uid,
     username: username ?? this.username,
-    fullName: fullName ?? this.fullName,
+    fullName: fullName.present ? fullName.value : this.fullName,
     email: email ?? this.email,
     role: role ?? this.role,
     isActive: isActive ?? this.isActive,
@@ -593,7 +595,7 @@ class UsersCompanion extends UpdateCompanion<User> {
   final Value<int> id;
   final Value<String> uid;
   final Value<String> username;
-  final Value<String> fullName;
+  final Value<String?> fullName;
   final Value<String> email;
   final Value<UserRole> role;
   final Value<bool> isActive;
@@ -622,7 +624,7 @@ class UsersCompanion extends UpdateCompanion<User> {
     this.id = const Value.absent(),
     required String uid,
     required String username,
-    required String fullName,
+    this.fullName = const Value.absent(),
     required String email,
     required UserRole role,
     this.isActive = const Value.absent(),
@@ -634,7 +636,6 @@ class UsersCompanion extends UpdateCompanion<User> {
     this.lastLoginAt = const Value.absent(),
   }) : uid = Value(uid),
        username = Value(username),
-       fullName = Value(fullName),
        email = Value(email),
        role = Value(role);
   static Insertable<User> custom({
@@ -673,7 +674,7 @@ class UsersCompanion extends UpdateCompanion<User> {
     Value<int>? id,
     Value<String>? uid,
     Value<String>? username,
-    Value<String>? fullName,
+    Value<String?>? fullName,
     Value<String>? email,
     Value<UserRole>? role,
     Value<bool>? isActive,
@@ -4946,7 +4947,7 @@ typedef $$UsersTableCreateCompanionBuilder =
       Value<int> id,
       required String uid,
       required String username,
-      required String fullName,
+      Value<String?> fullName,
       required String email,
       required UserRole role,
       Value<bool> isActive,
@@ -4962,7 +4963,7 @@ typedef $$UsersTableUpdateCompanionBuilder =
       Value<int> id,
       Value<String> uid,
       Value<String> username,
-      Value<String> fullName,
+      Value<String?> fullName,
       Value<String> email,
       Value<UserRole> role,
       Value<bool> isActive,
@@ -5560,7 +5561,7 @@ class $$UsersTableTableManager
                 Value<int> id = const Value.absent(),
                 Value<String> uid = const Value.absent(),
                 Value<String> username = const Value.absent(),
-                Value<String> fullName = const Value.absent(),
+                Value<String?> fullName = const Value.absent(),
                 Value<String> email = const Value.absent(),
                 Value<UserRole> role = const Value.absent(),
                 Value<bool> isActive = const Value.absent(),
@@ -5590,7 +5591,7 @@ class $$UsersTableTableManager
                 Value<int> id = const Value.absent(),
                 required String uid,
                 required String username,
-                required String fullName,
+                Value<String?> fullName = const Value.absent(),
                 required String email,
                 required UserRole role,
                 Value<bool> isActive = const Value.absent(),

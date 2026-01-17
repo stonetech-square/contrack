@@ -1,4 +1,4 @@
-import 'package:contrack/src/app/data/models/user_profile_model.dart';
+import 'package:contrack/src/core/common/models/user_profile_model.dart';
 import 'package:injectable/injectable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 

@@ -4,7 +4,7 @@ import 'package:contrack/src/app/router/app_router.dart';
 import 'package:contrack/src/app/theme/app_colors.dart';
 import 'package:contrack/src/features/dashboard/presentation/widgets/project_count_info.dart';
 import 'package:contrack/src/features/dashboard/presentation/widgets/widgets.dart';
-import 'package:file_picker/file_picker.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:contrack/src/features/dashboard/presentation/bloc/dashboard_bloc.dart';
@@ -38,20 +38,8 @@ class RegularDashboard extends StatelessWidget {
             ),
             const SizedBox(width: 16),
             FilledButton.icon(
-              onPressed: () async {
-                final result = await FilePicker.platform.pickFiles(
-                  type: FileType.custom,
-                  allowedExtensions: ['csv'],
-                );
-
-                if (result != null && result.files.single.path != null) {
-                  if (context.mounted) {
-                    context.read<DashboardBloc>().add(
-                      DashboardProjectImported(result.files.single.path!),
-                    );
-                  }
-                }
-              },
+              onPressed: () =>
+                  context.read<DashboardBloc>().add(DashboardImportRequested()),
               style: FilledButton.styleFrom(
                 maximumSize: const Size(250, 56),
                 minimumSize: const Size(220, 56),

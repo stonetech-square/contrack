@@ -17,6 +17,7 @@ sealed class UserProfileModel with _$UserProfileModel {
     required String email,
     required String? phone,
     required DateTime createdAt,
+    DateTime? updatedAt,
     DateTime? lastLoginAt,
     required List<UserRoleInfo> userRoles,
   }) = _UserProfileModel;
@@ -38,6 +39,7 @@ sealed class UserProfileModel with _$UserProfileModel {
       role: role,
       isActive: isActive,
       createdAt: createdAt,
+      updatedAt: updatedAt,
       lastLoginAt: lastLoginAt,
     );
   }

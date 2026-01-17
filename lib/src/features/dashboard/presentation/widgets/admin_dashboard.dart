@@ -1,8 +1,10 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:contrack/src/app/presentation/widgets/widgets.dart';
+import 'package:contrack/src/app/router/app_router.dart';
 import 'package:contrack/src/app/theme/app_colors.dart';
 import 'package:contrack/src/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:contrack/src/features/dashboard/presentation/widgets/widgets.dart';
-import 'package:file_picker/file_picker.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -27,19 +29,8 @@ class AdminDashboard extends StatelessWidget {
                 backgroundColor: context.colors.neutralInverted,
                 foregroundColor: context.colors.neutral,
               ),
-              onPressed: () async {
-                final result = await FilePicker.platform.pickFiles(
-                  type: FileType.custom,
-                  allowedExtensions: ['csv'],
-                );
-
-                if (result != null && result.files.single.path != null) {
-                  if (context.mounted) {
-                    context.read<DashboardBloc>().add(
-                      DashboardProjectImported(result.files.single.path!),
-                    );
-                  }
-                }
+              onPressed: () {
+                context.read<DashboardBloc>().add(DashboardImportRequested());
               },
               label: const Text('Import Projects'),
             ),
@@ -50,7 +41,9 @@ class AdminDashboard extends StatelessWidget {
                 minimumSize: const Size(150, 45),
                 maximumSize: const Size(200, 45),
               ),
-              onPressed: () {},
+              onPressed: () => context.router.navigate(
+                ShellProjectRoute(children: [CreateNewProjectRoute()]),
+              ),
               label: const Text('Add Projects'),
             ),
           ],

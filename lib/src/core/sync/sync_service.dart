@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:contrack/src/core/common/enums/user_role.dart';
 import 'package:contrack/src/core/database/database.dart';
 import 'package:contrack/src/core/network/network_info.dart';
 import 'package:contrack/src/core/sync/app_sync_status.dart';
@@ -9,6 +8,7 @@ import 'package:injectable/injectable.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:logging/logging.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:contrack/src/core/common/models/user_profile_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract class SyncService {
@@ -170,8 +170,7 @@ class SyncServiceImpl implements SyncService {
         _database.users,
       )..where((t) => t.id.equals(session.activeUserId!))).getSingleOrNull();
 
-      if (user != null &&
-          (user.role == UserRole.admin || user.role == UserRole.superAdmin)) {
+      if (user != null) {
         await _pullAndSyncProfiles();
       }
 
@@ -229,9 +228,15 @@ class SyncServiceImpl implements SyncService {
   }
 
   Future<void> _pullAndSyncProfiles() async {
-    final response = await _supabase.from('profiles').select();
-    for (final item in response) {
-      await _syncAction.updateLocalFromRemoteProfile(item);
+    final response = await _supabase
+        .from('profiles')
+        .select('*, user_roles!profile_id(role, is_active)')
+        .withConverter(
+          (data) =>
+              (data as List).map((e) => UserProfileModel.fromJson(e)).toList(),
+        );
+    for (final profile in response) {
+      await _syncAction.updateLocalFromRemoteProfile(profile);
     }
   }
 

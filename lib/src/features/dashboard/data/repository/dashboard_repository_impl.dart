@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:contrack/src/app/data/models/models.dart';
 import 'package:contrack/src/core/common/enums/project_status.dart';
 import 'package:contrack/src/core/errors/failures.dart';
+import 'package:contrack/src/core/services/file_picker_service.dart';
 import 'package:contrack/src/core/services/project_import_service.dart';
 import 'package:contrack/src/core/session/user_session.dart';
 import 'package:contrack/src/core/utils/project_code_generator.dart';
@@ -21,6 +22,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
   final UserSession _userSession;
   final ProjectImportService _importService;
   final ProjectCodeGenerator _codeGenerator;
+  final FilePickerService _filePickerService;
   final Logger _logger = Logger('DashboardRepositoryImpl');
 
   DashboardRepositoryImpl(
@@ -28,6 +30,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
     this._userSession,
     this._importService,
     this._codeGenerator,
+    this._filePickerService,
   );
 
   static final _codePattern = RegExp(r'^ERGP-39-\d{4}-\d{4}-\d{3}$');
@@ -210,5 +213,10 @@ class DashboardRepositoryImpl implements DashboardRepository {
     }
 
     return successfulProjects;
+  }
+
+  @override
+  Future<String?> pickProjectFile() async {
+    return _filePickerService.pickCsvFile();
   }
 }

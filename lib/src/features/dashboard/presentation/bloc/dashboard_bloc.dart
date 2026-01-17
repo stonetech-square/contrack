@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:contrack/src/core/errors/failures.dart';
+import 'package:contrack/src/features/dashboard/domain/usecase/pick_project_file_use_case.dart';
 import 'package:contrack/src/core/usecase/usecase.dart';
 import 'package:contrack/src/features/dashboard/domain/usecase/import_projects_use_case.dart';
 import 'package:contrack/src/features/dashboard/domain/usecase/watch_dashboard_stats_use_case.dart';
@@ -25,14 +26,16 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   final WatchRecentProjectsWithDetailsUseCase
   _watchRecentProjectsWithDetailsUseCase;
   final ImportProjectsUseCase _importProjectsUseCase;
+  final PickProjectFileUseCase _pickProjectFileUseCase;
 
   DashboardBloc(
     this._watchDashboardStatsUseCase,
     this._watchRecentProjectsWithDetailsUseCase,
     this._importProjectsUseCase,
+    this._pickProjectFileUseCase,
   ) : super(DashboardState.empty()) {
     on<DashboardStarted>(_onStarted);
-    on<DashboardProjectImported>(_onProjectImported);
+    on<DashboardImportRequested>(_onImportRequested);
   }
 
   Future<void> _onStarted(
@@ -64,12 +67,15 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     );
   }
 
-  Future<void> _onProjectImported(
-    DashboardProjectImported event,
+  Future<void> _onImportRequested(
+    DashboardImportRequested event,
     Emitter<DashboardState> emit,
   ) async {
     try {
-      final file = File(event.path);
+      final path = await _pickProjectFileUseCase(NoParams());
+      if (path == null) return;
+
+      final file = File(path);
       final projects = await _importProjectsUseCase(file);
       emit(state.copyWith(importedProjects: projects));
       emit(state.copyWith(importedProjects: null));

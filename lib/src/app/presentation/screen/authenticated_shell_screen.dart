@@ -10,8 +10,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 @RoutePage()
-class AuthenticatedShellScreen extends StatelessWidget {
+class AuthenticatedShellScreen extends StatefulWidget {
   const AuthenticatedShellScreen({super.key});
+
+  @override
+  State<AuthenticatedShellScreen> createState() =>
+      _AuthenticatedShellScreenState();
+}
+
+class _AuthenticatedShellScreenState extends State<AuthenticatedShellScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AppBloc>().add(const AppSyncRequested());
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

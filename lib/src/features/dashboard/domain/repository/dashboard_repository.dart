@@ -11,4 +11,5 @@ abstract class DashboardRepository {
   Stream<int> watchUnsyncedProjectCount();
   Stream<Map<ProjectStatus, int>> watchProjectCountsByStatus();
   Future<List<Project>> importProjects(File file);
+  Future<String?> pickProjectFile();
 }

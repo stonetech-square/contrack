@@ -98,7 +98,7 @@ class UserSession {
           .into(_db.users)
           .insert(
             UsersCompanion.insert(
-              fullName: fullName,
+              fullName: Value(fullName),
               email: email,
               username: username,
               uid: uid,

@@ -12,6 +12,7 @@ class AppUser extends Equatable {
     required this.role,
     required this.isActive,
     required this.createdAt,
+    this.updatedAt,
     this.lastLoginAt,
   });
 
@@ -23,6 +24,7 @@ class AppUser extends Equatable {
   final UserRole role;
   final bool isActive;
   final DateTime createdAt;
+  final DateTime? updatedAt;
   final DateTime? lastLoginAt;
 
   AppUserModel toModel() {
@@ -49,6 +51,7 @@ class AppUser extends Equatable {
     role,
     isActive,
     createdAt,
+    updatedAt,
     lastLoginAt,
   ];
 }

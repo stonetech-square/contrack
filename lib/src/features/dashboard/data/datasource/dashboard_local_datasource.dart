@@ -133,11 +133,11 @@ class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
           constituency: project.constituency,
           sponsor: project.sponsor,
           createdBy: project.createdBy,
-          createdByName: createdUser?.fullName.isNotEmpty == true
+          createdByName: createdUser?.fullName?.isNotEmpty == true
               ? createdUser!.fullName
               : createdUser?.username,
           modifiedBy: project.modifiedBy,
-          modifiedByName: modifiedUser?.fullName.isNotEmpty == true
+          modifiedByName: modifiedUser?.fullName?.isNotEmpty == true
               ? modifiedUser!.fullName
               : modifiedUser?.username,
           createdAt: project.createdAt,

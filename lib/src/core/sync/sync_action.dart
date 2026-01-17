@@ -1,6 +1,7 @@
+import 'package:contrack/src/core/common/models/user_profile_model.dart';
 import 'package:contrack/src/core/common/enums/project_status.dart';
-import 'package:contrack/src/core/common/enums/user_role.dart';
 import 'package:contrack/src/core/database/database.dart' as db;
+
 import 'package:drift/drift.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
@@ -21,7 +22,7 @@ abstract class SyncAction {
   Future<void> updateLocalFromRemoteMinistry(Map<String, dynamic> data);
   Future<void> updateLocalFromRemoteState(Map<String, dynamic> data);
   Future<void> updateLocalFromRemoteAgency(Map<String, dynamic> data);
-  Future<void> updateLocalFromRemoteProfile(Map<String, dynamic> data);
+  Future<void> updateLocalFromRemoteProfile(UserProfileModel data);
   Future<void> updateLocalFromRemoteProject(
     Map<String, dynamic> data,
     int? currentUserId,
@@ -448,31 +449,27 @@ class SyncActionImpl implements SyncAction {
   }
 
   @override
-  Future<void> updateLocalFromRemoteProfile(Map<String, dynamic> data) async {
-    final remoteId = data['id'] as String;
-    final email = data['email'] as String;
-    final fullName = data['full_name'] as String?;
-    final username = data['user_name'] as String?;
-    final isActive = data['is_active'] as bool?;
-    final lastLoginAtStr = data['last_login_at'] as String?;
-    final createdAt = DateTime.parse(data['created_at'] as String);
-    final updatedAt = DateTime.parse(data['updated_at'] as String);
-
-    final lastLoginAt = lastLoginAtStr != null
-        ? DateTime.parse(lastLoginAtStr)
-        : null;
-
+  Future<void> updateLocalFromRemoteProfile(UserProfileModel data) async {
+    final remoteId = data.id;
+    final email = data.email;
+    final fullName = data.fullName;
+    final username = data.userName;
+    final isActive = data.isActive;
+    final lastLoginAt = data.lastLoginAt;
+    final createdAt = data.createdAt;
+    final updatedAt = data.updatedAt;
+    final resolvedName = fullName ?? username;
     final companion = db.UsersCompanion(
       uid: Value(remoteId),
       remoteId: Value(remoteId),
       email: Value(email),
-      fullName: fullName != null ? Value(fullName) : Value.absent(),
-      username: Value(username ?? email.split('@')[0]),
-      isActive: Value(isActive ?? true),
-      role: Value(UserRole.regular),
-      lastLoginAt: Value(lastLoginAt),
+      fullName: Value(resolvedName),
+      username: Value(username),
+      isActive: Value(isActive),
+      role: Value(data.role),
+      lastLoginAt: lastLoginAt != null ? Value(lastLoginAt) : Value.absent(),
       createdAt: Value(createdAt),
-      updatedAt: Value(updatedAt),
+      updatedAt: updatedAt != null ? Value(updatedAt) : Value.absent(),
       isSynced: Value(true),
       lastSyncedAt: Value(DateTime.now()),
     );
@@ -493,9 +490,9 @@ class SyncActionImpl implements SyncAction {
       );
       final remoteDigest = _computeUserDigest(
         email,
-        fullName ?? '',
-        username ?? email.split('@')[0],
-        isActive ?? true,
+        resolvedName,
+        username,
+        isActive,
         lastLoginAt,
         createdAt,
         updatedAt,
@@ -751,7 +748,7 @@ class SyncActionImpl implements SyncAction {
     bool isActive,
     DateTime? lastLoginAt,
     DateTime createdAt,
-    DateTime updatedAt,
+    DateTime? updatedAt,
   ) {
     return Object.hash(
       email,
