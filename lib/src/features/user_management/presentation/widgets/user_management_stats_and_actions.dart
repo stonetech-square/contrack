@@ -1,3 +1,5 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:contrack/src/app/router/app_router.dart';
 import 'package:contrack/src/app/theme/app_colors.dart';
 import 'package:contrack/src/app/theme/app_typography.dart';
 import 'package:contrack/src/features/user_management/presentation/bloc/user_management_bloc.dart';
@@ -25,9 +27,7 @@ class UserManagementStatsAndActions extends StatelessWidget {
         ),
         const Spacer(),
         FilledButton.icon(
-          onPressed: () {
-            // TODO: Navigate to Create User Dialog/Page
-          },
+          onPressed: () => context.router.push(const CreateUserRoute()),
           style: FilledButton.styleFrom(
             maximumSize: const Size(150, 45),
             minimumSize: const Size(150, 45),

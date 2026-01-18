@@ -1,5 +1,7 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:contrack/src/app/presentation/bloc/app_bloc.dart';
 import 'package:contrack/src/app/presentation/widgets/app_card.dart';
+import 'package:contrack/src/app/router/app_router.dart';
 import 'package:contrack/src/app/theme/app_colors.dart';
 import 'package:contrack/src/app/theme/app_typography.dart';
 import 'package:flutter/material.dart';
@@ -42,7 +44,9 @@ class QuickActionCard extends StatelessWidget {
             icon: Icons.person_add_outlined,
             title: 'Add Staff',
             subtitle: 'Create new user account',
-            onTap: () {},
+            onTap: () => context.navigateTo(
+              const UserManagementRoute(children: [CreateUserRoute()]),
+            ),
           ),
           SizedBox(height: 12),
           _ActionItem(

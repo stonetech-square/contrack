@@ -12,6 +12,8 @@ import 'package:contrack/src/features/projects/presentation/screens/create_new_p
 import 'package:contrack/src/features/projects/presentation/screens/project_screen.dart';
 import 'package:contrack/src/features/projects/presentation/screens/shell_project_screen.dart';
 import 'package:contrack/src/features/reports/presentation/screen/report_screen.dart';
+import 'package:contrack/src/features/user_management/presentation/screens/create_user_screen.dart';
+import 'package:contrack/src/features/user_management/presentation/screens/user_list_screen.dart';
 import 'package:contrack/src/features/user_management/presentation/screens/user_management_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -45,7 +47,13 @@ class AppRouter extends RootStackRouter {
               ],
             ),
             AutoRoute(page: ReportRoute.page),
-            AutoRoute(page: UserManagementRoute.page),
+            AutoRoute(
+              page: UserManagementRoute.page,
+              children: [
+                AutoRoute(page: UserListRoute.page, initial: true),
+                AutoRoute(page: CreateUserRoute.page),
+              ],
+            ),
             AutoRoute(page: MasterDataRoute.page),
           ],
         ),

@@ -83,8 +83,10 @@ import '../../features/projects/presentation/bloc/all_projects_bloc.dart'
 import '../../features/projects/presentation/bloc/create_new_project_bloc.dart'
     as _i921;
 import '../../features/projects/presentation/bloc/project_bloc.dart' as _i205;
-import '../../features/user_management/data/datasource/user_management_datasource.dart'
-    as _i307;
+import '../../features/user_management/data/datasource/user_management_local_datasource.dart'
+    as _i642;
+import '../../features/user_management/data/datasource/user_management_remote_datasource.dart'
+    as _i44;
 import '../../features/user_management/data/repository/user_management_repository_impl.dart'
     as _i283;
 import '../../features/user_management/domain/repository/user_management_repository.dart'
@@ -95,6 +97,8 @@ import '../../features/user_management/domain/usecase/update_user_use_case.dart'
     as _i40;
 import '../../features/user_management/domain/usecase/watch_users_use_case.dart'
     as _i641;
+import '../../features/user_management/presentation/bloc/create_user/create_user_bloc.dart'
+    as _i356;
 import '../../features/user_management/presentation/bloc/user_management_bloc.dart'
     as _i787;
 import '../data/datasource/app_local_datasource.dart' as _i293;
@@ -125,6 +129,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i642.DashboardLocalDataSource>(
       () => _i642.DashboardLocalDataSourceImpl(gh<_i339.AppDatabase>()),
     );
+    gh.lazySingleton<_i642.UserManagementLocalDataSource>(
+      () => _i642.UserManagementLocalDataSourceImpl(gh<_i339.AppDatabase>()),
+    );
     gh.lazySingleton<_i445.ProjectExportService>(
       () => _i726.ProjectExportServiceImpl(),
     );
@@ -145,9 +152,6 @@ extension GetItInjectableX on _i174.GetIt {
       () =>
           _i26.UserSession(gh<_i339.AppDatabase>(), gh<_i454.SupabaseClient>()),
     );
-    gh.lazySingleton<_i307.UserManagementDataSource>(
-      () => _i307.UserManagementDataSourceImpl(gh<_i339.AppDatabase>()),
-    );
     gh.lazySingleton<_i355.AuditService>(
       () => _i782.AuditServiceImpl(gh<_i339.AppDatabase>()),
     );
@@ -166,11 +170,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i293.AppLocalDataSource>(
       () => _i293.AppLocalDataSourceImpl(gh<_i26.UserSession>()),
     );
-    gh.lazySingleton<_i282.UserManagementRepository>(
-      () => _i283.UserManagementRepositoryImpl(
-        gh<_i307.UserManagementDataSource>(),
-        gh<_i26.UserSession>(),
-      ),
+    gh.lazySingleton<_i44.UserManagementRemoteDataSource>(
+      () => _i44.UserManagementRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
     );
     gh.lazySingleton<_i465.ProjectsLocalDataSource>(
       () => _i465.ProjectsLocalDataSourceImpl(
@@ -192,15 +193,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i355.AuditService>(),
       ),
     );
-    gh.lazySingleton<_i836.CreateUserUseCase>(
-      () => _i836.CreateUserUseCase(gh<_i282.UserManagementRepository>()),
-    );
-    gh.lazySingleton<_i40.UpdateUserUseCase>(
-      () => _i40.UpdateUserUseCase(gh<_i282.UserManagementRepository>()),
-    );
-    gh.lazySingleton<_i641.WatchUsersUseCase>(
-      () => _i641.WatchUsersUseCase(gh<_i282.UserManagementRepository>()),
-    );
     gh.lazySingleton<_i103.SyncService>(
       () => _i103.SyncServiceImpl(
         gh<_i892.NetworkInfo>(),
@@ -214,6 +206,13 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i820.ProjectImportService>(),
         gh<_i869.ProjectCodeGenerator>(),
         gh<_i704.FilePickerService>(),
+      ),
+    );
+    gh.lazySingleton<_i282.UserManagementRepository>(
+      () => _i283.UserManagementRepositoryImpl(
+        gh<_i642.UserManagementLocalDataSource>(),
+        gh<_i44.UserManagementRemoteDataSource>(),
+        gh<_i26.UserSession>(),
       ),
     );
     gh.lazySingleton<_i335.ChangePasswordUseCase>(
@@ -273,13 +272,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i135.SignInBloc>(
       () => _i135.SignInBloc(gh<_i277.SignInUseCase>()),
     );
-    gh.factory<_i787.UserManagementBloc>(
-      () => _i787.UserManagementBloc(
-        gh<_i641.WatchUsersUseCase>(),
-        gh<_i836.CreateUserUseCase>(),
-        gh<_i40.UpdateUserUseCase>(),
-      ),
-    );
     gh.factory<_i948.SyncNowUseCase>(
       () => _i948.SyncNowUseCase(gh<_i454.AppRepository>()),
     );
@@ -291,6 +283,15 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i353.WatchAppUserUseCase>(
       () => _i353.WatchAppUserUseCase(gh<_i454.AppRepository>()),
+    );
+    gh.lazySingleton<_i836.CreateUserUseCase>(
+      () => _i836.CreateUserUseCase(gh<_i282.UserManagementRepository>()),
+    );
+    gh.lazySingleton<_i40.UpdateUserUseCase>(
+      () => _i40.UpdateUserUseCase(gh<_i282.UserManagementRepository>()),
+    );
+    gh.lazySingleton<_i641.WatchUsersUseCase>(
+      () => _i641.WatchUsersUseCase(gh<_i282.UserManagementRepository>()),
     );
     gh.lazySingleton<_i1037.PickProjectFileUseCase>(
       () => _i1037.PickProjectFileUseCase(gh<_i275.DashboardRepository>()),
@@ -318,6 +319,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i159.ExportProjectUseCase>(),
       ),
     );
+    gh.factory<_i356.CreateUserBloc>(
+      () => _i356.CreateUserBloc(gh<_i836.CreateUserUseCase>()),
+    );
     gh.lazySingleton<_i813.AppBloc>(
       () => _i813.AppBloc(
         gh<_i353.WatchAppUserUseCase>(),
@@ -344,6 +348,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i835.WatchRecentProjectsWithDetailsUseCase>(),
         gh<_i304.ImportProjectsUseCase>(),
         gh<_i1037.PickProjectFileUseCase>(),
+      ),
+    );
+    gh.factory<_i787.UserManagementBloc>(
+      () => _i787.UserManagementBloc(
+        gh<_i641.WatchUsersUseCase>(),
+        gh<_i40.UpdateUserUseCase>(),
       ),
     );
     return this;

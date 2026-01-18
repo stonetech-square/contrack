@@ -1,4 +1,3 @@
-import 'package:contrack/src/core/database/database.dart';
 import 'package:contrack/src/core/usecase/usecase.dart';
 import 'package:contrack/src/features/user_management/domain/repository/user_management_repository.dart';
 import 'package:equatable/equatable.dart';
@@ -12,13 +11,26 @@ class UpdateUserUseCase implements UseCase<void, UpdateUserParams> {
 
   @override
   Future<void> call(UpdateUserParams params) async {
-    await _repository.updateUser(params.user);
+    await _repository.updateUser(
+      userId: params.userId,
+      fullName: params.fullName,
+      email: params.email,
+      username: params.username,
+    );
   }
 }
 
 class UpdateUserParams extends Equatable {
-  final User user;
-  const UpdateUserParams({required this.user});
+  final String userId;
+  final String? fullName;
+  final String? email;
+  final String? username;
+  const UpdateUserParams({
+    required this.userId,
+    this.fullName,
+    this.email,
+    this.username,
+  });
   @override
-  List<Object?> get props => [user];
+  List<Object?> get props => [userId, fullName, email, username];
 }

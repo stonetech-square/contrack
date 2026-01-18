@@ -1,7 +1,20 @@
+import 'package:contrack/src/core/common/enums/user_role.dart';
 import 'package:contrack/src/core/database/database.dart';
 
 abstract class UserManagementRepository {
   Stream<List<User>> watchUsers({String? searchQuery});
-  Future<void> createUser(User user);
-  Future<void> updateUser(User user);
+  Future<void> createUser({
+    required String fullName,
+    required String email,
+    required String username,
+    required UserRole role,
+  });
+  Future<void> updateUser({
+    required String userId,
+    String? fullName,
+    String? email,
+    String? username,
+  });
+  Future<void> toggleUserStatus(String userId);
+  Future<void> changeUserRole(String userId, UserRole role);
 }

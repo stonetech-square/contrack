@@ -110,6 +110,22 @@ class CreateNewProjectRouteArgs {
 }
 
 /// generated route for
+/// [CreateUserScreen]
+class CreateUserRoute extends PageRouteInfo<void> {
+  const CreateUserRoute({List<PageRouteInfo>? children})
+    : super(CreateUserRoute.name, initialChildren: children);
+
+  static const String name = 'CreateUserRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const CreateUserScreen();
+    },
+  );
+}
+
+/// generated route for
 /// [DashboardScreen]
 class DashboardRoute extends PageRouteInfo<void> {
   const DashboardRoute({List<PageRouteInfo>? children})
@@ -248,6 +264,22 @@ class UnAuthenticatedShellRoute extends PageRouteInfo<void> {
     name,
     builder: (data) {
       return const UnAuthenticatedShellScreen();
+    },
+  );
+}
+
+/// generated route for
+/// [UserListScreen]
+class UserListRoute extends PageRouteInfo<void> {
+  const UserListRoute({List<PageRouteInfo>? children})
+    : super(UserListRoute.name, initialChildren: children);
+
+  static const String name = 'UserListRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const UserListScreen();
     },
   );
 }

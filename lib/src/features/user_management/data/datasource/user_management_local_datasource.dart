@@ -3,21 +3,21 @@ import 'package:contrack/src/core/database/database.dart';
 import 'package:drift/drift.dart';
 import 'package:injectable/injectable.dart';
 
-abstract class UserManagementDataSource {
+abstract class UserManagementLocalDataSource {
   Stream<List<User>> watchUsers({
     String? searchQuery,
     required String currentUserId,
     required UserRole currentUserRole,
   });
   Future<void> createUser(User user, {required UserRole currentUserRole});
-  Future<void> updateUser(User user, {required UserRole currentUserRole});
+  Future<void> updateUser(UsersCompanion user, {required UserRole currentUserRole});
 }
 
-@LazySingleton(as: UserManagementDataSource)
-class UserManagementDataSourceImpl implements UserManagementDataSource {
+@LazySingleton(as: UserManagementLocalDataSource)
+class UserManagementLocalDataSourceImpl implements UserManagementLocalDataSource {
   final AppDatabase _database;
 
-  UserManagementDataSourceImpl(this._database);
+  UserManagementLocalDataSourceImpl(this._database);
 
   @override
   Future<void> createUser(
@@ -30,7 +30,7 @@ class UserManagementDataSourceImpl implements UserManagementDataSource {
 
   @override
   Future<void> updateUser(
-    User user, {
+    UsersCompanion user, {
     required UserRole currentUserRole,
   }) async {
     if (!currentUserRole.isAnyAdmin) return;

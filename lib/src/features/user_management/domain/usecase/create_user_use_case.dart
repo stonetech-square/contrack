@@ -1,4 +1,4 @@
-import 'package:contrack/src/core/database/database.dart';
+import 'package:contrack/src/core/common/enums/user_role.dart';
 import 'package:contrack/src/core/usecase/usecase.dart';
 import 'package:contrack/src/features/user_management/domain/repository/user_management_repository.dart';
 import 'package:equatable/equatable.dart';
@@ -12,13 +12,26 @@ class CreateUserUseCase implements UseCase<void, CreateUserParams> {
 
   @override
   Future<void> call(CreateUserParams params) async {
-    await _repository.createUser(params.user);
+    await _repository.createUser(
+      fullName: params.fullName,
+      email: params.email,
+      username: params.username,
+      role: params.role,
+    );
   }
 }
 
 class CreateUserParams extends Equatable {
-  final User user;
-  const CreateUserParams({required this.user});
+  final String fullName;
+  final String email;
+  final String username;
+  final UserRole role;
+  const CreateUserParams({
+    required this.fullName,
+    required this.email,
+    required this.username,
+    required this.role,
+  });
   @override
-  List<Object?> get props => [user];
+  List<Object?> get props => [fullName, email, username, role];
 }
