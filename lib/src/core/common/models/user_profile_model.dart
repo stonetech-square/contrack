@@ -31,7 +31,6 @@ sealed class UserProfileModel with _$UserProfileModel {
 
   AppUser toAppUser() {
     return AppUser(
-      id: 0,
       uid: id,
       username: userName,
       fullName: fullName ?? userName,

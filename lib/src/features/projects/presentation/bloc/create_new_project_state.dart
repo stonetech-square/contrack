@@ -43,7 +43,7 @@ sealed class ProjectEntryFormData with _$ProjectEntryFormData {
     endDate,
   ]);
 
-  Project toProject(int createdBy) => Project(
+  Project toProject() => Project(
     code: code,
     status: status.value ?? ProjectStatus.notStarted,
     agencyId: implementingAgencyId.value,
@@ -54,7 +54,7 @@ sealed class ProjectEntryFormData with _$ProjectEntryFormData {
     amount: budget.value,
     sponsor: sponsor.isEmpty ? null : sponsor,
     title: title.value,
-    createdBy: createdBy,
+    createdBy: '',
     createdAt: DateTime.now(),
     updatedAt: DateTime.now(),
     isSynced: false,

@@ -82,8 +82,8 @@ class AppBloc extends HydratedBloc<AppEvent, AppState> {
     Emitter<AppState> emit,
   ) async {
     try {
-      await _setActiveUserUseCase(event.user!.id);
-      emit(state.copyWith(user: event.user?.toModel(), error: null));
+      await _setActiveUserUseCase(event.user.uid);
+      emit(state.copyWith(user: event.user.toModel(), error: null));
     } catch (e, stackTrace) {
       final failure = e is Failure
           ? e

@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$DashboardState {
 
- bool get isLoading; List<ProjectWithDetails> get recentProjects; DashboardStats get stats; String? get error; int? get userId; List<Project>? get importedProjects;
+ bool get isLoading; List<ProjectWithDetails> get recentProjects; DashboardStats get stats; String? get error; String? get userId; List<Project>? get importedProjects;
 /// Create a copy of DashboardState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -45,7 +45,7 @@ abstract mixin class $DashboardStateCopyWith<$Res>  {
   factory $DashboardStateCopyWith(DashboardState value, $Res Function(DashboardState) _then) = _$DashboardStateCopyWithImpl;
 @useResult
 $Res call({
- bool isLoading, List<ProjectWithDetails> recentProjects, DashboardStats stats, String? error, int? userId, List<Project>? importedProjects
+ bool isLoading, List<ProjectWithDetails> recentProjects, DashboardStats stats, String? error, String? userId, List<Project>? importedProjects
 });
 
 
@@ -69,7 +69,7 @@ as bool,recentProjects: null == recentProjects ? _self.recentProjects : recentPr
 as List<ProjectWithDetails>,stats: null == stats ? _self.stats : stats // ignore: cast_nullable_to_non_nullable
 as DashboardStats,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
 as String?,userId: freezed == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
-as int?,importedProjects: freezed == importedProjects ? _self.importedProjects : importedProjects // ignore: cast_nullable_to_non_nullable
+as String?,importedProjects: freezed == importedProjects ? _self.importedProjects : importedProjects // ignore: cast_nullable_to_non_nullable
 as List<Project>?,
   ));
 }
@@ -152,7 +152,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  List<ProjectWithDetails> recentProjects,  DashboardStats stats,  String? error,  int? userId,  List<Project>? importedProjects)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  List<ProjectWithDetails> recentProjects,  DashboardStats stats,  String? error,  String? userId,  List<Project>? importedProjects)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _DashboardState() when $default != null:
 return $default(_that.isLoading,_that.recentProjects,_that.stats,_that.error,_that.userId,_that.importedProjects);case _:
@@ -173,7 +173,7 @@ return $default(_that.isLoading,_that.recentProjects,_that.stats,_that.error,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  List<ProjectWithDetails> recentProjects,  DashboardStats stats,  String? error,  int? userId,  List<Project>? importedProjects)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  List<ProjectWithDetails> recentProjects,  DashboardStats stats,  String? error,  String? userId,  List<Project>? importedProjects)  $default,) {final _that = this;
 switch (_that) {
 case _DashboardState():
 return $default(_that.isLoading,_that.recentProjects,_that.stats,_that.error,_that.userId,_that.importedProjects);}
@@ -190,7 +190,7 @@ return $default(_that.isLoading,_that.recentProjects,_that.stats,_that.error,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  List<ProjectWithDetails> recentProjects,  DashboardStats stats,  String? error,  int? userId,  List<Project>? importedProjects)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  List<ProjectWithDetails> recentProjects,  DashboardStats stats,  String? error,  String? userId,  List<Project>? importedProjects)?  $default,) {final _that = this;
 switch (_that) {
 case _DashboardState() when $default != null:
 return $default(_that.isLoading,_that.recentProjects,_that.stats,_that.error,_that.userId,_that.importedProjects);case _:
@@ -218,7 +218,7 @@ class _DashboardState implements DashboardState {
 
 @override final  DashboardStats stats;
 @override final  String? error;
-@override final  int? userId;
+@override final  String? userId;
  final  List<Project>? _importedProjects;
 @override List<Project>? get importedProjects {
   final value = _importedProjects;
@@ -259,7 +259,7 @@ abstract mixin class _$DashboardStateCopyWith<$Res> implements $DashboardStateCo
   factory _$DashboardStateCopyWith(_DashboardState value, $Res Function(_DashboardState) _then) = __$DashboardStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool isLoading, List<ProjectWithDetails> recentProjects, DashboardStats stats, String? error, int? userId, List<Project>? importedProjects
+ bool isLoading, List<ProjectWithDetails> recentProjects, DashboardStats stats, String? error, String? userId, List<Project>? importedProjects
 });
 
 
@@ -283,7 +283,7 @@ as bool,recentProjects: null == recentProjects ? _self._recentProjects : recentP
 as List<ProjectWithDetails>,stats: null == stats ? _self.stats : stats // ignore: cast_nullable_to_non_nullable
 as DashboardStats,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
 as String?,userId: freezed == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
-as int?,importedProjects: freezed == importedProjects ? _self._importedProjects : importedProjects // ignore: cast_nullable_to_non_nullable
+as String?,importedProjects: freezed == importedProjects ? _self._importedProjects : importedProjects // ignore: cast_nullable_to_non_nullable
 as List<Project>?,
   ));
 }

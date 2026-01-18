@@ -17,9 +17,9 @@ class ProjectWithDetails extends Equatable {
   final double amount;
   final String? sponsor;
   final String title;
-  final int createdBy;
+  final String createdBy;
   final String? createdByName;
-  final int? modifiedBy;
+  final String? modifiedBy;
   final String? modifiedByName;
   final DateTime createdAt;
   final DateTime updatedAt;

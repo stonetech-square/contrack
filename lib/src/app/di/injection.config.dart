@@ -114,12 +114,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i445.ProjectExportService>(
       () => _i726.ProjectExportServiceImpl(),
     );
-    gh.lazySingleton<_i889.SyncAction>(
-      () => _i889.SyncActionImpl(
-        gh<_i339.AppDatabase>(),
-        gh<_i454.SupabaseClient>(),
-      ),
-    );
     gh.lazySingleton<_i820.ProjectImportService>(
       () => _i978.ProjectImportServiceImpl(),
     );
@@ -137,19 +131,17 @@ extension GetItInjectableX on _i174.GetIt {
       () =>
           _i26.UserSession(gh<_i339.AppDatabase>(), gh<_i454.SupabaseClient>()),
     );
-    gh.lazySingleton<_i103.SyncService>(
-      () => _i103.SyncServiceImpl(
-        gh<_i892.NetworkInfo>(),
-        gh<_i339.AppDatabase>(),
-        gh<_i889.SyncAction>(),
-        gh<_i454.SupabaseClient>(),
-      ),
-    );
     gh.lazySingleton<_i355.AuditService>(
       () => _i782.AuditServiceImpl(gh<_i339.AppDatabase>()),
     );
     gh.lazySingleton<_i964.DatabaseSeeder>(
       () => _i964.DatabaseSeeder(
+        gh<_i339.AppDatabase>(),
+        gh<_i454.SupabaseClient>(),
+      ),
+    );
+    gh.lazySingleton<_i889.SyncAction>(
+      () => _i889.SyncActionImpl(
         gh<_i339.AppDatabase>(),
         gh<_i454.SupabaseClient>(),
       ),
@@ -175,6 +167,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i26.UserSession>(),
         gh<_i445.ProjectExportService>(),
         gh<_i355.AuditService>(),
+      ),
+    );
+    gh.lazySingleton<_i103.SyncService>(
+      () => _i103.SyncServiceImpl(
+        gh<_i892.NetworkInfo>(),
+        gh<_i889.SyncAction>(),
       ),
     );
     gh.lazySingleton<_i275.DashboardRepository>(

@@ -13,13 +13,13 @@ abstract class ProjectsLocalDataSource {
   Future<void> createProject(List<ProjectModel> projects);
   Future<ProjectWithDetailsModel?> getProjectByCode(String code);
   Stream<List<ProjectModel>> watchProjectsForUser(
-    int userId,
+    String userId,
     UserRole role, {
     String? query,
     ProjectFilter filter = const ProjectFilter(),
   });
   Future<List<ProjectWithDetailsModel>> getAllProjectsWithDetails(
-    int userId,
+    String userId,
     UserRole role, {
     String? query,
     ProjectFilter filter = const ProjectFilter(),
@@ -32,7 +32,7 @@ abstract class ProjectsLocalDataSource {
     int implementingAgencyId,
   );
   Future<void> recordExport({
-    required int userId,
+    required String userId,
     required String projectCode,
     required ExportFormat format,
     required String fileName,
@@ -162,7 +162,7 @@ class ProjectsLocalDataSourceImpl implements ProjectsLocalDataSource {
 
   @override
   Stream<List<ProjectModel>> watchProjectsForUser(
-    int userId,
+    String userId,
     UserRole role, {
     String? query,
     ProjectFilter filter = const ProjectFilter(),
@@ -280,7 +280,7 @@ class ProjectsLocalDataSourceImpl implements ProjectsLocalDataSource {
 
   @override
   Future<List<ProjectWithDetailsModel>> getAllProjectsWithDetails(
-    int userId,
+    String userId,
     UserRole role, {
     String? query,
     ProjectFilter filter = const ProjectFilter(),
@@ -428,7 +428,7 @@ class ProjectsLocalDataSourceImpl implements ProjectsLocalDataSource {
 
   @override
   Future<void> recordExport({
-    required int userId,
+    required String userId,
     required String projectCode,
     required ExportFormat format,
     required String fileName,

@@ -26,7 +26,7 @@ class UserSession {
       if (session != null && session.activeUserId != null) {
         final user = await (_db.select(
           _db.users,
-        )..where((u) => u.id.equals(session.activeUserId!))).getSingleOrNull();
+        )..where((u) => u.uid.equals(session.activeUserId!))).getSingleOrNull();
         _userSubject.add(user);
       } else {
         _userSubject.add(null);
@@ -49,7 +49,7 @@ class UserSession {
     });
   }
 
-  Future<void> setSession(int userId) async {
+  Future<void> setSession(String userId) async {
     await _db.transaction(() async {
       await _db.delete(_db.sessions).go();
       await _db
@@ -59,7 +59,7 @@ class UserSession {
 
     final user = await (_db.select(
       _db.users,
-    )..where((u) => u.id.equals(userId))).getSingleOrNull();
+    )..where((u) => u.uid.equals(userId))).getSingleOrNull();
     _userSubject.add(user);
   }
 
@@ -75,11 +75,10 @@ class UserSession {
       _db.users,
     )..where((u) => u.uid.equals(uid))).getSingleOrNull();
 
-    final int id;
     if (existingUser != null) {
       await (_db.update(
         _db.users,
-      )..where((u) => u.id.equals(existingUser.id))).write(
+      )..where((u) => u.uid.equals(existingUser.uid))).write(
         UsersCompanion(
           fullName: Value(fullName),
           email: Value(email),
@@ -92,9 +91,8 @@ class UserSession {
           updatedAt: Value(DateTime.now()),
         ),
       );
-      id = existingUser.id;
     } else {
-      id = await _db
+      await _db
           .into(_db.users)
           .insert(
             UsersCompanion.insert(
@@ -111,7 +109,7 @@ class UserSession {
           );
     }
 
-    await setSession(id);
+    await setSession(uid);
   }
 
   Future<void> clear() async {

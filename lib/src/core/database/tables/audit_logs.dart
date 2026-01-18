@@ -3,7 +3,7 @@ import 'package:drift/drift.dart';
 
 class AuditLogs extends Table {
   IntColumn get id => integer().autoIncrement()();
-  IntColumn get userId => integer().references(Users, #id)();
+  TextColumn get userId => text().references(Users, #uid)();
   TextColumn get tableNameRef => text().withLength(min: 1, max: 50)();
   TextColumn get recordId => text().nullable()();
   TextColumn get action => textEnum<AuditAction>()();

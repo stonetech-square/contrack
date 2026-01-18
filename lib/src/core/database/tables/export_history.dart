@@ -4,7 +4,7 @@ import 'package:drift/drift.dart';
 
 class ExportHistory extends Table {
   IntColumn get id => integer().autoIncrement()();
-  IntColumn get userId => integer().references(Users, #id)();
+  TextColumn get userId => text().references(Users, #uid)();
   TextColumn get projectCode =>
       text().references(Projects, #code, onDelete: KeyAction.cascade)();
   TextColumn get format => textEnum<ExportFormat>()();

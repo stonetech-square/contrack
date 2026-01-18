@@ -35,7 +35,7 @@ class AppRepositoryImpl implements AppRepository {
   }
 
   @override
-  Future<void> setUser(int userId) async {
+  Future<void> setUser(String userId) async {
     try {
       await _localDataSource.setUser(userId);
     } catch (e, stackTrace) {

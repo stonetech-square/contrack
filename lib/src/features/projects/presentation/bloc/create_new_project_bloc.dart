@@ -262,7 +262,7 @@ class CreateNewProjectBloc
     );
 
     try {
-      final projects = state.entries.map((e) => e.toProject(0)).toList();
+      final projects = state.entries.map((e) => e.toProject()).toList();
       await _createProjectUseCase(CreateProjectParams(projects: projects));
       emit(state.copyWith(viewStatus: CreateProjectViewStatus.success));
     } catch (e, stackTrace) {

@@ -1,15 +1,12 @@
 import 'dart:async';
-import 'package:contrack/src/core/database/database.dart';
+
 import 'package:contrack/src/core/network/network_info.dart';
 import 'package:contrack/src/core/sync/app_sync_status.dart';
 import 'package:contrack/src/core/sync/sync_action.dart';
-import 'package:drift/drift.dart';
 import 'package:injectable/injectable.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:logging/logging.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:contrack/src/core/common/models/user_profile_model.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract class SyncService {
   Stream<bool> get isSyncing;
@@ -19,11 +16,17 @@ abstract class SyncService {
 }
 
 @LazySingleton(as: SyncService)
+/// Orchestrator: Responsible for managing the synchronization lifecycle.
+///
+/// Responsibilities:
+/// 1. Monitoring network connectivity.
+/// 2. Scheduling periodic syncs.
+/// 3. Fetching batch data from Remote (Pull).
+/// 4. Identifying local changes to be pushed (Push candidates).
+/// 5. Delegating atomic operations to [SyncAction].
 class SyncServiceImpl implements SyncService {
   final NetworkInfo _networkInfo;
-  final AppDatabase _database;
   final SyncAction _syncAction;
-  final SupabaseClient _supabase;
   final Logger _logger = Logger('SyncServiceImpl');
 
   final _isSyncingController = BehaviorSubject<bool>.seeded(false);
@@ -34,12 +37,7 @@ class SyncServiceImpl implements SyncService {
   static const _syncInterval = Duration(minutes: 15);
   static const _batchSize = 50;
 
-  SyncServiceImpl(
-    this._networkInfo,
-    this._database,
-    this._syncAction,
-    this._supabase,
-  ) {
+  SyncServiceImpl(this._networkInfo, this._syncAction) {
     _networkSubscription = _networkInfo.onStatusChange.listen((status) {
       if (status == InternetStatus.connected) {
         _startPeriodicSync();
@@ -154,42 +152,20 @@ class SyncServiceImpl implements SyncService {
     await _pullAndSyncMinistries();
     await _pullAndSyncStates();
 
-    final session =
-        await (_database.select(_database.sessions)
-              ..limit(1)
-              ..orderBy([
-                (t) => OrderingTerm(
-                  expression: t.createdAt,
-                  mode: OrderingMode.desc,
-                ),
-              ]))
-            .getSingleOrNull();
-
-    if (session != null && session.activeUserId != null) {
-      final user = await (_database.select(
-        _database.users,
-      )..where((t) => t.id.equals(session.activeUserId!))).getSingleOrNull();
-
-      if (user != null) {
-        await _pullAndSyncProfiles();
-      }
-
-      await _pullAndSyncProjects(currentUserId: session.activeUserId);
+    final user = await _syncAction.getActiveSessionUser();
+    if (user != null) {
+      await _pullAndSyncProfiles();
+      await _pullAndSyncProjects(currentUserId: user.uid);
     }
   }
 
-  Future<void> _pullAndSyncProjects({required int? currentUserId}) async {
+  Future<void> _pullAndSyncProjects({required String? currentUserId}) async {
     try {
-      final response = await _supabase.from('projects').select();
-      final projectsData = response as List<dynamic>;
-
+      final projectsData = await _syncAction.fetchRemoteProjects();
       for (final projectData in projectsData) {
         if (_isDisposed) break;
         try {
-          await _syncAction.updateLocalFromRemoteProject(
-            projectData as Map<String, dynamic>,
-            currentUserId,
-          );
+          await _syncAction.upsertRemoteProject(projectData, currentUserId);
         } catch (e, stackTrace) {
           _logger.warning('Failed to sync incoming project', e, stackTrace);
         }
@@ -200,43 +176,37 @@ class SyncServiceImpl implements SyncService {
   }
 
   Future<void> _pullAndSyncGeopoliticalZones() async {
-    final response = await _supabase.from('geopolitical_zones').select();
+    final response = await _syncAction.fetchRemoteGeopoliticalZones();
     for (final item in response) {
-      await _syncAction.updateLocalFromRemoteGeopoliticalZone(item);
+      await _syncAction.upsertRemoteGeopoliticalZone(item);
     }
   }
 
   Future<void> _pullAndSyncAgencies() async {
-    final response = await _supabase.from('agencies').select();
+    final response = await _syncAction.fetchRemoteAgencies();
     for (final item in response) {
-      await _syncAction.updateLocalFromRemoteAgency(item);
+      await _syncAction.upsertRemoteAgency(item);
     }
   }
 
   Future<void> _pullAndSyncMinistries() async {
-    final response = await _supabase.from('ministries').select();
+    final response = await _syncAction.fetchRemoteMinistries();
     for (final item in response) {
-      await _syncAction.updateLocalFromRemoteMinistry(item);
+      await _syncAction.upsertRemoteMinistry(item);
     }
   }
 
   Future<void> _pullAndSyncStates() async {
-    final response = await _supabase.from('states').select();
+    final response = await _syncAction.fetchRemoteStates();
     for (final item in response) {
-      await _syncAction.updateLocalFromRemoteState(item);
+      await _syncAction.upsertRemoteState(item);
     }
   }
 
   Future<void> _pullAndSyncProfiles() async {
-    final response = await _supabase
-        .from('profiles')
-        .select('*, user_roles!profile_id(role, is_active)')
-        .withConverter(
-          (data) =>
-              (data as List).map((e) => UserProfileModel.fromJson(e)).toList(),
-        );
+    final response = await _syncAction.fetchRemoteProfiles();
     for (final profile in response) {
-      await _syncAction.updateLocalFromRemoteProfile(profile);
+      await _syncAction.upsertRemoteProfile(profile);
     }
   }
 
@@ -244,87 +214,27 @@ class SyncServiceImpl implements SyncService {
     int synced = 0;
 
     while (!_isDisposed) {
-      final createdByUser = _database.alias(_database.users, 'created_by_user');
-      final modifiedByUser = _database.alias(
-        _database.users,
-        'modified_by_user',
-      );
-
-      final query =
-          _database.select(_database.projects).join([
-              leftOuterJoin(
-                _database.agencies,
-                _database.agencies.id.equalsExp(_database.projects.agencyId),
-              ),
-              leftOuterJoin(
-                _database.ministries,
-                _database.ministries.id.equalsExp(
-                  _database.projects.ministryId,
-                ),
-              ),
-              leftOuterJoin(
-                _database.states,
-                _database.states.id.equalsExp(_database.projects.stateId),
-              ),
-              leftOuterJoin(
-                _database.geopoliticalZones,
-                _database.geopoliticalZones.id.equalsExp(
-                  _database.projects.zoneId,
-                ),
-              ),
-              leftOuterJoin(
-                createdByUser,
-                createdByUser.id.equalsExp(_database.projects.createdBy),
-              ),
-              leftOuterJoin(
-                modifiedByUser,
-                modifiedByUser.id.equalsExp(_database.projects.modifiedBy),
-              ),
-            ])
-            ..where(_database.projects.isSynced.equals(false))
-            ..orderBy([
-              OrderingTerm(
-                expression: _database.projects.createdAt,
-                mode: OrderingMode.asc,
-              ),
-            ])
-            ..limit(_batchSize);
-
-      final results = await query.get();
+      final results = await _syncAction.getUnsyncedProjects(limit: _batchSize);
 
       if (results.isEmpty) break;
 
-      for (final row in results) {
+      for (final item in results) {
         if (_isDisposed) break;
 
-        final project = row.readTable(_database.projects);
-        final agencyRemoteId = row
-            .readTableOrNull(_database.agencies)
-            ?.remoteId;
-        final ministryRemoteId = row
-            .readTableOrNull(_database.ministries)
-            ?.remoteId;
-        final stateRemoteId = row.readTableOrNull(_database.states)?.remoteId;
-        final zoneRemoteId = row
-            .readTableOrNull(_database.geopoliticalZones)
-            ?.remoteId;
-        final createdByRemoteId = row.readTableOrNull(createdByUser)?.uid;
-        final modifiedByRemoteId = row.readTableOrNull(modifiedByUser)?.uid;
-
         try {
-          await _syncAction.syncProject(
-            project,
-            agencyRemoteId,
-            ministryRemoteId,
-            stateRemoteId,
-            zoneRemoteId,
-            createdByRemoteId,
-            modifiedByRemoteId,
+          await _syncAction.pushProject(
+            item.project,
+            item.agencyRemoteId,
+            item.ministryRemoteId,
+            item.stateRemoteId,
+            item.zoneRemoteId,
+            item.createdByRemoteId,
+            item.modifiedByRemoteId,
           );
           synced++;
         } catch (e, stackTrace) {
           _logger.severe(
-            'Failed to sync project ${project.code}',
+            'Failed to sync project ${item.project.code}',
             e,
             stackTrace,
           );
@@ -341,17 +251,9 @@ class SyncServiceImpl implements SyncService {
     int synced = 0;
 
     while (!_isDisposed) {
-      final unsyncedUsers =
-          await (_database.select(_database.users)
-                ..where((t) => t.isSynced.equals(false))
-                ..orderBy([
-                  (t) => OrderingTerm(
-                    expression: t.createdAt,
-                    mode: OrderingMode.asc,
-                  ),
-                ])
-                ..limit(_batchSize))
-              .get();
+      final unsyncedUsers = await _syncAction.getUnsyncedUsers(
+        limit: _batchSize,
+      );
 
       if (unsyncedUsers.isEmpty) break;
 
@@ -359,7 +261,7 @@ class SyncServiceImpl implements SyncService {
         if (_isDisposed) break;
 
         try {
-          await _syncAction.syncUser(user);
+          await _syncAction.pushUser(user);
           synced++;
         } catch (e, stackTrace) {
           _logger.severe('Failed to sync user ${user.username}', e, stackTrace);

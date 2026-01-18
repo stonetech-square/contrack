@@ -4,7 +4,6 @@ import 'package:contrack/src/core/common/enums/project_status.dart';
 import 'package:drift/drift.dart';
 
 class Projects extends Table {
-  // code is the primary key - enables efficient batch upserts
   @override
   Set<Column> get primaryKey => {code};
   TextColumn get code => text().withLength(min: 1, max: 100)();
@@ -14,9 +13,9 @@ class Projects extends Table {
   IntColumn get stateId => integer().references(States, #id)();
   IntColumn get zoneId => integer().references(GeopoliticalZones, #id)();
   @ReferenceName('createdProjects')
-  IntColumn get createdBy => integer().references(Users, #id)();
+  TextColumn get createdBy => text().references(Users, #uid)();
   @ReferenceName('modifiedProjects')
-  IntColumn get modifiedBy => integer().references(Users, #id).nullable()();
+  TextColumn get modifiedBy => text().references(Users, #uid).nullable()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get lastSyncedAt => dateTime().nullable()();

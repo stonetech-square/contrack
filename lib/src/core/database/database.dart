@@ -34,7 +34,7 @@ class AppDatabase extends _$AppDatabase {
   static QueryExecutor _openConnection() {
     return LazyDatabase(() async {
       final dbFolder = await getApplicationSupportDirectory();
-      final file = File(p.join(dbFolder.path, 'contrack_dev8.sqlite'));
+      final file = File(p.join(dbFolder.path, 'contrack_dev9.sqlite'));
 
       return NativeDatabase.createInBackground(
         file,

@@ -45,11 +45,11 @@ class DashboardRepositoryImpl implements DashboardRepository {
       }
 
       return _localDataSource
-          .watchRecentProjects(userId: user.id, role: user.role)
+          .watchRecentProjects(userId: user.uid, role: user.role)
           .map((models) => models.map((e) => e.toEntity()).toList())
           .handleError((error, stackTrace) {
             _logger.severe(
-              'Error watching projects for user: ${user.id}',
+              'Error watching projects for user: ${user.uid}',
               error,
               stackTrace,
             );
@@ -66,11 +66,11 @@ class DashboardRepositoryImpl implements DashboardRepository {
       }
 
       return _localDataSource
-          .watchRecentProjectsWithDetails(userId: user.id, role: user.role)
+          .watchRecentProjectsWithDetails(userId: user.uid, role: user.role)
           .map((models) => models.map((e) => e.toEntity()).toList())
           .handleError((error, stackTrace) {
             _logger.severe(
-              'Error watching projects with details for user: ${user.id}',
+              'Error watching projects with details for user: ${user.uid}',
               error,
               stackTrace,
             );
@@ -86,10 +86,10 @@ class DashboardRepositoryImpl implements DashboardRepository {
         throw AppFailure('User not logged in');
       }
       return _localDataSource
-          .watchUnsyncProjectCount(user.id, user.role)
+          .watchUnsyncProjectCount(user.uid, user.role)
           .handleError((error, stackTrace) {
             _logger.severe(
-              'Error watching unsynced project count for user: ${user.id}',
+              'Error watching unsynced project count for user: ${user.uid}',
               error,
               stackTrace,
             );
@@ -105,10 +105,10 @@ class DashboardRepositoryImpl implements DashboardRepository {
         throw AppFailure('User not logged in');
       }
       return _localDataSource
-          .watchProjectCountsByStatus(user.id, user.role)
+          .watchProjectCountsByStatus(user.uid, user.role)
           .handleError((error, stackTrace) {
             _logger.severe(
-              'Error watching project counts by status for user: ${user.id}',
+              'Error watching project counts by status for user: ${user.uid}',
               error,
               stackTrace,
             );
@@ -201,7 +201,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
           title: dto.title,
           amount: dto.amount,
           sponsor: dto.sponsor,
-          createdBy: user.id,
+          createdBy: user.uid,
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
         );

@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AppUserModel {
 
- int get id; String get uid; String get username; String get fullName; String get email; UserRole get role; bool get isActive; DateTime get createdAt; DateTime? get lastLoginAt;
+ String get uid; String get username; String get fullName; String get email; UserRole get role; bool get isActive; DateTime get createdAt; DateTime? get lastLoginAt;
 /// Create a copy of AppUserModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $AppUserModelCopyWith<AppUserModel> get copyWith => _$AppUserModelCopyWithImpl<A
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppUserModel&&(identical(other.id, id) || other.id == id)&&(identical(other.uid, uid) || other.uid == uid)&&(identical(other.username, username) || other.username == username)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.email, email) || other.email == email)&&(identical(other.role, role) || other.role == role)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.lastLoginAt, lastLoginAt) || other.lastLoginAt == lastLoginAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppUserModel&&(identical(other.uid, uid) || other.uid == uid)&&(identical(other.username, username) || other.username == username)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.email, email) || other.email == email)&&(identical(other.role, role) || other.role == role)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.lastLoginAt, lastLoginAt) || other.lastLoginAt == lastLoginAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,uid,username,fullName,email,role,isActive,createdAt,lastLoginAt);
+int get hashCode => Object.hash(runtimeType,uid,username,fullName,email,role,isActive,createdAt,lastLoginAt);
 
 @override
 String toString() {
-  return 'AppUserModel(id: $id, uid: $uid, username: $username, fullName: $fullName, email: $email, role: $role, isActive: $isActive, createdAt: $createdAt, lastLoginAt: $lastLoginAt)';
+  return 'AppUserModel(uid: $uid, username: $username, fullName: $fullName, email: $email, role: $role, isActive: $isActive, createdAt: $createdAt, lastLoginAt: $lastLoginAt)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $AppUserModelCopyWith<$Res>  {
   factory $AppUserModelCopyWith(AppUserModel value, $Res Function(AppUserModel) _then) = _$AppUserModelCopyWithImpl;
 @useResult
 $Res call({
- int id, String uid, String username, String fullName, String email, UserRole role, bool isActive, DateTime createdAt, DateTime? lastLoginAt
+ String uid, String username, String fullName, String email, UserRole role, bool isActive, DateTime createdAt, DateTime? lastLoginAt
 });
 
 
@@ -65,10 +65,9 @@ class _$AppUserModelCopyWithImpl<$Res>
 
 /// Create a copy of AppUserModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? uid = null,Object? username = null,Object? fullName = null,Object? email = null,Object? role = null,Object? isActive = null,Object? createdAt = null,Object? lastLoginAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? uid = null,Object? username = null,Object? fullName = null,Object? email = null,Object? role = null,Object? isActive = null,Object? createdAt = null,Object? lastLoginAt = freezed,}) {
   return _then(_self.copyWith(
-id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as int,uid: null == uid ? _self.uid : uid // ignore: cast_nullable_to_non_nullable
+uid: null == uid ? _self.uid : uid // ignore: cast_nullable_to_non_nullable
 as String,username: null == username ? _self.username : username // ignore: cast_nullable_to_non_nullable
 as String,fullName: null == fullName ? _self.fullName : fullName // ignore: cast_nullable_to_non_nullable
 as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
@@ -158,10 +157,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String uid,  String username,  String fullName,  String email,  UserRole role,  bool isActive,  DateTime createdAt,  DateTime? lastLoginAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String uid,  String username,  String fullName,  String email,  UserRole role,  bool isActive,  DateTime createdAt,  DateTime? lastLoginAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AppUserModel() when $default != null:
-return $default(_that.id,_that.uid,_that.username,_that.fullName,_that.email,_that.role,_that.isActive,_that.createdAt,_that.lastLoginAt);case _:
+return $default(_that.uid,_that.username,_that.fullName,_that.email,_that.role,_that.isActive,_that.createdAt,_that.lastLoginAt);case _:
   return orElse();
 
 }
@@ -179,10 +178,10 @@ return $default(_that.id,_that.uid,_that.username,_that.fullName,_that.email,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String uid,  String username,  String fullName,  String email,  UserRole role,  bool isActive,  DateTime createdAt,  DateTime? lastLoginAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String uid,  String username,  String fullName,  String email,  UserRole role,  bool isActive,  DateTime createdAt,  DateTime? lastLoginAt)  $default,) {final _that = this;
 switch (_that) {
 case _AppUserModel():
-return $default(_that.id,_that.uid,_that.username,_that.fullName,_that.email,_that.role,_that.isActive,_that.createdAt,_that.lastLoginAt);}
+return $default(_that.uid,_that.username,_that.fullName,_that.email,_that.role,_that.isActive,_that.createdAt,_that.lastLoginAt);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -196,10 +195,10 @@ return $default(_that.id,_that.uid,_that.username,_that.fullName,_that.email,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String uid,  String username,  String fullName,  String email,  UserRole role,  bool isActive,  DateTime createdAt,  DateTime? lastLoginAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String uid,  String username,  String fullName,  String email,  UserRole role,  bool isActive,  DateTime createdAt,  DateTime? lastLoginAt)?  $default,) {final _that = this;
 switch (_that) {
 case _AppUserModel() when $default != null:
-return $default(_that.id,_that.uid,_that.username,_that.fullName,_that.email,_that.role,_that.isActive,_that.createdAt,_that.lastLoginAt);case _:
+return $default(_that.uid,_that.username,_that.fullName,_that.email,_that.role,_that.isActive,_that.createdAt,_that.lastLoginAt);case _:
   return null;
 
 }
@@ -211,10 +210,9 @@ return $default(_that.id,_that.uid,_that.username,_that.fullName,_that.email,_th
 @JsonSerializable()
 
 class _AppUserModel extends AppUserModel {
-  const _AppUserModel({required this.id, required this.uid, required this.username, required this.fullName, required this.email, required this.role, required this.isActive, required this.createdAt, this.lastLoginAt}): super._();
+  const _AppUserModel({required this.uid, required this.username, required this.fullName, required this.email, required this.role, required this.isActive, required this.createdAt, this.lastLoginAt}): super._();
   factory _AppUserModel.fromJson(Map<String, dynamic> json) => _$AppUserModelFromJson(json);
 
-@override final  int id;
 @override final  String uid;
 @override final  String username;
 @override final  String fullName;
@@ -237,16 +235,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppUserModel&&(identical(other.id, id) || other.id == id)&&(identical(other.uid, uid) || other.uid == uid)&&(identical(other.username, username) || other.username == username)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.email, email) || other.email == email)&&(identical(other.role, role) || other.role == role)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.lastLoginAt, lastLoginAt) || other.lastLoginAt == lastLoginAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppUserModel&&(identical(other.uid, uid) || other.uid == uid)&&(identical(other.username, username) || other.username == username)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.email, email) || other.email == email)&&(identical(other.role, role) || other.role == role)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.lastLoginAt, lastLoginAt) || other.lastLoginAt == lastLoginAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,uid,username,fullName,email,role,isActive,createdAt,lastLoginAt);
+int get hashCode => Object.hash(runtimeType,uid,username,fullName,email,role,isActive,createdAt,lastLoginAt);
 
 @override
 String toString() {
-  return 'AppUserModel(id: $id, uid: $uid, username: $username, fullName: $fullName, email: $email, role: $role, isActive: $isActive, createdAt: $createdAt, lastLoginAt: $lastLoginAt)';
+  return 'AppUserModel(uid: $uid, username: $username, fullName: $fullName, email: $email, role: $role, isActive: $isActive, createdAt: $createdAt, lastLoginAt: $lastLoginAt)';
 }
 
 
@@ -257,7 +255,7 @@ abstract mixin class _$AppUserModelCopyWith<$Res> implements $AppUserModelCopyWi
   factory _$AppUserModelCopyWith(_AppUserModel value, $Res Function(_AppUserModel) _then) = __$AppUserModelCopyWithImpl;
 @override @useResult
 $Res call({
- int id, String uid, String username, String fullName, String email, UserRole role, bool isActive, DateTime createdAt, DateTime? lastLoginAt
+ String uid, String username, String fullName, String email, UserRole role, bool isActive, DateTime createdAt, DateTime? lastLoginAt
 });
 
 
@@ -274,10 +272,9 @@ class __$AppUserModelCopyWithImpl<$Res>
 
 /// Create a copy of AppUserModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? uid = null,Object? username = null,Object? fullName = null,Object? email = null,Object? role = null,Object? isActive = null,Object? createdAt = null,Object? lastLoginAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? uid = null,Object? username = null,Object? fullName = null,Object? email = null,Object? role = null,Object? isActive = null,Object? createdAt = null,Object? lastLoginAt = freezed,}) {
   return _then(_AppUserModel(
-id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as int,uid: null == uid ? _self.uid : uid // ignore: cast_nullable_to_non_nullable
+uid: null == uid ? _self.uid : uid // ignore: cast_nullable_to_non_nullable
 as String,username: null == username ? _self.username : username // ignore: cast_nullable_to_non_nullable
 as String,fullName: null == fullName ? _self.fullName : fullName // ignore: cast_nullable_to_non_nullable
 as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable

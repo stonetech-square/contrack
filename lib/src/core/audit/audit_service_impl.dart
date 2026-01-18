@@ -12,11 +12,13 @@ class AuditServiceImpl implements AuditService {
 
   @override
   Future<void> logExport({
-    required int userId,
+    required String userId,
     required String projectCode,
     required String fileName,
   }) async {
-    await _database.into(_database.auditLogs).insert(
+    await _database
+        .into(_database.auditLogs)
+        .insert(
           AuditLogsCompanion.insert(
             userId: userId,
             tableNameRef: 'projects',

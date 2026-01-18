@@ -11,7 +11,6 @@ sealed class AppUserModel with _$AppUserModel {
   const AppUserModel._();
 
   const factory AppUserModel({
-    required int id,
     required String uid,
     required String username,
     required String fullName,
@@ -27,7 +26,6 @@ sealed class AppUserModel with _$AppUserModel {
 
   factory AppUserModel.fromDrift(User user) {
     return AppUserModel(
-      id: user.id,
       uid: user.uid,
       username: user.username,
       fullName: user.fullName ?? user.username,
@@ -41,7 +39,6 @@ sealed class AppUserModel with _$AppUserModel {
 
   AppUser toEntity() {
     return AppUser(
-      id: id,
       uid: uid,
       username: username,
       fullName: fullName,

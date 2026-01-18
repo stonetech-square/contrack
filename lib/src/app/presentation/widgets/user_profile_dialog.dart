@@ -170,7 +170,7 @@ class _UserDetailsGrid extends StatelessWidget {
       _DetailItem(
         icon: Icons.person_outline,
         label: 'User ID',
-        value: 'USR-${user.id.toString().padLeft(3, '0')}',
+        value: 'USR-${user.uid.toString().padLeft(3, '0')}',
       ),
       _DetailItem(
         icon: Icons.calendar_today_outlined,

@@ -93,8 +93,6 @@ class RecentProjects extends StatelessWidget {
                       child: SingleChildScrollView(
                         child: RecentProjectsTableBody(
                           projects: state.recentProjects,
-                          isAdmin: isAdmin,
-                          currentUserId: state.userId,
                         ),
                       ),
                     ),

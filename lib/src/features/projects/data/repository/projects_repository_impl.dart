@@ -45,7 +45,7 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
       throw Exception('User not logged in');
     }
     final projectsWithCreatedBy = projects
-        .map((project) => project.copyWith(createdBy: user.id))
+        .map((project) => project.copyWith(createdBy: user.uid))
         .toList();
 
     final projectModels = projectsWithCreatedBy
@@ -111,7 +111,7 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
     }
 
     return _localDataSource
-        .watchProjectsForUser(user.id, user.role, query: query, filter: filter)
+        .watchProjectsForUser(user.uid, user.role, query: query, filter: filter)
         .map((models) => models.map((model) => model.toEntity()).toList());
   }
 
@@ -129,7 +129,7 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
     final fileName = filePath.split('/').last;
 
     await _localDataSource.recordExport(
-      userId: user.id,
+      userId: user.uid,
       projectCode: project.code,
       format: format,
       fileName: fileName,
@@ -137,7 +137,7 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
     );
 
     await _auditService.logExport(
-      userId: user.id,
+      userId: user.uid,
       projectCode: project.code,
       fileName: fileName,
     );
@@ -157,7 +157,7 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
     }
 
     final projects = await _localDataSource.getAllProjectsWithDetails(
-      user.id,
+      user.uid,
       user.role,
       query: query,
       filter: filter,
@@ -175,7 +175,7 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
 
     for (final project in projects) {
       await _localDataSource.recordExport(
-        userId: user.id,
+        userId: user.uid,
         projectCode: project.code,
         format: format,
         fileName: fileName,
@@ -183,7 +183,7 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
       );
 
       await _auditService.logExport(
-        userId: user.id,
+        userId: user.uid,
         projectCode: project.code,
         fileName: fileName,
       );

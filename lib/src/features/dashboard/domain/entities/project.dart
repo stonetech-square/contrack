@@ -12,8 +12,8 @@ class Project extends Equatable {
   final double amount;
   final String? sponsor;
   final String title;
-  final int createdBy;
-  final int? modifiedBy;
+  final String createdBy;
+  final String? modifiedBy;
   final DateTime createdAt;
   final DateTime updatedAt;
   final bool isSynced;
@@ -51,7 +51,7 @@ class Project extends Equatable {
       constituency: '',
       amount: 0,
       title: '',
-      createdBy: 0,
+      createdBy: '',
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
       isSynced: false,
@@ -69,8 +69,8 @@ class Project extends Equatable {
     double? amount,
     String? sponsor,
     String? title,
-    int? createdBy,
-    int? modifiedBy,
+    String? createdBy,
+    String? modifiedBy,
     DateTime? createdAt,
     DateTime? updatedAt,
     bool? isSynced,

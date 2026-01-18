@@ -13,7 +13,7 @@ class AppStarted extends AppEvent {
 }
 
 class AppUserChanged extends AppEvent {
-  final AppUser? user;
+  final AppUser user;
   const AppUserChanged(this.user);
 
   @override

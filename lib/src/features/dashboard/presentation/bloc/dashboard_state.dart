@@ -7,7 +7,7 @@ sealed class DashboardState with _$DashboardState {
     @Default([]) List<ProjectWithDetails> recentProjects,
     required DashboardStats stats,
     String? error,
-    int? userId,
+    String? userId,
     List<Project>? importedProjects,
   }) = _DashboardState;
 

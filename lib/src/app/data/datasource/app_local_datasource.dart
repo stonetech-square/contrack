@@ -4,7 +4,7 @@ import 'package:injectable/injectable.dart';
 
 abstract class AppLocalDataSource {
   Stream<User?> watchUser();
-  Future<void> setUser(int userId);
+  Future<void> setUser(String uid);
   Future<void> clearSession();
 }
 
@@ -18,7 +18,7 @@ class AppLocalDataSourceImpl implements AppLocalDataSource {
   Stream<User?> watchUser() => _userSession.userStream;
 
   @override
-  Future<void> setUser(int userId) async {
+  Future<void> setUser(String userId) async {
     await _userSession.setSession(userId);
   }
 

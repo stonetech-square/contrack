@@ -8,19 +8,6 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $UsersTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
-    'id',
-    aliasedName,
-    false,
-    hasAutoIncrement: true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
-  );
   static const VerificationMeta _uidMeta = const VerificationMeta('uid');
   @override
   late final GeneratedColumn<String> uid = GeneratedColumn<String>(
@@ -29,7 +16,6 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
-    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
   );
   static const VerificationMeta _usernameMeta = const VerificationMeta(
     'username',
@@ -174,7 +160,6 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
   );
   @override
   List<GeneratedColumn> get $columns => [
-    id,
     uid,
     username,
     fullName,
@@ -200,9 +185,6 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
   }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
     if (data.containsKey('uid')) {
       context.handle(
         _uidMeta,
@@ -285,15 +267,11 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {id};
+  Set<GeneratedColumn> get $primaryKey => {uid};
   @override
   User map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return User(
-      id: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}id'],
-      )!,
       uid: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}uid'],
@@ -357,7 +335,6 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
 }
 
 class User extends DataClass implements Insertable<User> {
-  final int id;
   final String uid;
   final String username;
   final String? fullName;
@@ -371,7 +348,6 @@ class User extends DataClass implements Insertable<User> {
   final DateTime updatedAt;
   final DateTime? lastLoginAt;
   const User({
-    required this.id,
     required this.uid,
     required this.username,
     this.fullName,
@@ -388,7 +364,6 @@ class User extends DataClass implements Insertable<User> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
     map['uid'] = Variable<String>(uid);
     map['username'] = Variable<String>(username);
     if (!nullToAbsent || fullName != null) {
@@ -416,7 +391,6 @@ class User extends DataClass implements Insertable<User> {
 
   UsersCompanion toCompanion(bool nullToAbsent) {
     return UsersCompanion(
-      id: Value(id),
       uid: Value(uid),
       username: Value(username),
       fullName: fullName == null && nullToAbsent
@@ -446,7 +420,6 @@ class User extends DataClass implements Insertable<User> {
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return User(
-      id: serializer.fromJson<int>(json['id']),
       uid: serializer.fromJson<String>(json['uid']),
       username: serializer.fromJson<String>(json['username']),
       fullName: serializer.fromJson<String?>(json['fullName']),
@@ -467,7 +440,6 @@ class User extends DataClass implements Insertable<User> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
       'uid': serializer.toJson<String>(uid),
       'username': serializer.toJson<String>(username),
       'fullName': serializer.toJson<String?>(fullName),
@@ -486,7 +458,6 @@ class User extends DataClass implements Insertable<User> {
   }
 
   User copyWith({
-    int? id,
     String? uid,
     String? username,
     Value<String?> fullName = const Value.absent(),
@@ -500,7 +471,6 @@ class User extends DataClass implements Insertable<User> {
     DateTime? updatedAt,
     Value<DateTime?> lastLoginAt = const Value.absent(),
   }) => User(
-    id: id ?? this.id,
     uid: uid ?? this.uid,
     username: username ?? this.username,
     fullName: fullName.present ? fullName.value : this.fullName,
@@ -516,7 +486,6 @@ class User extends DataClass implements Insertable<User> {
   );
   User copyWithCompanion(UsersCompanion data) {
     return User(
-      id: data.id.present ? data.id.value : this.id,
       uid: data.uid.present ? data.uid.value : this.uid,
       username: data.username.present ? data.username.value : this.username,
       fullName: data.fullName.present ? data.fullName.value : this.fullName,
@@ -539,7 +508,6 @@ class User extends DataClass implements Insertable<User> {
   @override
   String toString() {
     return (StringBuffer('User(')
-          ..write('id: $id, ')
           ..write('uid: $uid, ')
           ..write('username: $username, ')
           ..write('fullName: $fullName, ')
@@ -558,7 +526,6 @@ class User extends DataClass implements Insertable<User> {
 
   @override
   int get hashCode => Object.hash(
-    id,
     uid,
     username,
     fullName,
@@ -576,7 +543,6 @@ class User extends DataClass implements Insertable<User> {
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is User &&
-          other.id == this.id &&
           other.uid == this.uid &&
           other.username == this.username &&
           other.fullName == this.fullName &&
@@ -592,7 +558,6 @@ class User extends DataClass implements Insertable<User> {
 }
 
 class UsersCompanion extends UpdateCompanion<User> {
-  final Value<int> id;
   final Value<String> uid;
   final Value<String> username;
   final Value<String?> fullName;
@@ -605,8 +570,8 @@ class UsersCompanion extends UpdateCompanion<User> {
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   final Value<DateTime?> lastLoginAt;
+  final Value<int> rowid;
   const UsersCompanion({
-    this.id = const Value.absent(),
     this.uid = const Value.absent(),
     this.username = const Value.absent(),
     this.fullName = const Value.absent(),
@@ -619,9 +584,9 @@ class UsersCompanion extends UpdateCompanion<User> {
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.lastLoginAt = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   UsersCompanion.insert({
-    this.id = const Value.absent(),
     required String uid,
     required String username,
     this.fullName = const Value.absent(),
@@ -634,12 +599,12 @@ class UsersCompanion extends UpdateCompanion<User> {
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.lastLoginAt = const Value.absent(),
+    this.rowid = const Value.absent(),
   }) : uid = Value(uid),
        username = Value(username),
        email = Value(email),
        role = Value(role);
   static Insertable<User> custom({
-    Expression<int>? id,
     Expression<String>? uid,
     Expression<String>? username,
     Expression<String>? fullName,
@@ -652,9 +617,9 @@ class UsersCompanion extends UpdateCompanion<User> {
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<DateTime>? lastLoginAt,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
-      if (id != null) 'id': id,
       if (uid != null) 'uid': uid,
       if (username != null) 'username': username,
       if (fullName != null) 'full_name': fullName,
@@ -667,11 +632,11 @@ class UsersCompanion extends UpdateCompanion<User> {
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (lastLoginAt != null) 'last_login_at': lastLoginAt,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   UsersCompanion copyWith({
-    Value<int>? id,
     Value<String>? uid,
     Value<String>? username,
     Value<String?>? fullName,
@@ -684,9 +649,9 @@ class UsersCompanion extends UpdateCompanion<User> {
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
     Value<DateTime?>? lastLoginAt,
+    Value<int>? rowid,
   }) {
     return UsersCompanion(
-      id: id ?? this.id,
       uid: uid ?? this.uid,
       username: username ?? this.username,
       fullName: fullName ?? this.fullName,
@@ -699,15 +664,13 @@ class UsersCompanion extends UpdateCompanion<User> {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       lastLoginAt: lastLoginAt ?? this.lastLoginAt,
+      rowid: rowid ?? this.rowid,
     );
   }
 
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<int>(id.value);
-    }
     if (uid.present) {
       map['uid'] = Variable<String>(uid.value);
     }
@@ -746,13 +709,15 @@ class UsersCompanion extends UpdateCompanion<User> {
     if (lastLoginAt.present) {
       map['last_login_at'] = Variable<DateTime>(lastLoginAt.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
   @override
   String toString() {
     return (StringBuffer('UsersCompanion(')
-          ..write('id: $id, ')
           ..write('uid: $uid, ')
           ..write('username: $username, ')
           ..write('fullName: $fullName, ')
@@ -764,7 +729,8 @@ class UsersCompanion extends UpdateCompanion<User> {
           ..write('lastSyncedAt: $lastSyncedAt, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
-          ..write('lastLoginAt: $lastLoginAt')
+          ..write('lastLoginAt: $lastLoginAt, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -2562,28 +2528,28 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
     'createdBy',
   );
   @override
-  late final GeneratedColumn<int> createdBy = GeneratedColumn<int>(
+  late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
     'created_by',
     aliasedName,
     false,
-    type: DriftSqlType.int,
+    type: DriftSqlType.string,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES users (id)',
+      'REFERENCES users (uid)',
     ),
   );
   static const VerificationMeta _modifiedByMeta = const VerificationMeta(
     'modifiedBy',
   );
   @override
-  late final GeneratedColumn<int> modifiedBy = GeneratedColumn<int>(
+  late final GeneratedColumn<String> modifiedBy = GeneratedColumn<String>(
     'modified_by',
     aliasedName,
     true,
-    type: DriftSqlType.int,
+    type: DriftSqlType.string,
     requiredDuringInsert: false,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES users (id)',
+      'REFERENCES users (uid)',
     ),
   );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
@@ -2911,11 +2877,11 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
         data['${effectivePrefix}zone_id'],
       )!,
       createdBy: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       )!,
       modifiedBy: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.string,
         data['${effectivePrefix}modified_by'],
       ),
       createdAt: attachedDatabase.typeMapping.read(
@@ -2981,8 +2947,8 @@ class Project extends DataClass implements Insertable<Project> {
   final int ministryId;
   final int stateId;
   final int zoneId;
-  final int createdBy;
-  final int? modifiedBy;
+  final String createdBy;
+  final String? modifiedBy;
   final DateTime createdAt;
   final DateTime updatedAt;
   final DateTime? lastSyncedAt;
@@ -3028,9 +2994,9 @@ class Project extends DataClass implements Insertable<Project> {
     map['ministry_id'] = Variable<int>(ministryId);
     map['state_id'] = Variable<int>(stateId);
     map['zone_id'] = Variable<int>(zoneId);
-    map['created_by'] = Variable<int>(createdBy);
+    map['created_by'] = Variable<String>(createdBy);
     if (!nullToAbsent || modifiedBy != null) {
-      map['modified_by'] = Variable<int>(modifiedBy);
+      map['modified_by'] = Variable<String>(modifiedBy);
     }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
@@ -3106,8 +3072,8 @@ class Project extends DataClass implements Insertable<Project> {
       ministryId: serializer.fromJson<int>(json['ministryId']),
       stateId: serializer.fromJson<int>(json['stateId']),
       zoneId: serializer.fromJson<int>(json['zoneId']),
-      createdBy: serializer.fromJson<int>(json['createdBy']),
-      modifiedBy: serializer.fromJson<int?>(json['modifiedBy']),
+      createdBy: serializer.fromJson<String>(json['createdBy']),
+      modifiedBy: serializer.fromJson<String?>(json['modifiedBy']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
       lastSyncedAt: serializer.fromJson<DateTime?>(json['lastSyncedAt']),
@@ -3133,8 +3099,8 @@ class Project extends DataClass implements Insertable<Project> {
       'ministryId': serializer.toJson<int>(ministryId),
       'stateId': serializer.toJson<int>(stateId),
       'zoneId': serializer.toJson<int>(zoneId),
-      'createdBy': serializer.toJson<int>(createdBy),
-      'modifiedBy': serializer.toJson<int?>(modifiedBy),
+      'createdBy': serializer.toJson<String>(createdBy),
+      'modifiedBy': serializer.toJson<String?>(modifiedBy),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
       'lastSyncedAt': serializer.toJson<DateTime?>(lastSyncedAt),
@@ -3156,8 +3122,8 @@ class Project extends DataClass implements Insertable<Project> {
     int? ministryId,
     int? stateId,
     int? zoneId,
-    int? createdBy,
-    Value<int?> modifiedBy = const Value.absent(),
+    String? createdBy,
+    Value<String?> modifiedBy = const Value.absent(),
     DateTime? createdAt,
     DateTime? updatedAt,
     Value<DateTime?> lastSyncedAt = const Value.absent(),
@@ -3302,8 +3268,8 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
   final Value<int> ministryId;
   final Value<int> stateId;
   final Value<int> zoneId;
-  final Value<int> createdBy;
-  final Value<int?> modifiedBy;
+  final Value<String> createdBy;
+  final Value<String?> modifiedBy;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   final Value<DateTime?> lastSyncedAt;
@@ -3345,7 +3311,7 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
     required int ministryId,
     required int stateId,
     required int zoneId,
-    required int createdBy,
+    required String createdBy,
     this.modifiedBy = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
@@ -3376,8 +3342,8 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
     Expression<int>? ministryId,
     Expression<int>? stateId,
     Expression<int>? zoneId,
-    Expression<int>? createdBy,
-    Expression<int>? modifiedBy,
+    Expression<String>? createdBy,
+    Expression<String>? modifiedBy,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<DateTime>? lastSyncedAt,
@@ -3422,8 +3388,8 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
     Value<int>? ministryId,
     Value<int>? stateId,
     Value<int>? zoneId,
-    Value<int>? createdBy,
-    Value<int?>? modifiedBy,
+    Value<String>? createdBy,
+    Value<String?>? modifiedBy,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
     Value<DateTime?>? lastSyncedAt,
@@ -3485,10 +3451,10 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
       map['zone_id'] = Variable<int>(zoneId.value);
     }
     if (createdBy.present) {
-      map['created_by'] = Variable<int>(createdBy.value);
+      map['created_by'] = Variable<String>(createdBy.value);
     }
     if (modifiedBy.present) {
-      map['modified_by'] = Variable<int>(modifiedBy.value);
+      map['modified_by'] = Variable<String>(modifiedBy.value);
     }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
@@ -3578,14 +3544,14 @@ class $AuditLogsTable extends AuditLogs
   );
   static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
   @override
-  late final GeneratedColumn<int> userId = GeneratedColumn<int>(
+  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
     'user_id',
     aliasedName,
     false,
-    type: DriftSqlType.int,
+    type: DriftSqlType.string,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES users (id)',
+      'REFERENCES users (uid)',
     ),
   );
   static const VerificationMeta _tableNameRefMeta = const VerificationMeta(
@@ -3758,7 +3724,7 @@ class $AuditLogsTable extends AuditLogs
         data['${effectivePrefix}id'],
       )!,
       userId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.string,
         data['${effectivePrefix}user_id'],
       )!,
       tableNameRef: attachedDatabase.typeMapping.read(
@@ -3805,7 +3771,7 @@ class $AuditLogsTable extends AuditLogs
 
 class AuditLog extends DataClass implements Insertable<AuditLog> {
   final int id;
-  final int userId;
+  final String userId;
   final String tableNameRef;
   final String? recordId;
   final AuditAction action;
@@ -3828,7 +3794,7 @@ class AuditLog extends DataClass implements Insertable<AuditLog> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    map['user_id'] = Variable<int>(userId);
+    map['user_id'] = Variable<String>(userId);
     map['table_name_ref'] = Variable<String>(tableNameRef);
     if (!nullToAbsent || recordId != null) {
       map['record_id'] = Variable<String>(recordId);
@@ -3880,7 +3846,7 @@ class AuditLog extends DataClass implements Insertable<AuditLog> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return AuditLog(
       id: serializer.fromJson<int>(json['id']),
-      userId: serializer.fromJson<int>(json['userId']),
+      userId: serializer.fromJson<String>(json['userId']),
       tableNameRef: serializer.fromJson<String>(json['tableNameRef']),
       recordId: serializer.fromJson<String?>(json['recordId']),
       action: $AuditLogsTable.$converteraction.fromJson(
@@ -3897,7 +3863,7 @@ class AuditLog extends DataClass implements Insertable<AuditLog> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'userId': serializer.toJson<int>(userId),
+      'userId': serializer.toJson<String>(userId),
       'tableNameRef': serializer.toJson<String>(tableNameRef),
       'recordId': serializer.toJson<String?>(recordId),
       'action': serializer.toJson<String>(
@@ -3912,7 +3878,7 @@ class AuditLog extends DataClass implements Insertable<AuditLog> {
 
   AuditLog copyWith({
     int? id,
-    int? userId,
+    String? userId,
     String? tableNameRef,
     Value<String?> recordId = const Value.absent(),
     AuditAction? action,
@@ -3992,7 +3958,7 @@ class AuditLog extends DataClass implements Insertable<AuditLog> {
 
 class AuditLogsCompanion extends UpdateCompanion<AuditLog> {
   final Value<int> id;
-  final Value<int> userId;
+  final Value<String> userId;
   final Value<String> tableNameRef;
   final Value<String?> recordId;
   final Value<AuditAction> action;
@@ -4013,7 +3979,7 @@ class AuditLogsCompanion extends UpdateCompanion<AuditLog> {
   });
   AuditLogsCompanion.insert({
     this.id = const Value.absent(),
-    required int userId,
+    required String userId,
     required String tableNameRef,
     this.recordId = const Value.absent(),
     required AuditAction action,
@@ -4026,7 +3992,7 @@ class AuditLogsCompanion extends UpdateCompanion<AuditLog> {
        action = Value(action);
   static Insertable<AuditLog> custom({
     Expression<int>? id,
-    Expression<int>? userId,
+    Expression<String>? userId,
     Expression<String>? tableNameRef,
     Expression<String>? recordId,
     Expression<String>? action,
@@ -4050,7 +4016,7 @@ class AuditLogsCompanion extends UpdateCompanion<AuditLog> {
 
   AuditLogsCompanion copyWith({
     Value<int>? id,
-    Value<int>? userId,
+    Value<String>? userId,
     Value<String>? tableNameRef,
     Value<String?>? recordId,
     Value<AuditAction>? action,
@@ -4079,7 +4045,7 @@ class AuditLogsCompanion extends UpdateCompanion<AuditLog> {
       map['id'] = Variable<int>(id.value);
     }
     if (userId.present) {
-      map['user_id'] = Variable<int>(userId.value);
+      map['user_id'] = Variable<String>(userId.value);
     }
     if (tableNameRef.present) {
       map['table_name_ref'] = Variable<String>(tableNameRef.value);
@@ -4145,14 +4111,14 @@ class $ExportHistoryTable extends ExportHistory
   );
   static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
   @override
-  late final GeneratedColumn<int> userId = GeneratedColumn<int>(
+  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
     'user_id',
     aliasedName,
     false,
-    type: DriftSqlType.int,
+    type: DriftSqlType.string,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES users (id)',
+      'REFERENCES users (uid)',
     ),
   );
   static const VerificationMeta _projectCodeMeta = const VerificationMeta(
@@ -4313,7 +4279,7 @@ class $ExportHistoryTable extends ExportHistory
         data['${effectivePrefix}id'],
       )!,
       userId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.string,
         data['${effectivePrefix}user_id'],
       )!,
       projectCode: attachedDatabase.typeMapping.read(
@@ -4357,7 +4323,7 @@ class $ExportHistoryTable extends ExportHistory
 class ExportHistoryData extends DataClass
     implements Insertable<ExportHistoryData> {
   final int id;
-  final int userId;
+  final String userId;
   final String projectCode;
   final ExportFormat format;
   final int recordCount;
@@ -4378,7 +4344,7 @@ class ExportHistoryData extends DataClass
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    map['user_id'] = Variable<int>(userId);
+    map['user_id'] = Variable<String>(userId);
     map['project_code'] = Variable<String>(projectCode);
     {
       map['format'] = Variable<String>(
@@ -4416,7 +4382,7 @@ class ExportHistoryData extends DataClass
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return ExportHistoryData(
       id: serializer.fromJson<int>(json['id']),
-      userId: serializer.fromJson<int>(json['userId']),
+      userId: serializer.fromJson<String>(json['userId']),
       projectCode: serializer.fromJson<String>(json['projectCode']),
       format: $ExportHistoryTable.$converterformat.fromJson(
         serializer.fromJson<String>(json['format']),
@@ -4432,7 +4398,7 @@ class ExportHistoryData extends DataClass
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'userId': serializer.toJson<int>(userId),
+      'userId': serializer.toJson<String>(userId),
       'projectCode': serializer.toJson<String>(projectCode),
       'format': serializer.toJson<String>(
         $ExportHistoryTable.$converterformat.toJson(format),
@@ -4446,7 +4412,7 @@ class ExportHistoryData extends DataClass
 
   ExportHistoryData copyWith({
     int? id,
-    int? userId,
+    String? userId,
     String? projectCode,
     ExportFormat? format,
     int? recordCount,
@@ -4522,7 +4488,7 @@ class ExportHistoryData extends DataClass
 
 class ExportHistoryCompanion extends UpdateCompanion<ExportHistoryData> {
   final Value<int> id;
-  final Value<int> userId;
+  final Value<String> userId;
   final Value<String> projectCode;
   final Value<ExportFormat> format;
   final Value<int> recordCount;
@@ -4541,7 +4507,7 @@ class ExportHistoryCompanion extends UpdateCompanion<ExportHistoryData> {
   });
   ExportHistoryCompanion.insert({
     this.id = const Value.absent(),
-    required int userId,
+    required String userId,
     required String projectCode,
     required ExportFormat format,
     required int recordCount,
@@ -4555,7 +4521,7 @@ class ExportHistoryCompanion extends UpdateCompanion<ExportHistoryData> {
        fileName = Value(fileName);
   static Insertable<ExportHistoryData> custom({
     Expression<int>? id,
-    Expression<int>? userId,
+    Expression<String>? userId,
     Expression<String>? projectCode,
     Expression<String>? format,
     Expression<int>? recordCount,
@@ -4577,7 +4543,7 @@ class ExportHistoryCompanion extends UpdateCompanion<ExportHistoryData> {
 
   ExportHistoryCompanion copyWith({
     Value<int>? id,
-    Value<int>? userId,
+    Value<String>? userId,
     Value<String>? projectCode,
     Value<ExportFormat>? format,
     Value<int>? recordCount,
@@ -4604,7 +4570,7 @@ class ExportHistoryCompanion extends UpdateCompanion<ExportHistoryData> {
       map['id'] = Variable<int>(id.value);
     }
     if (userId.present) {
-      map['user_id'] = Variable<int>(userId.value);
+      map['user_id'] = Variable<String>(userId.value);
     }
     if (projectCode.present) {
       map['project_code'] = Variable<String>(projectCode.value);
@@ -4667,14 +4633,14 @@ class $SessionsTable extends Sessions with TableInfo<$SessionsTable, Session> {
     'activeUserId',
   );
   @override
-  late final GeneratedColumn<int> activeUserId = GeneratedColumn<int>(
+  late final GeneratedColumn<String> activeUserId = GeneratedColumn<String>(
     'active_user_id',
     aliasedName,
     true,
-    type: DriftSqlType.int,
+    type: DriftSqlType.string,
     requiredDuringInsert: false,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES users (id)',
+      'REFERENCES users (uid)',
     ),
   );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
@@ -4735,7 +4701,7 @@ class $SessionsTable extends Sessions with TableInfo<$SessionsTable, Session> {
         data['${effectivePrefix}id'],
       )!,
       activeUserId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.string,
         data['${effectivePrefix}active_user_id'],
       ),
       createdAt: attachedDatabase.typeMapping.read(
@@ -4753,7 +4719,7 @@ class $SessionsTable extends Sessions with TableInfo<$SessionsTable, Session> {
 
 class Session extends DataClass implements Insertable<Session> {
   final int id;
-  final int? activeUserId;
+  final String? activeUserId;
   final DateTime createdAt;
   const Session({required this.id, this.activeUserId, required this.createdAt});
   @override
@@ -4761,7 +4727,7 @@ class Session extends DataClass implements Insertable<Session> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     if (!nullToAbsent || activeUserId != null) {
-      map['active_user_id'] = Variable<int>(activeUserId);
+      map['active_user_id'] = Variable<String>(activeUserId);
     }
     map['created_at'] = Variable<DateTime>(createdAt);
     return map;
@@ -4784,7 +4750,7 @@ class Session extends DataClass implements Insertable<Session> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Session(
       id: serializer.fromJson<int>(json['id']),
-      activeUserId: serializer.fromJson<int?>(json['activeUserId']),
+      activeUserId: serializer.fromJson<String?>(json['activeUserId']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
     );
   }
@@ -4793,14 +4759,14 @@ class Session extends DataClass implements Insertable<Session> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'activeUserId': serializer.toJson<int?>(activeUserId),
+      'activeUserId': serializer.toJson<String?>(activeUserId),
       'createdAt': serializer.toJson<DateTime>(createdAt),
     };
   }
 
   Session copyWith({
     int? id,
-    Value<int?> activeUserId = const Value.absent(),
+    Value<String?> activeUserId = const Value.absent(),
     DateTime? createdAt,
   }) => Session(
     id: id ?? this.id,
@@ -4840,7 +4806,7 @@ class Session extends DataClass implements Insertable<Session> {
 
 class SessionsCompanion extends UpdateCompanion<Session> {
   final Value<int> id;
-  final Value<int?> activeUserId;
+  final Value<String?> activeUserId;
   final Value<DateTime> createdAt;
   const SessionsCompanion({
     this.id = const Value.absent(),
@@ -4854,7 +4820,7 @@ class SessionsCompanion extends UpdateCompanion<Session> {
   });
   static Insertable<Session> custom({
     Expression<int>? id,
-    Expression<int>? activeUserId,
+    Expression<String>? activeUserId,
     Expression<DateTime>? createdAt,
   }) {
     return RawValuesInsertable({
@@ -4866,7 +4832,7 @@ class SessionsCompanion extends UpdateCompanion<Session> {
 
   SessionsCompanion copyWith({
     Value<int>? id,
-    Value<int?>? activeUserId,
+    Value<String?>? activeUserId,
     Value<DateTime>? createdAt,
   }) {
     return SessionsCompanion(
@@ -4883,7 +4849,7 @@ class SessionsCompanion extends UpdateCompanion<Session> {
       map['id'] = Variable<int>(id.value);
     }
     if (activeUserId.present) {
-      map['active_user_id'] = Variable<int>(activeUserId.value);
+      map['active_user_id'] = Variable<String>(activeUserId.value);
     }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
@@ -4944,7 +4910,6 @@ abstract class _$AppDatabase extends GeneratedDatabase {
 
 typedef $$UsersTableCreateCompanionBuilder =
     UsersCompanion Function({
-      Value<int> id,
       required String uid,
       required String username,
       Value<String?> fullName,
@@ -4957,10 +4922,10 @@ typedef $$UsersTableCreateCompanionBuilder =
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
       Value<DateTime?> lastLoginAt,
+      Value<int> rowid,
     });
 typedef $$UsersTableUpdateCompanionBuilder =
     UsersCompanion Function({
-      Value<int> id,
       Value<String> uid,
       Value<String> username,
       Value<String?> fullName,
@@ -4973,6 +4938,7 @@ typedef $$UsersTableUpdateCompanionBuilder =
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
       Value<DateTime?> lastLoginAt,
+      Value<int> rowid,
     });
 
 final class $$UsersTableReferences
@@ -4982,14 +4948,14 @@ final class $$UsersTableReferences
   static MultiTypedResultKey<$ProjectsTable, List<Project>>
   _createdProjectsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.projects,
-    aliasName: $_aliasNameGenerator(db.users.id, db.projects.createdBy),
+    aliasName: $_aliasNameGenerator(db.users.uid, db.projects.createdBy),
   );
 
   $$ProjectsTableProcessedTableManager get createdProjects {
     final manager = $$ProjectsTableTableManager(
       $_db,
       $_db.projects,
-    ).filter((f) => f.createdBy.id.sqlEquals($_itemColumn<int>('id')!));
+    ).filter((f) => f.createdBy.uid.sqlEquals($_itemColumn<String>('uid')!));
 
     final cache = $_typedResult.readTableOrNull(_createdProjectsTable($_db));
     return ProcessedTableManager(
@@ -5000,14 +4966,14 @@ final class $$UsersTableReferences
   static MultiTypedResultKey<$ProjectsTable, List<Project>>
   _modifiedProjectsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.projects,
-    aliasName: $_aliasNameGenerator(db.users.id, db.projects.modifiedBy),
+    aliasName: $_aliasNameGenerator(db.users.uid, db.projects.modifiedBy),
   );
 
   $$ProjectsTableProcessedTableManager get modifiedProjects {
     final manager = $$ProjectsTableTableManager(
       $_db,
       $_db.projects,
-    ).filter((f) => f.modifiedBy.id.sqlEquals($_itemColumn<int>('id')!));
+    ).filter((f) => f.modifiedBy.uid.sqlEquals($_itemColumn<String>('uid')!));
 
     final cache = $_typedResult.readTableOrNull(_modifiedProjectsTable($_db));
     return ProcessedTableManager(
@@ -5018,14 +4984,14 @@ final class $$UsersTableReferences
   static MultiTypedResultKey<$AuditLogsTable, List<AuditLog>>
   _auditLogsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.auditLogs,
-    aliasName: $_aliasNameGenerator(db.users.id, db.auditLogs.userId),
+    aliasName: $_aliasNameGenerator(db.users.uid, db.auditLogs.userId),
   );
 
   $$AuditLogsTableProcessedTableManager get auditLogsRefs {
     final manager = $$AuditLogsTableTableManager(
       $_db,
       $_db.auditLogs,
-    ).filter((f) => f.userId.id.sqlEquals($_itemColumn<int>('id')!));
+    ).filter((f) => f.userId.uid.sqlEquals($_itemColumn<String>('uid')!));
 
     final cache = $_typedResult.readTableOrNull(_auditLogsRefsTable($_db));
     return ProcessedTableManager(
@@ -5036,14 +5002,14 @@ final class $$UsersTableReferences
   static MultiTypedResultKey<$ExportHistoryTable, List<ExportHistoryData>>
   _exportHistoryRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.exportHistory,
-    aliasName: $_aliasNameGenerator(db.users.id, db.exportHistory.userId),
+    aliasName: $_aliasNameGenerator(db.users.uid, db.exportHistory.userId),
   );
 
   $$ExportHistoryTableProcessedTableManager get exportHistoryRefs {
     final manager = $$ExportHistoryTableTableManager(
       $_db,
       $_db.exportHistory,
-    ).filter((f) => f.userId.id.sqlEquals($_itemColumn<int>('id')!));
+    ).filter((f) => f.userId.uid.sqlEquals($_itemColumn<String>('uid')!));
 
     final cache = $_typedResult.readTableOrNull(_exportHistoryRefsTable($_db));
     return ProcessedTableManager(
@@ -5055,14 +5021,14 @@ final class $$UsersTableReferences
     _$AppDatabase db,
   ) => MultiTypedResultKey.fromTable(
     db.sessions,
-    aliasName: $_aliasNameGenerator(db.users.id, db.sessions.activeUserId),
+    aliasName: $_aliasNameGenerator(db.users.uid, db.sessions.activeUserId),
   );
 
   $$SessionsTableProcessedTableManager get sessionsRefs {
     final manager = $$SessionsTableTableManager(
       $_db,
       $_db.sessions,
-    ).filter((f) => f.activeUserId.id.sqlEquals($_itemColumn<int>('id')!));
+    ).filter((f) => f.activeUserId.uid.sqlEquals($_itemColumn<String>('uid')!));
 
     final cache = $_typedResult.readTableOrNull(_sessionsRefsTable($_db));
     return ProcessedTableManager(
@@ -5079,11 +5045,6 @@ class $$UsersTableFilterComposer extends Composer<_$AppDatabase, $UsersTable> {
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<int> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
   ColumnFilters<String> get uid => $composableBuilder(
     column: $table.uid,
     builder: (column) => ColumnFilters(column),
@@ -5150,7 +5111,7 @@ class $$UsersTableFilterComposer extends Composer<_$AppDatabase, $UsersTable> {
   ) {
     final $$ProjectsTableFilterComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.id,
+      getCurrentColumn: (t) => t.uid,
       referencedTable: $db.projects,
       getReferencedColumn: (t) => t.createdBy,
       builder:
@@ -5175,7 +5136,7 @@ class $$UsersTableFilterComposer extends Composer<_$AppDatabase, $UsersTable> {
   ) {
     final $$ProjectsTableFilterComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.id,
+      getCurrentColumn: (t) => t.uid,
       referencedTable: $db.projects,
       getReferencedColumn: (t) => t.modifiedBy,
       builder:
@@ -5200,7 +5161,7 @@ class $$UsersTableFilterComposer extends Composer<_$AppDatabase, $UsersTable> {
   ) {
     final $$AuditLogsTableFilterComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.id,
+      getCurrentColumn: (t) => t.uid,
       referencedTable: $db.auditLogs,
       getReferencedColumn: (t) => t.userId,
       builder:
@@ -5225,7 +5186,7 @@ class $$UsersTableFilterComposer extends Composer<_$AppDatabase, $UsersTable> {
   ) {
     final $$ExportHistoryTableFilterComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.id,
+      getCurrentColumn: (t) => t.uid,
       referencedTable: $db.exportHistory,
       getReferencedColumn: (t) => t.userId,
       builder:
@@ -5250,7 +5211,7 @@ class $$UsersTableFilterComposer extends Composer<_$AppDatabase, $UsersTable> {
   ) {
     final $$SessionsTableFilterComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.id,
+      getCurrentColumn: (t) => t.uid,
       referencedTable: $db.sessions,
       getReferencedColumn: (t) => t.activeUserId,
       builder:
@@ -5280,11 +5241,6 @@ class $$UsersTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<int> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<String> get uid => $composableBuilder(
     column: $table.uid,
     builder: (column) => ColumnOrderings(column),
@@ -5355,9 +5311,6 @@ class $$UsersTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<int> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
-
   GeneratedColumn<String> get uid =>
       $composableBuilder(column: $table.uid, builder: (column) => column);
 
@@ -5403,7 +5356,7 @@ class $$UsersTableAnnotationComposer
   ) {
     final $$ProjectsTableAnnotationComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.id,
+      getCurrentColumn: (t) => t.uid,
       referencedTable: $db.projects,
       getReferencedColumn: (t) => t.createdBy,
       builder:
@@ -5428,7 +5381,7 @@ class $$UsersTableAnnotationComposer
   ) {
     final $$ProjectsTableAnnotationComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.id,
+      getCurrentColumn: (t) => t.uid,
       referencedTable: $db.projects,
       getReferencedColumn: (t) => t.modifiedBy,
       builder:
@@ -5453,7 +5406,7 @@ class $$UsersTableAnnotationComposer
   ) {
     final $$AuditLogsTableAnnotationComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.id,
+      getCurrentColumn: (t) => t.uid,
       referencedTable: $db.auditLogs,
       getReferencedColumn: (t) => t.userId,
       builder:
@@ -5478,7 +5431,7 @@ class $$UsersTableAnnotationComposer
   ) {
     final $$ExportHistoryTableAnnotationComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.id,
+      getCurrentColumn: (t) => t.uid,
       referencedTable: $db.exportHistory,
       getReferencedColumn: (t) => t.userId,
       builder:
@@ -5503,7 +5456,7 @@ class $$UsersTableAnnotationComposer
   ) {
     final $$SessionsTableAnnotationComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.id,
+      getCurrentColumn: (t) => t.uid,
       referencedTable: $db.sessions,
       getReferencedColumn: (t) => t.activeUserId,
       builder:
@@ -5558,7 +5511,6 @@ class $$UsersTableTableManager
               $$UsersTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
-                Value<int> id = const Value.absent(),
                 Value<String> uid = const Value.absent(),
                 Value<String> username = const Value.absent(),
                 Value<String?> fullName = const Value.absent(),
@@ -5571,8 +5523,8 @@ class $$UsersTableTableManager
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<DateTime?> lastLoginAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
               }) => UsersCompanion(
-                id: id,
                 uid: uid,
                 username: username,
                 fullName: fullName,
@@ -5585,10 +5537,10 @@ class $$UsersTableTableManager
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 lastLoginAt: lastLoginAt,
+                rowid: rowid,
               ),
           createCompanionCallback:
               ({
-                Value<int> id = const Value.absent(),
                 required String uid,
                 required String username,
                 Value<String?> fullName = const Value.absent(),
@@ -5601,8 +5553,8 @@ class $$UsersTableTableManager
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<DateTime?> lastLoginAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
               }) => UsersCompanion.insert(
-                id: id,
                 uid: uid,
                 username: username,
                 fullName: fullName,
@@ -5615,6 +5567,7 @@ class $$UsersTableTableManager
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 lastLoginAt: lastLoginAt,
+                rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -5655,7 +5608,7 @@ class $$UsersTableTableManager
                               ).createdProjects,
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
-                                (e) => e.createdBy == item.id,
+                                (e) => e.createdBy == item.uid,
                               ),
                           typedResults: items,
                         ),
@@ -5672,7 +5625,7 @@ class $$UsersTableTableManager
                               ).modifiedProjects,
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
-                                (e) => e.modifiedBy == item.id,
+                                (e) => e.modifiedBy == item.uid,
                               ),
                           typedResults: items,
                         ),
@@ -5689,7 +5642,7 @@ class $$UsersTableTableManager
                               ).auditLogsRefs,
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
-                                (e) => e.userId == item.id,
+                                (e) => e.userId == item.uid,
                               ),
                           typedResults: items,
                         ),
@@ -5710,7 +5663,7 @@ class $$UsersTableTableManager
                               ).exportHistoryRefs,
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
-                                (e) => e.userId == item.id,
+                                (e) => e.userId == item.uid,
                               ),
                           typedResults: items,
                         ),
@@ -5727,7 +5680,7 @@ class $$UsersTableTableManager
                               ).sessionsRefs,
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
-                                (e) => e.activeUserId == item.id,
+                                (e) => e.activeUserId == item.uid,
                               ),
                           typedResults: items,
                         ),
@@ -7471,8 +7424,8 @@ typedef $$ProjectsTableCreateCompanionBuilder =
       required int ministryId,
       required int stateId,
       required int zoneId,
-      required int createdBy,
-      Value<int?> modifiedBy,
+      required String createdBy,
+      Value<String?> modifiedBy,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
       Value<DateTime?> lastSyncedAt,
@@ -7494,8 +7447,8 @@ typedef $$ProjectsTableUpdateCompanionBuilder =
       Value<int> ministryId,
       Value<int> stateId,
       Value<int> zoneId,
-      Value<int> createdBy,
-      Value<int?> modifiedBy,
+      Value<String> createdBy,
+      Value<String?> modifiedBy,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
       Value<DateTime?> lastSyncedAt,
@@ -7588,16 +7541,16 @@ final class $$ProjectsTableReferences
   }
 
   static $UsersTable _createdByTable(_$AppDatabase db) => db.users.createAlias(
-    $_aliasNameGenerator(db.projects.createdBy, db.users.id),
+    $_aliasNameGenerator(db.projects.createdBy, db.users.uid),
   );
 
   $$UsersTableProcessedTableManager get createdBy {
-    final $_column = $_itemColumn<int>('created_by')!;
+    final $_column = $_itemColumn<String>('created_by')!;
 
     final manager = $$UsersTableTableManager(
       $_db,
       $_db.users,
-    ).filter((f) => f.id.sqlEquals($_column));
+    ).filter((f) => f.uid.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_createdByTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
@@ -7606,16 +7559,16 @@ final class $$ProjectsTableReferences
   }
 
   static $UsersTable _modifiedByTable(_$AppDatabase db) => db.users.createAlias(
-    $_aliasNameGenerator(db.projects.modifiedBy, db.users.id),
+    $_aliasNameGenerator(db.projects.modifiedBy, db.users.uid),
   );
 
   $$UsersTableProcessedTableManager? get modifiedBy {
-    final $_column = $_itemColumn<int>('modified_by');
+    final $_column = $_itemColumn<String>('modified_by');
     if ($_column == null) return null;
     final manager = $$UsersTableTableManager(
       $_db,
       $_db.users,
-    ).filter((f) => f.id.sqlEquals($_column));
+    ).filter((f) => f.uid.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_modifiedByTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
@@ -7817,7 +7770,7 @@ class $$ProjectsTableFilterComposer
       composer: this,
       getCurrentColumn: (t) => t.createdBy,
       referencedTable: $db.users,
-      getReferencedColumn: (t) => t.id,
+      getReferencedColumn: (t) => t.uid,
       builder:
           (
             joinBuilder, {
@@ -7840,7 +7793,7 @@ class $$ProjectsTableFilterComposer
       composer: this,
       getCurrentColumn: (t) => t.modifiedBy,
       referencedTable: $db.users,
-      getReferencedColumn: (t) => t.id,
+      getReferencedColumn: (t) => t.uid,
       builder:
           (
             joinBuilder, {
@@ -8055,7 +8008,7 @@ class $$ProjectsTableOrderingComposer
       composer: this,
       getCurrentColumn: (t) => t.createdBy,
       referencedTable: $db.users,
-      getReferencedColumn: (t) => t.id,
+      getReferencedColumn: (t) => t.uid,
       builder:
           (
             joinBuilder, {
@@ -8078,7 +8031,7 @@ class $$ProjectsTableOrderingComposer
       composer: this,
       getCurrentColumn: (t) => t.modifiedBy,
       referencedTable: $db.users,
-      getReferencedColumn: (t) => t.id,
+      getReferencedColumn: (t) => t.uid,
       builder:
           (
             joinBuilder, {
@@ -8247,7 +8200,7 @@ class $$ProjectsTableAnnotationComposer
       composer: this,
       getCurrentColumn: (t) => t.createdBy,
       referencedTable: $db.users,
-      getReferencedColumn: (t) => t.id,
+      getReferencedColumn: (t) => t.uid,
       builder:
           (
             joinBuilder, {
@@ -8270,7 +8223,7 @@ class $$ProjectsTableAnnotationComposer
       composer: this,
       getCurrentColumn: (t) => t.modifiedBy,
       referencedTable: $db.users,
-      getReferencedColumn: (t) => t.id,
+      getReferencedColumn: (t) => t.uid,
       builder:
           (
             joinBuilder, {
@@ -8356,8 +8309,8 @@ class $$ProjectsTableTableManager
                 Value<int> ministryId = const Value.absent(),
                 Value<int> stateId = const Value.absent(),
                 Value<int> zoneId = const Value.absent(),
-                Value<int> createdBy = const Value.absent(),
-                Value<int?> modifiedBy = const Value.absent(),
+                Value<String> createdBy = const Value.absent(),
+                Value<String?> modifiedBy = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<DateTime?> lastSyncedAt = const Value.absent(),
@@ -8400,8 +8353,8 @@ class $$ProjectsTableTableManager
                 required int ministryId,
                 required int stateId,
                 required int zoneId,
-                required int createdBy,
-                Value<int?> modifiedBy = const Value.absent(),
+                required String createdBy,
+                Value<String?> modifiedBy = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<DateTime?> lastSyncedAt = const Value.absent(),
@@ -8536,7 +8489,7 @@ class $$ProjectsTableTableManager
                                         ._createdByTable(db),
                                     referencedColumn: $$ProjectsTableReferences
                                         ._createdByTable(db)
-                                        .id,
+                                        .uid,
                                   )
                                   as T;
                         }
@@ -8549,7 +8502,7 @@ class $$ProjectsTableTableManager
                                         ._modifiedByTable(db),
                                     referencedColumn: $$ProjectsTableReferences
                                         ._modifiedByTable(db)
-                                        .id,
+                                        .uid,
                                   )
                                   as T;
                         }
@@ -8612,7 +8565,7 @@ typedef $$ProjectsTableProcessedTableManager =
 typedef $$AuditLogsTableCreateCompanionBuilder =
     AuditLogsCompanion Function({
       Value<int> id,
-      required int userId,
+      required String userId,
       required String tableNameRef,
       Value<String?> recordId,
       required AuditAction action,
@@ -8624,7 +8577,7 @@ typedef $$AuditLogsTableCreateCompanionBuilder =
 typedef $$AuditLogsTableUpdateCompanionBuilder =
     AuditLogsCompanion Function({
       Value<int> id,
-      Value<int> userId,
+      Value<String> userId,
       Value<String> tableNameRef,
       Value<String?> recordId,
       Value<AuditAction> action,
@@ -8639,16 +8592,16 @@ final class $$AuditLogsTableReferences
   $$AuditLogsTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
   static $UsersTable _userIdTable(_$AppDatabase db) => db.users.createAlias(
-    $_aliasNameGenerator(db.auditLogs.userId, db.users.id),
+    $_aliasNameGenerator(db.auditLogs.userId, db.users.uid),
   );
 
   $$UsersTableProcessedTableManager get userId {
-    final $_column = $_itemColumn<int>('user_id')!;
+    final $_column = $_itemColumn<String>('user_id')!;
 
     final manager = $$UsersTableTableManager(
       $_db,
       $_db.users,
-    ).filter((f) => f.id.sqlEquals($_column));
+    ).filter((f) => f.uid.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_userIdTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
@@ -8712,7 +8665,7 @@ class $$AuditLogsTableFilterComposer
       composer: this,
       getCurrentColumn: (t) => t.userId,
       referencedTable: $db.users,
-      getReferencedColumn: (t) => t.id,
+      getReferencedColumn: (t) => t.uid,
       builder:
           (
             joinBuilder, {
@@ -8785,7 +8738,7 @@ class $$AuditLogsTableOrderingComposer
       composer: this,
       getCurrentColumn: (t) => t.userId,
       referencedTable: $db.users,
-      getReferencedColumn: (t) => t.id,
+      getReferencedColumn: (t) => t.uid,
       builder:
           (
             joinBuilder, {
@@ -8844,7 +8797,7 @@ class $$AuditLogsTableAnnotationComposer
       composer: this,
       getCurrentColumn: (t) => t.userId,
       referencedTable: $db.users,
-      getReferencedColumn: (t) => t.id,
+      getReferencedColumn: (t) => t.uid,
       builder:
           (
             joinBuilder, {
@@ -8892,7 +8845,7 @@ class $$AuditLogsTableTableManager
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                Value<int> userId = const Value.absent(),
+                Value<String> userId = const Value.absent(),
                 Value<String> tableNameRef = const Value.absent(),
                 Value<String?> recordId = const Value.absent(),
                 Value<AuditAction> action = const Value.absent(),
@@ -8914,7 +8867,7 @@ class $$AuditLogsTableTableManager
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                required int userId,
+                required String userId,
                 required String tableNameRef,
                 Value<String?> recordId = const Value.absent(),
                 required AuditAction action,
@@ -8970,7 +8923,7 @@ class $$AuditLogsTableTableManager
                                     ._userIdTable(db),
                                 referencedColumn: $$AuditLogsTableReferences
                                     ._userIdTable(db)
-                                    .id,
+                                    .uid,
                               )
                               as T;
                     }
@@ -9003,7 +8956,7 @@ typedef $$AuditLogsTableProcessedTableManager =
 typedef $$ExportHistoryTableCreateCompanionBuilder =
     ExportHistoryCompanion Function({
       Value<int> id,
-      required int userId,
+      required String userId,
       required String projectCode,
       required ExportFormat format,
       required int recordCount,
@@ -9014,7 +8967,7 @@ typedef $$ExportHistoryTableCreateCompanionBuilder =
 typedef $$ExportHistoryTableUpdateCompanionBuilder =
     ExportHistoryCompanion Function({
       Value<int> id,
-      Value<int> userId,
+      Value<String> userId,
       Value<String> projectCode,
       Value<ExportFormat> format,
       Value<int> recordCount,
@@ -9033,16 +8986,16 @@ final class $$ExportHistoryTableReferences
   );
 
   static $UsersTable _userIdTable(_$AppDatabase db) => db.users.createAlias(
-    $_aliasNameGenerator(db.exportHistory.userId, db.users.id),
+    $_aliasNameGenerator(db.exportHistory.userId, db.users.uid),
   );
 
   $$UsersTableProcessedTableManager get userId {
-    final $_column = $_itemColumn<int>('user_id')!;
+    final $_column = $_itemColumn<String>('user_id')!;
 
     final manager = $$UsersTableTableManager(
       $_db,
       $_db.users,
-    ).filter((f) => f.id.sqlEquals($_column));
+    ).filter((f) => f.uid.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_userIdTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
@@ -9115,7 +9068,7 @@ class $$ExportHistoryTableFilterComposer
       composer: this,
       getCurrentColumn: (t) => t.userId,
       referencedTable: $db.users,
-      getReferencedColumn: (t) => t.id,
+      getReferencedColumn: (t) => t.uid,
       builder:
           (
             joinBuilder, {
@@ -9201,7 +9154,7 @@ class $$ExportHistoryTableOrderingComposer
       composer: this,
       getCurrentColumn: (t) => t.userId,
       referencedTable: $db.users,
-      getReferencedColumn: (t) => t.id,
+      getReferencedColumn: (t) => t.uid,
       builder:
           (
             joinBuilder, {
@@ -9277,7 +9230,7 @@ class $$ExportHistoryTableAnnotationComposer
       composer: this,
       getCurrentColumn: (t) => t.userId,
       referencedTable: $db.users,
-      getReferencedColumn: (t) => t.id,
+      getReferencedColumn: (t) => t.uid,
       builder:
           (
             joinBuilder, {
@@ -9348,7 +9301,7 @@ class $$ExportHistoryTableTableManager
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                Value<int> userId = const Value.absent(),
+                Value<String> userId = const Value.absent(),
                 Value<String> projectCode = const Value.absent(),
                 Value<ExportFormat> format = const Value.absent(),
                 Value<int> recordCount = const Value.absent(),
@@ -9368,7 +9321,7 @@ class $$ExportHistoryTableTableManager
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                required int userId,
+                required String userId,
                 required String projectCode,
                 required ExportFormat format,
                 required int recordCount,
@@ -9422,7 +9375,7 @@ class $$ExportHistoryTableTableManager
                                     ._userIdTable(db),
                                 referencedColumn: $$ExportHistoryTableReferences
                                     ._userIdTable(db)
-                                    .id,
+                                    .uid,
                               )
                               as T;
                     }
@@ -9468,13 +9421,13 @@ typedef $$ExportHistoryTableProcessedTableManager =
 typedef $$SessionsTableCreateCompanionBuilder =
     SessionsCompanion Function({
       Value<int> id,
-      Value<int?> activeUserId,
+      Value<String?> activeUserId,
       Value<DateTime> createdAt,
     });
 typedef $$SessionsTableUpdateCompanionBuilder =
     SessionsCompanion Function({
       Value<int> id,
-      Value<int?> activeUserId,
+      Value<String?> activeUserId,
       Value<DateTime> createdAt,
     });
 
@@ -9482,16 +9435,18 @@ final class $$SessionsTableReferences
     extends BaseReferences<_$AppDatabase, $SessionsTable, Session> {
   $$SessionsTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static $UsersTable _activeUserIdTable(_$AppDatabase db) => db.users
-      .createAlias($_aliasNameGenerator(db.sessions.activeUserId, db.users.id));
+  static $UsersTable _activeUserIdTable(_$AppDatabase db) =>
+      db.users.createAlias(
+        $_aliasNameGenerator(db.sessions.activeUserId, db.users.uid),
+      );
 
   $$UsersTableProcessedTableManager? get activeUserId {
-    final $_column = $_itemColumn<int>('active_user_id');
+    final $_column = $_itemColumn<String>('active_user_id');
     if ($_column == null) return null;
     final manager = $$UsersTableTableManager(
       $_db,
       $_db.users,
-    ).filter((f) => f.id.sqlEquals($_column));
+    ).filter((f) => f.uid.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_activeUserIdTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
@@ -9524,7 +9479,7 @@ class $$SessionsTableFilterComposer
       composer: this,
       getCurrentColumn: (t) => t.activeUserId,
       referencedTable: $db.users,
-      getReferencedColumn: (t) => t.id,
+      getReferencedColumn: (t) => t.uid,
       builder:
           (
             joinBuilder, {
@@ -9567,7 +9522,7 @@ class $$SessionsTableOrderingComposer
       composer: this,
       getCurrentColumn: (t) => t.activeUserId,
       referencedTable: $db.users,
-      getReferencedColumn: (t) => t.id,
+      getReferencedColumn: (t) => t.uid,
       builder:
           (
             joinBuilder, {
@@ -9606,7 +9561,7 @@ class $$SessionsTableAnnotationComposer
       composer: this,
       getCurrentColumn: (t) => t.activeUserId,
       referencedTable: $db.users,
-      getReferencedColumn: (t) => t.id,
+      getReferencedColumn: (t) => t.uid,
       builder:
           (
             joinBuilder, {
@@ -9654,7 +9609,7 @@ class $$SessionsTableTableManager
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                Value<int?> activeUserId = const Value.absent(),
+                Value<String?> activeUserId = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
               }) => SessionsCompanion(
                 id: id,
@@ -9664,7 +9619,7 @@ class $$SessionsTableTableManager
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                Value<int?> activeUserId = const Value.absent(),
+                Value<String?> activeUserId = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
               }) => SessionsCompanion.insert(
                 id: id,
@@ -9708,7 +9663,7 @@ class $$SessionsTableTableManager
                                     ._activeUserIdTable(db),
                                 referencedColumn: $$SessionsTableReferences
                                     ._activeUserIdTable(db)
-                                    .id,
+                                    .uid,
                               )
                               as T;
                     }

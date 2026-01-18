@@ -3,6 +3,6 @@ import 'package:drift/drift.dart';
 
 class Sessions extends Table {
   IntColumn get id => integer().autoIncrement()();
-  IntColumn get activeUserId => integer().nullable().references(Users, #id)();
+  TextColumn get activeUserId => text().nullable().references(Users, #uid)();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 }

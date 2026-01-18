@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ProjectModel {
 
- String get code; ProjectStatus get status; int get agencyId; int get ministryId; int get stateId; int get zoneId; String get title; double get amount; String get constituency; String? get sponsor; int get createdBy; int? get modifiedBy; DateTime get createdAt; DateTime get updatedAt; bool get isSynced; DateTime? get lastSyncedAt; String? get remoteId;
+ String get code; ProjectStatus get status; int get agencyId; int get ministryId; int get stateId; int get zoneId; String get title; double get amount; String get constituency; String? get sponsor; String get createdBy; String? get modifiedBy; DateTime get createdAt; DateTime get updatedAt; bool get isSynced; DateTime? get lastSyncedAt; String? get remoteId;
 /// Create a copy of ProjectModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $ProjectModelCopyWith<$Res>  {
   factory $ProjectModelCopyWith(ProjectModel value, $Res Function(ProjectModel) _then) = _$ProjectModelCopyWithImpl;
 @useResult
 $Res call({
- String code, ProjectStatus status, int agencyId, int ministryId, int stateId, int zoneId, String title, double amount, String constituency, String? sponsor, int createdBy, int? modifiedBy, DateTime createdAt, DateTime updatedAt, bool isSynced, DateTime? lastSyncedAt, String? remoteId
+ String code, ProjectStatus status, int agencyId, int ministryId, int stateId, int zoneId, String title, double amount, String constituency, String? sponsor, String createdBy, String? modifiedBy, DateTime createdAt, DateTime updatedAt, bool isSynced, DateTime? lastSyncedAt, String? remoteId
 });
 
 
@@ -78,8 +78,8 @@ as String,amount: null == amount ? _self.amount : amount // ignore: cast_nullabl
 as double,constituency: null == constituency ? _self.constituency : constituency // ignore: cast_nullable_to_non_nullable
 as String,sponsor: freezed == sponsor ? _self.sponsor : sponsor // ignore: cast_nullable_to_non_nullable
 as String?,createdBy: null == createdBy ? _self.createdBy : createdBy // ignore: cast_nullable_to_non_nullable
-as int,modifiedBy: freezed == modifiedBy ? _self.modifiedBy : modifiedBy // ignore: cast_nullable_to_non_nullable
-as int?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as String,modifiedBy: freezed == modifiedBy ? _self.modifiedBy : modifiedBy // ignore: cast_nullable_to_non_nullable
+as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,isSynced: null == isSynced ? _self.isSynced : isSynced // ignore: cast_nullable_to_non_nullable
 as bool,lastSyncedAt: freezed == lastSyncedAt ? _self.lastSyncedAt : lastSyncedAt // ignore: cast_nullable_to_non_nullable
@@ -166,7 +166,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String code,  ProjectStatus status,  int agencyId,  int ministryId,  int stateId,  int zoneId,  String title,  double amount,  String constituency,  String? sponsor,  int createdBy,  int? modifiedBy,  DateTime createdAt,  DateTime updatedAt,  bool isSynced,  DateTime? lastSyncedAt,  String? remoteId)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String code,  ProjectStatus status,  int agencyId,  int ministryId,  int stateId,  int zoneId,  String title,  double amount,  String constituency,  String? sponsor,  String createdBy,  String? modifiedBy,  DateTime createdAt,  DateTime updatedAt,  bool isSynced,  DateTime? lastSyncedAt,  String? remoteId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ProjectModel() when $default != null:
 return $default(_that.code,_that.status,_that.agencyId,_that.ministryId,_that.stateId,_that.zoneId,_that.title,_that.amount,_that.constituency,_that.sponsor,_that.createdBy,_that.modifiedBy,_that.createdAt,_that.updatedAt,_that.isSynced,_that.lastSyncedAt,_that.remoteId);case _:
@@ -187,7 +187,7 @@ return $default(_that.code,_that.status,_that.agencyId,_that.ministryId,_that.st
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String code,  ProjectStatus status,  int agencyId,  int ministryId,  int stateId,  int zoneId,  String title,  double amount,  String constituency,  String? sponsor,  int createdBy,  int? modifiedBy,  DateTime createdAt,  DateTime updatedAt,  bool isSynced,  DateTime? lastSyncedAt,  String? remoteId)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String code,  ProjectStatus status,  int agencyId,  int ministryId,  int stateId,  int zoneId,  String title,  double amount,  String constituency,  String? sponsor,  String createdBy,  String? modifiedBy,  DateTime createdAt,  DateTime updatedAt,  bool isSynced,  DateTime? lastSyncedAt,  String? remoteId)  $default,) {final _that = this;
 switch (_that) {
 case _ProjectModel():
 return $default(_that.code,_that.status,_that.agencyId,_that.ministryId,_that.stateId,_that.zoneId,_that.title,_that.amount,_that.constituency,_that.sponsor,_that.createdBy,_that.modifiedBy,_that.createdAt,_that.updatedAt,_that.isSynced,_that.lastSyncedAt,_that.remoteId);}
@@ -204,7 +204,7 @@ return $default(_that.code,_that.status,_that.agencyId,_that.ministryId,_that.st
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String code,  ProjectStatus status,  int agencyId,  int ministryId,  int stateId,  int zoneId,  String title,  double amount,  String constituency,  String? sponsor,  int createdBy,  int? modifiedBy,  DateTime createdAt,  DateTime updatedAt,  bool isSynced,  DateTime? lastSyncedAt,  String? remoteId)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String code,  ProjectStatus status,  int agencyId,  int ministryId,  int stateId,  int zoneId,  String title,  double amount,  String constituency,  String? sponsor,  String createdBy,  String? modifiedBy,  DateTime createdAt,  DateTime updatedAt,  bool isSynced,  DateTime? lastSyncedAt,  String? remoteId)?  $default,) {final _that = this;
 switch (_that) {
 case _ProjectModel() when $default != null:
 return $default(_that.code,_that.status,_that.agencyId,_that.ministryId,_that.stateId,_that.zoneId,_that.title,_that.amount,_that.constituency,_that.sponsor,_that.createdBy,_that.modifiedBy,_that.createdAt,_that.updatedAt,_that.isSynced,_that.lastSyncedAt,_that.remoteId);case _:
@@ -232,8 +232,8 @@ class _ProjectModel extends ProjectModel {
 @override final  double amount;
 @override final  String constituency;
 @override final  String? sponsor;
-@override final  int createdBy;
-@override final  int? modifiedBy;
+@override final  String createdBy;
+@override final  String? modifiedBy;
 @override final  DateTime createdAt;
 @override final  DateTime updatedAt;
 @override@JsonKey() final  bool isSynced;
@@ -273,7 +273,7 @@ abstract mixin class _$ProjectModelCopyWith<$Res> implements $ProjectModelCopyWi
   factory _$ProjectModelCopyWith(_ProjectModel value, $Res Function(_ProjectModel) _then) = __$ProjectModelCopyWithImpl;
 @override @useResult
 $Res call({
- String code, ProjectStatus status, int agencyId, int ministryId, int stateId, int zoneId, String title, double amount, String constituency, String? sponsor, int createdBy, int? modifiedBy, DateTime createdAt, DateTime updatedAt, bool isSynced, DateTime? lastSyncedAt, String? remoteId
+ String code, ProjectStatus status, int agencyId, int ministryId, int stateId, int zoneId, String title, double amount, String constituency, String? sponsor, String createdBy, String? modifiedBy, DateTime createdAt, DateTime updatedAt, bool isSynced, DateTime? lastSyncedAt, String? remoteId
 });
 
 
@@ -303,8 +303,8 @@ as String,amount: null == amount ? _self.amount : amount // ignore: cast_nullabl
 as double,constituency: null == constituency ? _self.constituency : constituency // ignore: cast_nullable_to_non_nullable
 as String,sponsor: freezed == sponsor ? _self.sponsor : sponsor // ignore: cast_nullable_to_non_nullable
 as String?,createdBy: null == createdBy ? _self.createdBy : createdBy // ignore: cast_nullable_to_non_nullable
-as int,modifiedBy: freezed == modifiedBy ? _self.modifiedBy : modifiedBy // ignore: cast_nullable_to_non_nullable
-as int?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as String,modifiedBy: freezed == modifiedBy ? _self.modifiedBy : modifiedBy // ignore: cast_nullable_to_non_nullable
+as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,isSynced: null == isSynced ? _self.isSynced : isSynced // ignore: cast_nullable_to_non_nullable
 as bool,lastSyncedAt: freezed == lastSyncedAt ? _self.lastSyncedAt : lastSyncedAt // ignore: cast_nullable_to_non_nullable

@@ -7,20 +7,20 @@ import 'package:injectable/injectable.dart';
 
 abstract class DashboardLocalDataSource {
   Stream<List<ProjectModel>> watchRecentProjects({
-    required int userId,
+    required String userId,
     required UserRole role,
     int limit,
   });
 
   Stream<List<ProjectWithDetailsModel>> watchRecentProjectsWithDetails({
-    required int userId,
+    required String userId,
     required UserRole role,
     int limit,
   });
 
-  Stream<int> watchUnsyncProjectCount(int userId, UserRole role);
+  Stream<int> watchUnsyncProjectCount(String userId, UserRole role);
   Stream<Map<ProjectStatus, int>> watchProjectCountsByStatus(
-    int userId,
+    String userId,
     UserRole role,
   );
 
@@ -28,7 +28,7 @@ abstract class DashboardLocalDataSource {
   Future<List<Agency>> getAllImplementingAgencies();
   Future<List<State>> getStatesByZoneId(int zoneId);
   Future<List<Ministry>> getMinistriesByAgencyId(int agencyId);
-  Future<User?> getUserById(int id);
+  Future<User?> getUserByUid(String uid);
 }
 
 @LazySingleton(as: DashboardLocalDataSource)
@@ -37,7 +37,7 @@ class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
 
   DashboardLocalDataSourceImpl(this.database);
 
-  Expression<bool> _buildRoleBasedPredicate(int userId, UserRole role) {
+  Expression<bool> _buildRoleBasedPredicate(String userId, UserRole role) {
     if (role == UserRole.regular) {
       return database.projects.createdBy.equals(userId);
     }
@@ -46,7 +46,7 @@ class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
 
   @override
   Stream<List<ProjectModel>> watchRecentProjects({
-    required int userId,
+    required String userId,
     required UserRole role,
     int limit = 15,
   }) {
@@ -64,7 +64,7 @@ class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
 
   @override
   Stream<List<ProjectWithDetailsModel>> watchRecentProjectsWithDetails({
-    required int userId,
+    required String userId,
     required UserRole role,
     int limit = 15,
   }) {
@@ -91,11 +91,11 @@ class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
             ),
             leftOuterJoin(
               createdByUser,
-              createdByUser.id.equalsExp(database.projects.createdBy),
+              createdByUser.uid.equalsExp(database.projects.createdBy),
             ),
             leftOuterJoin(
               modifiedByUser,
-              modifiedByUser.id.equalsExp(database.projects.modifiedBy),
+              modifiedByUser.uid.equalsExp(database.projects.modifiedBy),
             ),
           ])
           ..where(_buildRoleBasedPredicate(userId, role))
@@ -151,7 +151,7 @@ class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
   }
 
   @override
-  Stream<int> watchUnsyncProjectCount(int userId, UserRole role) {
+  Stream<int> watchUnsyncProjectCount(String userId, UserRole role) {
     final unsyncedPredicate = database.projects.isSynced.equals(false);
 
     final predicate =
@@ -166,7 +166,7 @@ class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
 
   @override
   Stream<Map<ProjectStatus, int>> watchProjectCountsByStatus(
-    int userId,
+    String userId,
     UserRole role,
   ) {
     final query = database.selectOnly(database.projects)
@@ -214,9 +214,9 @@ class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
   }
 
   @override
-  Future<User?> getUserById(int id) {
+  Future<User?> getUserByUid(String uid) {
     final query = database.select(database.users)
-      ..where((t) => t.id.equals(id));
+      ..where((t) => t.uid.equals(uid));
     return query.getSingleOrNull();
   }
 }

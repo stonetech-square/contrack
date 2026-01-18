@@ -4,7 +4,6 @@ import 'package:equatable/equatable.dart';
 
 class AppUser extends Equatable {
   const AppUser({
-    required this.id,
     required this.uid,
     required this.username,
     required this.fullName,
@@ -16,7 +15,6 @@ class AppUser extends Equatable {
     this.lastLoginAt,
   });
 
-  final int id;
   final String uid;
   final String username;
   final String fullName;
@@ -29,7 +27,6 @@ class AppUser extends Equatable {
 
   AppUserModel toModel() {
     return AppUserModel(
-      id: id,
       uid: uid,
       username: username,
       fullName: fullName,
@@ -43,7 +40,6 @@ class AppUser extends Equatable {
 
   @override
   List<Object?> get props => [
-    id,
     uid,
     username,
     fullName,

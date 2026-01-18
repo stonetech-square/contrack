@@ -20,7 +20,7 @@ class RecentProjectsTableRow extends StatelessWidget {
   final ProjectWithDetails project;
   final int index;
   final bool isAdmin;
-  final int? currentUserId;
+  final String? currentUserId;
 
   @override
   Widget build(BuildContext context) {
