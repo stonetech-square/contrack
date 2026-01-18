@@ -32,13 +32,13 @@ class UserManagementRemoteDataSourceImpl
     required String username,
     required UserRole role,
   }) async {
-    final response = await _supabaseClient.rpc(
-      'create_user',
-      params: {
-        'p_full_name': fullName,
-        'p_email': email,
-        'p_username': username,
-        'p_role': role.name,
+    final response = await _supabaseClient.functions.invoke(
+      'create-user',
+      body: {
+        'full_name': fullName,
+        'email': email,
+        'username': username,
+        'role': role.name,
       },
     );
     return response.data as String;
@@ -57,7 +57,6 @@ class UserManagementRemoteDataSourceImpl
           if (fullName != null) 'full_name': fullName,
           if (email != null) 'email': email,
           if (username != null) 'username': username,
-
           'updated_at': DateTime.now().toIso8601String(),
         })
         .eq('id', userId)
@@ -67,19 +66,21 @@ class UserManagementRemoteDataSourceImpl
 
   @override
   Future<bool> toggleUserStatus(String userId) async {
-    final response = await _supabaseClient.rpc(
-      'toggle_user_status',
-      params: {'p_user_id': userId},
+    final response = await _supabaseClient.functions.invoke(
+      'toggle-user-status',
+      body: {'userId': userId},
     );
-    return response.data as bool? ?? false;
+    final data = response.data as Map<String, dynamic>;
+    return data['success'] == true;
   }
 
   @override
   Future<bool> changeUserRole(String userId, UserRole role) async {
-    final response = await _supabaseClient.rpc(
-      'change_user_role',
-      params: {'p_user_id': userId, 'p_role': role.name},
+    final response = await _supabaseClient.functions.invoke(
+      'change-user-role',
+      body: {'userId': userId, 'role': role.name},
     );
-    return response.data as bool? ?? false;
+    final data = response.data as Map<String, dynamic>;
+    return data['success'] == true;
   }
 }

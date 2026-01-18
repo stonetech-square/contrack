@@ -10,11 +10,15 @@ abstract class UserManagementLocalDataSource {
     required UserRole currentUserRole,
   });
   Future<void> createUser(User user, {required UserRole currentUserRole});
-  Future<void> updateUser(UsersCompanion user, {required UserRole currentUserRole});
+  Future<void> updateUser(
+    UsersCompanion user, {
+    required UserRole currentUserRole,
+  });
 }
 
 @LazySingleton(as: UserManagementLocalDataSource)
-class UserManagementLocalDataSourceImpl implements UserManagementLocalDataSource {
+class UserManagementLocalDataSourceImpl
+    implements UserManagementLocalDataSource {
   final AppDatabase _database;
 
   UserManagementLocalDataSourceImpl(this._database);
@@ -25,6 +29,14 @@ class UserManagementLocalDataSourceImpl implements UserManagementLocalDataSource
     required UserRole currentUserRole,
   }) async {
     if (!currentUserRole.isAnyAdmin) return;
+    final query = _database.select(_database.users)
+      ..where((t) => t.uid.equals(user.uid) | t.email.equals(user.email));
+    final existingUser = await query.getSingleOrNull();
+    if (existingUser != null) {
+      await (_database.delete(
+        _database.users,
+      )..where((t) => t.email.equals(user.email))).go();
+    }
     await _database.into(_database.users).insert(user);
   }
 
