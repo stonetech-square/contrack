@@ -34,7 +34,7 @@ class SyncServiceImpl implements SyncService {
   StreamSubscription? _networkSubscription;
   bool _isDisposed = false;
 
-  static const _syncInterval = Duration(minutes: 3);
+  static const _syncInterval = Duration(hours: 1);
   static const _batchSize = 50;
 
   SyncServiceImpl(this._networkInfo, this._syncAction) {
