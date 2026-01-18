@@ -50,7 +50,7 @@ class ProjectsStats extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(width: 16),
+                  SizedBox(width: 8),
                   Expanded(
                     flex: 1,
                     child: _StatusLegend(
@@ -264,47 +264,46 @@ class _StatusLegend extends StatelessWidget {
       (ProjectStatus.completed, 'Completed'),
       (ProjectStatus.notStarted, 'Not Started'),
       (ProjectStatus.suspended, 'Suspended'),
+      (ProjectStatus.cancelled, 'Cancelled'),
     ];
 
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: legendItems.map((item) {
         final status = item.$1;
         final label = item.$2;
         final info = statusDistribution[status];
         final percentage = info?.percentage ?? 0.0;
         final count = info?.count ?? 0;
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(
-                  color: _getColorForStatus(context, status),
-                  shape: BoxShape.circle,
-                ),
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 8,
+              height: 8,
+              decoration: BoxDecoration(
+                color: _getColorForStatus(context, status),
+                shape: BoxShape.circle,
               ),
-              SizedBox(height: 8),
-              Text(
-                label,
-                style: context.textStyles.bodyMedium.copyWith(
-                  color: context.colors.textBody,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 12,
-                ),
+            ),
+            SizedBox(height: 4),
+            Text(
+              label,
+              style: context.textStyles.bodyMedium.copyWith(
+                color: context.colors.textBody,
+                fontWeight: FontWeight.w500,
+                fontSize: 12,
               ),
-              Text(
-                '$count (${percentage.toInt()}%)',
-                style: context.textStyles.bodyMedium.copyWith(
-                  color: context.colors.textHeading,
-                  fontWeight: FontWeight.w500,
-                ),
+            ),
+            Text(
+              '$count (${percentage.toInt()}%)',
+              style: context.textStyles.bodyMedium.copyWith(
+                color: context.colors.textHeading,
+                fontWeight: FontWeight.w500,
               ),
-            ],
-          ),
+            ),
+          ],
         );
       }).toList(),
     );
