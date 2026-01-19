@@ -1,5 +1,6 @@
 import 'package:contrack/src/app/data/models/app_user_model.dart';
 import 'package:contrack/src/app/domain/usecase/sync_now_use_case.dart';
+import 'package:contrack/src/app/domain/usecase/update_current_user_use_case.dart';
 import 'package:contrack/src/app/domain/usecase/watch_app_sync_status_use_case.dart';
 import 'package:contrack/src/core/database/seed.dart';
 import 'package:contrack/src/core/sync/app_sync_status.dart';
@@ -26,6 +27,7 @@ class AppBloc extends HydratedBloc<AppEvent, AppState> {
   final LogOutUseCase _logOutUseCase;
   final WatchAppSyncStatusUseCase _watchAppSyncStatusUseCase;
   final SyncNowUseCase _syncNowUseCase;
+  final UpdateCurrentUserUseCase _updateCurrentUserUseCase;
   final DatabaseSeeder _databaseSeeder;
 
   AppBloc(
@@ -34,6 +36,7 @@ class AppBloc extends HydratedBloc<AppEvent, AppState> {
     this._logOutUseCase,
     this._watchAppSyncStatusUseCase,
     this._syncNowUseCase,
+    this._updateCurrentUserUseCase,
     this._databaseSeeder,
   ) : super(const AppState()) {
     on<AppStarted>(_onStarted);
@@ -41,6 +44,7 @@ class AppBloc extends HydratedBloc<AppEvent, AppState> {
     on<AppUserChanged>(_onUserChanged);
     on<AppLogedOut>(_onLogedOut);
     on<AppSyncRequested>(_onSyncRequested);
+    on<AppUserProfileUpdated>(_onUserProfileUpdated);
   }
 
   Future<void> _onStarted(AppStarted event, Emitter<AppState> emit) async {
@@ -115,6 +119,22 @@ class AppBloc extends HydratedBloc<AppEvent, AppState> {
           ? e
           : AppFailure.fromException(e, stackTrace);
       emit(state.copyWith(error: failure.message));
+    }
+  }
+
+  Future<void> _onUserProfileUpdated(
+    AppUserProfileUpdated event,
+    Emitter<AppState> emit,
+  ) async {
+    emit(state.copyWith(isUpdatingProfile: true, error: null));
+    try {
+      await _updateCurrentUserUseCase(event.user);
+      emit(state.copyWith(isUpdatingProfile: false));
+    } catch (e, stackTrace) {
+      final failure = e is Failure
+          ? e
+          : AppFailure.fromException(e, stackTrace);
+      emit(state.copyWith(isUpdatingProfile: false, error: failure.message));
     }
   }
 

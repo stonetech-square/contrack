@@ -1,10 +1,12 @@
 import 'package:contrack/src/app/data/models/app_user_model.dart';
+import 'package:contrack/src/app/presentation/bloc/app_bloc.dart';
 import 'package:contrack/src/app/presentation/widgets/user_profile_dialog.dart';
 import 'package:contrack/src/app/theme/app_colors.dart';
 import 'package:contrack/src/app/theme/app_typography.dart';
 import 'package:contrack/src/core/common/enums/user_role.dart';
 import 'package:contrack/src/core/utils/string_extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class UserProfileButton extends StatelessWidget {
   const UserProfileButton({super.key, required this.user});
@@ -22,8 +24,19 @@ class UserProfileButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
 
         onTap: user != null
-            ? () {
-                UserProfileDialog.show(context, user: user!);
+            ? () async {
+                final updatedUser = await UserProfileDialog.show(
+                  context,
+                  user: user!,
+                );
+                if (updatedUser == user) {
+                  return;
+                }
+                if (context.mounted && updatedUser != null) {
+                  BlocProvider.of<AppBloc>(
+                    context,
+                  ).add(AppUserProfileUpdated(updatedUser));
+                }
               }
             : null,
         child: Padding(

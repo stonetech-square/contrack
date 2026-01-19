@@ -128,6 +128,28 @@ class UserSession {
     _rolesSubscription = null;
   }
 
+  Future<void> updateCurrentUser({
+    required String fullName,
+    required String username,
+  }) async {
+    final user = currentUser;
+    if (user == null) return;
+
+    await (_db.update(_db.users)..where((u) => u.uid.equals(user.uid))).write(
+      UsersCompanion(
+        fullName: Value(fullName),
+        username: Value(username),
+        isSynced: Value(false),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+
+    final updatedUser = await (_db.select(
+      _db.users,
+    )..where((u) => u.uid.equals(user.uid))).getSingleOrNull();
+    _userSubject.add(updatedUser);
+  }
+
   void _subscribeToUserRoles(String userId) {
     _rolesSubscription?.unsubscribe();
     _rolesSubscription = _supabase
@@ -183,6 +205,10 @@ class UserSession {
       } catch (_) {
         _logger.warning('Failed to refresh session');
       }
+    }
+    if (isActive == false) {
+      clear();
+      _supabase.auth.signOut();
     }
   }
 }

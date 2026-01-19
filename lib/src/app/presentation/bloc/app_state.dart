@@ -8,6 +8,7 @@ sealed class AppState with _$AppState {
     String? error,
     @Default(AppSyncStatus.offline) AppSyncStatus syncStatus,
     @Default(false) bool isSeeding,
+    @Default(false) bool isUpdatingProfile,
   }) = _AppState;
 
   factory AppState.fromJson(Map<String, dynamic> json) =>

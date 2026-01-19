@@ -16,6 +16,7 @@ _AppState _$AppStateFromJson(Map<String, dynamic> json) => _AppState(
       $enumDecodeNullable(_$AppSyncStatusEnumMap, json['syncStatus']) ??
       AppSyncStatus.offline,
   isSeeding: json['isSeeding'] as bool? ?? false,
+  isUpdatingProfile: json['isUpdatingProfile'] as bool? ?? false,
 );
 
 Map<String, dynamic> _$AppStateToJson(_AppState instance) => <String, dynamic>{
@@ -24,6 +25,7 @@ Map<String, dynamic> _$AppStateToJson(_AppState instance) => <String, dynamic>{
   'error': instance.error,
   'syncStatus': _$AppSyncStatusEnumMap[instance.syncStatus]!,
   'isSeeding': instance.isSeeding,
+  'isUpdatingProfile': instance.isUpdatingProfile,
 };
 
 const _$AppSyncStatusEnumMap = {

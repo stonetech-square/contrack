@@ -23,7 +23,9 @@ class UserRoleBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
       ),
       child: Text(
-        role == UserRole.admin ? 'Admin' : 'Staff',
+        role == UserRole.admin || role == UserRole.superAdmin
+            ? 'Admin'
+            : 'Staff',
         style: context.textStyles.labelSmall.copyWith(
           color: textColor,
           fontWeight: FontWeight.w600,

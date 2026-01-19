@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:contrack/src/core/common/enums/user_role.dart';
 import 'package:contrack/src/core/database/database.dart' as db;
 import 'package:contrack/src/core/errors/failures.dart';
+import 'package:contrack/src/features/user_management/domain/usecase/change_user_role_use_case.dart';
 import 'package:contrack/src/features/user_management/domain/usecase/toggle_user_status_use_case.dart';
 
 import 'package:contrack/src/features/user_management/domain/usecase/watch_users_use_case.dart';
@@ -19,10 +21,15 @@ class UserManagementBloc
     extends Bloc<UserManagementEvent, UserManagementState> {
   final WatchUsersUseCase _watchUsersUseCase;
   final ToggleUserStatusUseCase _toggleUserStatusUseCase;
-  UserManagementBloc(this._watchUsersUseCase, this._toggleUserStatusUseCase)
-    : super(const UserManagementState()) {
+  final ChangeUserRoleUseCase _changeUserRoleUseCase;
+  UserManagementBloc(
+    this._watchUsersUseCase,
+    this._toggleUserStatusUseCase,
+    this._changeUserRoleUseCase,
+  ) : super(const UserManagementState()) {
     on<UserWatchStarted>(_onWatchStarted);
     on<UserStatusToggled>(_onStatusToggled);
+    on<UserRoleChanged>(_onRoleChanged);
   }
 
   Future<void> _onWatchStarted(
@@ -55,8 +62,31 @@ class UserManagementBloc
       final failure = e is Failure
           ? e
           : AppFailure.fromException(e, stackTrace);
+      emit(state.copyWith(togglingUserId: null, toggleError: failure.message));
+    }
+  }
+
+  Future<void> _onRoleChanged(
+    UserRoleChanged event,
+    Emitter<UserManagementState> emit,
+  ) async {
+    emit(
+      state.copyWith(changingRoleUserId: event.userId, changeRoleError: null),
+    );
+    try {
+      await _changeUserRoleUseCase(
+        ChangeUserRoleParams(event.userId, event.role),
+      );
+      emit(state.copyWith(changingRoleUserId: null));
+    } catch (e, stackTrace) {
+      final failure = e is Failure
+          ? e
+          : AppFailure.fromException(e, stackTrace);
       emit(
-        state.copyWith(togglingUserId: null, toggleError: failure.message),
+        state.copyWith(
+          changingRoleUserId: null,
+          changeRoleError: failure.message,
+        ),
       );
     }
   }

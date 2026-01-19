@@ -5,7 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class OfflineWarning extends StatelessWidget {
-  const OfflineWarning({super.key});
+  const OfflineWarning({
+    super.key,
+    this.title = 'You are offline',
+    required this.message,
+  });
+
+  final String title;
+  final String message;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +45,7 @@ class OfflineWarning extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'You are offline',
+                      title,
                       style: context.textStyles.titleSmall.copyWith(
                         fontWeight: FontWeight.bold,
                         color: context.colors.error,
@@ -46,7 +53,7 @@ class OfflineWarning extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'You can only create new users when you are online. Please check your internet connection.',
+                      message,
                       style: context.textStyles.bodySmall.copyWith(
                         color: context.colors.error,
                       ),

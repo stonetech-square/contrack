@@ -118,19 +118,14 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
       throw Exception('You are not authorized to change user role');
     }
 
-    final isSucess = await _remoteDataSource.changeUserRole(userId, role);
-    if (!isSucess) {
+    final result = await _remoteDataSource.changeUserRole(userId, role);
+    if (!result.success) {
       throw Exception('Failed to change user role');
     }
 
-    final userCompanion = UsersCompanion(
-      uid: Value(userId),
-      role: Value(role),
-      updatedAt: Value(DateTime.now()),
-    );
-
-    await _localDataSource.updateUser(
-      userCompanion,
+    await _localDataSource.changeUserRole(
+      userId,
+      result.role,
       currentUserRole: currentUser.role,
     );
   }

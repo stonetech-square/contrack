@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:contrack/src/app/presentation/bloc/app_bloc.dart';
 import 'package:contrack/src/app/router/app_router.dart';
 import 'package:contrack/src/app/theme/app_colors.dart';
 import 'package:contrack/src/app/theme/app_typography.dart';
@@ -26,14 +27,23 @@ class UserManagementStatsAndActions extends StatelessWidget {
           },
         ),
         const Spacer(),
-        FilledButton.icon(
-          onPressed: () => context.router.push(const CreateUserRoute()),
-          style: FilledButton.styleFrom(
-            maximumSize: const Size(150, 45),
-            minimumSize: const Size(150, 45),
-          ),
-          label: const Text('Create User'),
-          icon: const Icon(Icons.person_add_outlined),
+        BlocBuilder<AppBloc, AppState>(
+          buildWhen: (previous, current) =>
+              previous.syncStatus != current.syncStatus,
+          builder: (context, state) {
+            final isOffline = state.syncStatus.isOffline;
+            return FilledButton.icon(
+              onPressed: isOffline
+                  ? null
+                  : () => context.router.push(const CreateUserRoute()),
+              style: FilledButton.styleFrom(
+                maximumSize: const Size(150, 45),
+                minimumSize: const Size(150, 45),
+              ),
+              label: const Text('Create User'),
+              icon: const Icon(Icons.person_add_outlined),
+            );
+          },
         ),
       ],
     );

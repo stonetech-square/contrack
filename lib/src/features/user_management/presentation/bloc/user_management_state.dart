@@ -8,6 +8,8 @@ sealed class UserManagementState with _$UserManagementState {
     @Default(null) String? errorMessage,
     @Default(null) String? togglingUserId,
     @Default(null) String? toggleError,
+    @Default(null) String? changingRoleUserId,
+    @Default(null) String? changeRoleError,
   }) = _UserManagementState;
 
   const UserManagementState._();

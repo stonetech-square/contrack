@@ -134,7 +134,7 @@ class UserSyncDelegate {
         .from('users')
         .insert({
           'uid': user.uid,
-          'username': user.username,
+          'user_name': user.username,
           'full_name': user.fullName,
           'email': user.email,
           'role': user.role.name,
@@ -163,7 +163,7 @@ class UserSyncDelegate {
         .from('users')
         .update({
           'uid': user.uid,
-          'username': user.username,
+          'user_name': user.username,
           'full_name': user.fullName,
           'email': user.email,
           'role': user.role.name,

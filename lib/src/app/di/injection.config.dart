@@ -91,6 +91,8 @@ import '../../features/user_management/data/repository/user_management_repositor
     as _i283;
 import '../../features/user_management/domain/repository/user_management_repository.dart'
     as _i282;
+import '../../features/user_management/domain/usecase/change_user_role_use_case.dart'
+    as _i108;
 import '../../features/user_management/domain/usecase/create_user_use_case.dart'
     as _i836;
 import '../../features/user_management/domain/usecase/toggle_user_status_use_case.dart'
@@ -110,6 +112,7 @@ import '../domain/repository/app_repository.dart' as _i454;
 import '../domain/usecase/log_out_use_case.dart' as _i504;
 import '../domain/usecase/set_active_user_use_case.dart' as _i407;
 import '../domain/usecase/sync_now_use_case.dart' as _i948;
+import '../domain/usecase/update_current_user_use_case.dart' as _i249;
 import '../domain/usecase/watch_app_sync_status_use_case.dart' as _i528;
 import '../domain/usecase/watch_app_user_use_case.dart' as _i353;
 import '../presentation/bloc/app_bloc.dart' as _i813;
@@ -283,8 +286,14 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i407.SetActiveUserUseCase>(
       () => _i407.SetActiveUserUseCase(gh<_i454.AppRepository>()),
     );
+    gh.lazySingleton<_i249.UpdateCurrentUserUseCase>(
+      () => _i249.UpdateCurrentUserUseCase(gh<_i454.AppRepository>()),
+    );
     gh.lazySingleton<_i353.WatchAppUserUseCase>(
       () => _i353.WatchAppUserUseCase(gh<_i454.AppRepository>()),
+    );
+    gh.lazySingleton<_i108.ChangeUserRoleUseCase>(
+      () => _i108.ChangeUserRoleUseCase(gh<_i282.UserManagementRepository>()),
     );
     gh.lazySingleton<_i836.CreateUserUseCase>(
       () => _i836.CreateUserUseCase(gh<_i282.UserManagementRepository>()),
@@ -312,16 +321,28 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i275.DashboardRepository>(),
       ),
     );
-    gh.factory<_i787.UserManagementBloc>(
-      () => _i787.UserManagementBloc(
-        gh<_i641.WatchUsersUseCase>(),
-        gh<_i848.ToggleUserStatusUseCase>(),
+    gh.lazySingleton<_i813.AppBloc>(
+      () => _i813.AppBloc(
+        gh<_i353.WatchAppUserUseCase>(),
+        gh<_i407.SetActiveUserUseCase>(),
+        gh<_i504.LogOutUseCase>(),
+        gh<_i528.WatchAppSyncStatusUseCase>(),
+        gh<_i948.SyncNowUseCase>(),
+        gh<_i249.UpdateCurrentUserUseCase>(),
+        gh<_i964.DatabaseSeeder>(),
       ),
     );
     gh.factory<_i259.AllProjectsBloc>(
       () => _i259.AllProjectsBloc(
         gh<_i1001.WatchProjectsForUserUseCase>(),
         gh<_i471.ExportAllProjectsUseCase>(),
+      ),
+    );
+    gh.factory<_i787.UserManagementBloc>(
+      () => _i787.UserManagementBloc(
+        gh<_i641.WatchUsersUseCase>(),
+        gh<_i848.ToggleUserStatusUseCase>(),
+        gh<_i108.ChangeUserRoleUseCase>(),
       ),
     );
     gh.factory<_i205.ProjectBloc>(
@@ -332,16 +353,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i356.CreateUserBloc>(
       () => _i356.CreateUserBloc(gh<_i836.CreateUserUseCase>()),
-    );
-    gh.lazySingleton<_i813.AppBloc>(
-      () => _i813.AppBloc(
-        gh<_i353.WatchAppUserUseCase>(),
-        gh<_i407.SetActiveUserUseCase>(),
-        gh<_i504.LogOutUseCase>(),
-        gh<_i528.WatchAppSyncStatusUseCase>(),
-        gh<_i948.SyncNowUseCase>(),
-        gh<_i964.DatabaseSeeder>(),
-      ),
     );
     gh.factory<_i921.CreateNewProjectBloc>(
       () => _i921.CreateNewProjectBloc(

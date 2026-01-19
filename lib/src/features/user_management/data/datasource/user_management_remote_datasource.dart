@@ -1,13 +1,8 @@
 import 'package:contrack/src/core/common/enums/user_role.dart';
+import 'package:contrack/src/features/user_management/data/models/change_role_result.dart';
+import 'package:contrack/src/features/user_management/data/models/toggle_status_result.dart';
 import 'package:injectable/injectable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
-class ToggleStatusResult {
-  final bool success;
-  final bool isActive;
-
-  ToggleStatusResult({required this.success, required this.isActive});
-}
 
 abstract class UserManagementRemoteDataSource {
   Future<String> createUser({
@@ -23,7 +18,7 @@ abstract class UserManagementRemoteDataSource {
     String? username,
   });
   Future<ToggleStatusResult> toggleUserStatus(String userId);
-  Future<bool> changeUserRole(String userId, UserRole role);
+  Future<ChangeRoleResult> changeUserRole(String userId, UserRole role);
 }
 
 @LazySingleton(as: UserManagementRemoteDataSource)
@@ -85,12 +80,15 @@ class UserManagementRemoteDataSourceImpl
   }
 
   @override
-  Future<bool> changeUserRole(String userId, UserRole role) async {
+  Future<ChangeRoleResult> changeUserRole(String userId, UserRole role) async {
     final response = await _supabaseClient.functions.invoke(
       'change-user-role',
       body: {'userId': userId, 'role': role.name},
     );
     final data = response.data as Map<String, dynamic>;
-    return data['success'] == true;
+    return ChangeRoleResult(
+      success: data['success'] == true,
+      role: UserRole.values.firstWhere((e) => e.name == data['role']),
+    );
   }
 }

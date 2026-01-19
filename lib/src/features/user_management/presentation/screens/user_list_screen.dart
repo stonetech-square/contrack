@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:contrack/src/app/presentation/widgets/widgets.dart';
 import 'package:contrack/src/features/user_management/presentation/bloc/user_management_bloc.dart';
+import 'package:contrack/src/features/user_management/presentation/widgets/create_user/offline_warning.dart';
 import 'package:contrack/src/features/user_management/presentation/widgets/user_management_search_field.dart';
 import 'package:contrack/src/features/user_management/presentation/widgets/user_management_stats_and_actions.dart';
 import 'package:contrack/src/features/user_management/presentation/widgets/user_management_table.dart';
@@ -38,6 +39,10 @@ class _UserManagementView extends StatelessWidget {
         const SizedBox(height: 16),
         const RouteHeader(routePath: ['User Management'], canPop: false),
         const SizedBox(height: 24),
+        const OfflineWarning(
+          message:
+              'User management actions are unavailable while offline. Please check your internet connection.',
+        ),
         const UserManagementStatsAndActions(),
         const SizedBox(height: 24),
         UserManagementSearchField(),

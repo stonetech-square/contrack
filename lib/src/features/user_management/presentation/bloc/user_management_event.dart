@@ -24,3 +24,13 @@ class UserStatusToggled extends UserManagementEvent {
   @override
   List<Object?> get props => [userId];
 }
+
+class UserRoleChanged extends UserManagementEvent {
+  final String userId;
+  final UserRole role;
+
+  const UserRoleChanged(this.userId, this.role);
+
+  @override
+  List<Object?> get props => [userId, role];
+}

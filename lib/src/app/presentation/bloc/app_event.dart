@@ -40,3 +40,11 @@ class AppSyncRequested extends AppEvent {
   @override
   List<Object?> get props => [];
 }
+
+class AppUserProfileUpdated extends AppEvent {
+  final AppUserModel user;
+  const AppUserProfileUpdated(this.user);
+
+  @override
+  List<Object?> get props => [user];
+}

@@ -1,68 +1,19 @@
-import 'package:contrack/src/app/data/models/app_user_model.dart';
-import 'package:contrack/src/app/presentation/widgets/widgets.dart';
 import 'package:contrack/src/app/theme/app_colors.dart';
 import 'package:contrack/src/app/theme/app_typography.dart';
+import 'package:contrack/src/core/database/database.dart' as db;
 import 'package:contrack/src/core/utils/string_extensions.dart';
 import 'package:flutter/material.dart';
 
-class UserProfileDialog extends StatefulWidget {
-  final AppUserModel user;
+class StaffProfileDialog extends StatelessWidget {
+  final db.User user;
 
-  const UserProfileDialog({super.key, required this.user});
+  const StaffProfileDialog({super.key, required this.user});
 
-  static Future<AppUserModel?> show(
-    BuildContext context, {
-    required AppUserModel user,
-  }) {
-    return showDialog<AppUserModel>(
+  static Future<void> show(BuildContext context, {required db.User user}) {
+    return showDialog(
       context: context,
-      builder: (context) => UserProfileDialog(user: user),
+      builder: (context) => StaffProfileDialog(user: user),
     );
-  }
-
-  @override
-  State<UserProfileDialog> createState() => _UserProfileDialogState();
-}
-
-class _UserProfileDialogState extends State<UserProfileDialog> {
-  bool _isEditing = false;
-  late TextEditingController _fullNameController;
-  late TextEditingController _usernameController;
-  late TextEditingController _phoneController;
-
-  @override
-  void initState() {
-    super.initState();
-    _fullNameController = TextEditingController(text: widget.user.fullName);
-    _usernameController = TextEditingController(text: widget.user.username);
-    _phoneController = TextEditingController(text: '');
-  }
-
-  @override
-  void dispose() {
-    _fullNameController.dispose();
-    _usernameController.dispose();
-    _phoneController.dispose();
-    super.dispose();
-  }
-
-  void _toggleEditMode() {
-    setState(() {
-      _isEditing = !_isEditing;
-      if (!_isEditing) {
-        _fullNameController.text = widget.user.fullName;
-        _usernameController.text = widget.user.username;
-        _phoneController.text = '';
-      }
-    });
-  }
-
-  void _saveChanges() {
-    final updatedUser = widget.user.copyWith(
-      fullName: _fullNameController.text.trim(),
-      username: _usernameController.text.trim(),
-    );
-    Navigator.of(context).pop(updatedUser);
   }
 
   @override
@@ -76,29 +27,28 @@ class _UserProfileDialogState extends State<UserProfileDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _UserProfileHeader(user: widget.user),
+            _StaffProfileHeader(user: user),
             Flexible(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(24),
-                child: AnimatedCrossFade(
-                  duration: const Duration(milliseconds: 300),
-                  crossFadeState: _isEditing
-                      ? CrossFadeState.showSecond
-                      : CrossFadeState.showFirst,
-                  firstChild: _ViewModeContent(user: widget.user),
-                  secondChild: _EditModeContent(
-                    fullNameController: _fullNameController,
-                    usernameController: _usernameController,
-                    phoneController: _phoneController,
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _StaffDetailsGrid(user: user),
+                    const SizedBox(height: 32),
+                    Text(
+                      'Account Information',
+                      style: context.textStyles.titleMedium.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    _StaffAccountInfo(user: user),
+                  ],
                 ),
               ),
             ),
-            _UserProfileFooter(
-              isEditing: _isEditing,
-              onEditToggle: _toggleEditMode,
-              onSave: _saveChanges,
-            ),
+            const _StaffProfileFooter(),
           ],
         ),
       ),
@@ -106,94 +56,16 @@ class _UserProfileDialogState extends State<UserProfileDialog> {
   }
 }
 
-class _ViewModeContent extends StatelessWidget {
-  const _ViewModeContent({required this.user});
+class _StaffProfileHeader extends StatelessWidget {
+  const _StaffProfileHeader({required this.user});
 
-  final AppUserModel user;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _UserDetailsGrid(user: user),
-        const SizedBox(height: 32),
-        Text(
-          'Account Information',
-          style: context.textStyles.titleMedium.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 16),
-        _UserAccountInfo(user: user),
-      ],
-    );
-  }
-}
-
-class _EditModeContent extends StatelessWidget {
-  const _EditModeContent({
-    required this.fullNameController,
-    required this.usernameController,
-    required this.phoneController,
-  });
-
-  final TextEditingController fullNameController;
-  final TextEditingController usernameController;
-  final TextEditingController phoneController;
+  final db.User user;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Edit Profile',
-          style: context.textStyles.titleMedium.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 24),
-        _EditField(
-          controller: fullNameController,
-          label: 'Full Name',
-          icon: Icons.person_outline,
-        ),
-        const SizedBox(height: 16),
-        _EditField(
-          controller: usernameController,
-          label: 'Username',
-          icon: Icons.alternate_email,
-        ),
-      ],
-    );
-  }
-}
+    final displayName = user.fullName ?? user.username;
+    final role = user.role;
 
-class _EditField extends StatelessWidget {
-  const _EditField({
-    required this.controller,
-    required this.label,
-    required this.icon,
-  });
-
-  final TextEditingController controller;
-  final String label;
-  final IconData icon;
-
-  @override
-  Widget build(BuildContext context) {
-    return AppTextField(controller: controller, label: label);
-  }
-}
-
-class _UserProfileHeader extends StatelessWidget {
-  const _UserProfileHeader({required this.user});
-
-  final AppUserModel user;
-
-  @override
-  Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
       decoration: BoxDecoration(
@@ -208,7 +80,7 @@ class _UserProfileHeader extends StatelessWidget {
                 radius: 32,
                 backgroundColor: context.colors.surface.withValues(alpha: 0.2),
                 child: Text(
-                  user.fullName.initials,
+                  displayName.initials,
                   style: context.textStyles.headlineSmall.copyWith(
                     color: context.colors.white,
                     fontWeight: FontWeight.bold,
@@ -220,7 +92,7 @@ class _UserProfileHeader extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    user.fullName,
+                    displayName,
                     style: context.textStyles.headlineSmall.copyWith(
                       color: context.colors.white,
                       fontWeight: FontWeight.w600,
@@ -228,7 +100,7 @@ class _UserProfileHeader extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    user.role.displayName,
+                    role.displayName,
                     style: context.textStyles.bodyMedium.copyWith(
                       color: context.colors.white.withValues(alpha: 0.7),
                     ),
@@ -251,10 +123,10 @@ class _UserProfileHeader extends StatelessWidget {
   }
 }
 
-class _UserDetailsGrid extends StatelessWidget {
-  const _UserDetailsGrid({required this.user});
+class _StaffDetailsGrid extends StatelessWidget {
+  const _StaffDetailsGrid({required this.user});
 
-  final AppUserModel user;
+  final db.User user;
 
   String _formatDate(DateTime date) {
     const months = [
@@ -318,13 +190,15 @@ class _UserDetailsGrid extends StatelessWidget {
   }
 }
 
-class _UserAccountInfo extends StatelessWidget {
-  const _UserAccountInfo({required this.user});
+class _StaffAccountInfo extends StatelessWidget {
+  const _StaffAccountInfo({required this.user});
 
-  final AppUserModel user;
+  final db.User user;
 
   @override
   Widget build(BuildContext context) {
+    final role = user.role;
+
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
@@ -333,7 +207,7 @@ class _UserAccountInfo extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _UserInfoRow(
+          _StaffInfoRow(
             label: 'Account Status',
             valueWidget: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -355,17 +229,17 @@ class _UserAccountInfo extends StatelessWidget {
             ),
           ),
           Divider(height: 32, color: context.colors.border),
-          _UserInfoRow(
+          _StaffInfoRow(
             label: 'Role',
             valueWidget: Text(
-              user.role.displayName,
+              role.displayName,
               style: context.textStyles.bodyMedium.copyWith(
                 fontWeight: FontWeight.w500,
               ),
             ),
           ),
           Divider(height: 32, color: context.colors.border),
-          _UserInfoRow(
+          _StaffInfoRow(
             label: 'Username',
             valueWidget: Text(
               user.username,
@@ -380,8 +254,8 @@ class _UserAccountInfo extends StatelessWidget {
   }
 }
 
-class _UserInfoRow extends StatelessWidget {
-  const _UserInfoRow({required this.label, required this.valueWidget});
+class _StaffInfoRow extends StatelessWidget {
+  const _StaffInfoRow({required this.label, required this.valueWidget});
 
   final String label;
   final Widget valueWidget;
@@ -403,16 +277,8 @@ class _UserInfoRow extends StatelessWidget {
   }
 }
 
-class _UserProfileFooter extends StatelessWidget {
-  const _UserProfileFooter({
-    required this.isEditing,
-    required this.onEditToggle,
-    required this.onSave,
-  });
-
-  final bool isEditing;
-  final VoidCallback onEditToggle;
-  final VoidCallback onSave;
+class _StaffProfileFooter extends StatelessWidget {
+  const _StaffProfileFooter();
 
   @override
   Widget build(BuildContext context) {
@@ -426,33 +292,13 @@ class _UserProfileFooter extends StatelessWidget {
         children: [
           Expanded(
             child: TextButton(
-              onPressed: isEditing
-                  ? onEditToggle
-                  : () => Navigator.of(context).pop(),
+              onPressed: () => Navigator.of(context).pop(),
               style: TextButton.styleFrom(
                 foregroundColor: context.colors.onSurfaceVariant,
                 backgroundColor: context.colors.surfaceVariant,
                 minimumSize: const Size.fromHeight(54),
               ),
-              child: Text(isEditing ? 'Cancel' : 'Close'),
-            ),
-          ),
-          const SizedBox(width: 24),
-          Expanded(
-            flex: 2,
-            child: FilledButton(
-              onPressed: isEditing ? onSave : onEditToggle,
-              style: FilledButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 12,
-                ),
-                minimumSize: const Size.fromHeight(54),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              child: Text(isEditing ? 'Save Changes' : 'Edit Profile'),
+              child: const Text('Close'),
             ),
           ),
         ],

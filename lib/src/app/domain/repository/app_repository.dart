@@ -6,5 +6,6 @@ abstract class AppRepository {
   Future<void> setUser(String uid);
   Future<void> logOut();
   Future<void> syncNow();
+  Future<void> updateUser(AppUserModel user);
   Stream<AppSyncStatus> get syncStatus;
 }

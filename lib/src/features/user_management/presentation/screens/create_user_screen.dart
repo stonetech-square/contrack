@@ -50,7 +50,10 @@ class _CreateUserView extends StatelessWidget {
             const SizedBox(height: 23),
             const HeaderActions(),
             const SizedBox(height: 23),
-            const OfflineWarning(),
+            const OfflineWarning(
+              message:
+                  'You can only create new users when you are online. Please check your internet connection.',
+            ),
             const Expanded(child: UserFormContent()),
           ],
         ),

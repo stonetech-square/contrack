@@ -64,4 +64,14 @@ class AppRepositoryImpl implements AppRepository {
       throw AppFailure.fromException(e, stackTrace);
     }
   }
+
+  @override
+  Future<void> updateUser(AppUserModel user) async {
+    try {
+      await _localDataSource.updateUser(user);
+      await _remoteDataSource.updateUser(user);
+    } catch (e, stackTrace) {
+      throw AppFailure.fromException(e, stackTrace);
+    }
+  }
 }
