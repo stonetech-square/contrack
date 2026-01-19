@@ -93,6 +93,8 @@ import '../../features/user_management/domain/repository/user_management_reposit
     as _i282;
 import '../../features/user_management/domain/usecase/create_user_use_case.dart'
     as _i836;
+import '../../features/user_management/domain/usecase/toggle_user_status_use_case.dart'
+    as _i848;
 import '../../features/user_management/domain/usecase/update_user_use_case.dart'
     as _i40;
 import '../../features/user_management/domain/usecase/watch_users_use_case.dart'
@@ -287,6 +289,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i836.CreateUserUseCase>(
       () => _i836.CreateUserUseCase(gh<_i282.UserManagementRepository>()),
     );
+    gh.lazySingleton<_i848.ToggleUserStatusUseCase>(
+      () => _i848.ToggleUserStatusUseCase(gh<_i282.UserManagementRepository>()),
+    );
     gh.lazySingleton<_i40.UpdateUserUseCase>(
       () => _i40.UpdateUserUseCase(gh<_i282.UserManagementRepository>()),
     );
@@ -305,6 +310,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i835.WatchRecentProjectsWithDetailsUseCase>(
       () => _i835.WatchRecentProjectsWithDetailsUseCase(
         gh<_i275.DashboardRepository>(),
+      ),
+    );
+    gh.factory<_i787.UserManagementBloc>(
+      () => _i787.UserManagementBloc(
+        gh<_i641.WatchUsersUseCase>(),
+        gh<_i848.ToggleUserStatusUseCase>(),
       ),
     );
     gh.factory<_i259.AllProjectsBloc>(
@@ -348,12 +359,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i835.WatchRecentProjectsWithDetailsUseCase>(),
         gh<_i304.ImportProjectsUseCase>(),
         gh<_i1037.PickProjectFileUseCase>(),
-      ),
-    );
-    gh.factory<_i787.UserManagementBloc>(
-      () => _i787.UserManagementBloc(
-        gh<_i641.WatchUsersUseCase>(),
-        gh<_i40.UpdateUserUseCase>(),
       ),
     );
     return this;

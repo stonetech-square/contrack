@@ -2,6 +2,13 @@ import 'package:contrack/src/core/common/enums/user_role.dart';
 import 'package:injectable/injectable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+class ToggleStatusResult {
+  final bool success;
+  final bool isActive;
+
+  ToggleStatusResult({required this.success, required this.isActive});
+}
+
 abstract class UserManagementRemoteDataSource {
   Future<String> createUser({
     required String fullName,
@@ -15,7 +22,7 @@ abstract class UserManagementRemoteDataSource {
     String? email,
     String? username,
   });
-  Future<bool> toggleUserStatus(String userId);
+  Future<ToggleStatusResult> toggleUserStatus(String userId);
   Future<bool> changeUserRole(String userId, UserRole role);
 }
 
@@ -65,13 +72,16 @@ class UserManagementRemoteDataSourceImpl
   }
 
   @override
-  Future<bool> toggleUserStatus(String userId) async {
+  Future<ToggleStatusResult> toggleUserStatus(String userId) async {
     final response = await _supabaseClient.functions.invoke(
       'toggle-user-status',
       body: {'userId': userId},
     );
     final data = response.data as Map<String, dynamic>;
-    return data['success'] == true;
+    return ToggleStatusResult(
+      success: data['success'] == true,
+      isActive: data['isActive'] == true,
+    );
   }
 
   @override

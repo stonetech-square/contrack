@@ -14,6 +14,11 @@ abstract class UserManagementLocalDataSource {
     UsersCompanion user, {
     required UserRole currentUserRole,
   });
+  Future<void> updateUserStatus(
+    String userId,
+    bool isActive, {
+    required UserRole currentUserRole,
+  });
 }
 
 @LazySingleton(as: UserManagementLocalDataSource)
@@ -81,5 +86,17 @@ class UserManagementLocalDataSourceImpl
     ]);
 
     return query.watch();
+  }
+
+  @override
+  Future<void> updateUserStatus(
+    String userId,
+    bool isActive, {
+    required UserRole currentUserRole,
+  }) async {
+    if (!currentUserRole.isAnyAdmin) return;
+    _database.update(_database.users)
+      ..where((t) => t.uid.equals(userId))
+      ..write(UsersCompanion.custom(isActive: Constant(isActive)));
   }
 }

@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$UserManagementState {
 
- List<db.User> get users; bool get isLoadingUsers; String? get errorMessage; bool get isTogglingStatus; String? get toggleError;
+ List<db.User> get users; bool get isLoadingUsers; String? get errorMessage; String? get togglingUserId; String? get toggleError;
 /// Create a copy of UserManagementState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $UserManagementStateCopyWith<UserManagementState> get copyWith => _$UserManageme
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserManagementState&&const DeepCollectionEquality().equals(other.users, users)&&(identical(other.isLoadingUsers, isLoadingUsers) || other.isLoadingUsers == isLoadingUsers)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.isTogglingStatus, isTogglingStatus) || other.isTogglingStatus == isTogglingStatus)&&(identical(other.toggleError, toggleError) || other.toggleError == toggleError));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserManagementState&&const DeepCollectionEquality().equals(other.users, users)&&(identical(other.isLoadingUsers, isLoadingUsers) || other.isLoadingUsers == isLoadingUsers)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.togglingUserId, togglingUserId) || other.togglingUserId == togglingUserId)&&(identical(other.toggleError, toggleError) || other.toggleError == toggleError));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(users),isLoadingUsers,errorMessage,isTogglingStatus,toggleError);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(users),isLoadingUsers,errorMessage,togglingUserId,toggleError);
 
 @override
 String toString() {
-  return 'UserManagementState(users: $users, isLoadingUsers: $isLoadingUsers, errorMessage: $errorMessage, isTogglingStatus: $isTogglingStatus, toggleError: $toggleError)';
+  return 'UserManagementState(users: $users, isLoadingUsers: $isLoadingUsers, errorMessage: $errorMessage, togglingUserId: $togglingUserId, toggleError: $toggleError)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $UserManagementStateCopyWith<$Res>  {
   factory $UserManagementStateCopyWith(UserManagementState value, $Res Function(UserManagementState) _then) = _$UserManagementStateCopyWithImpl;
 @useResult
 $Res call({
- List<db.User> users, bool isLoadingUsers, String? errorMessage, bool isTogglingStatus, String? toggleError
+ List<db.User> users, bool isLoadingUsers, String? errorMessage, String? togglingUserId, String? toggleError
 });
 
 
@@ -62,13 +62,13 @@ class _$UserManagementStateCopyWithImpl<$Res>
 
 /// Create a copy of UserManagementState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? users = null,Object? isLoadingUsers = null,Object? errorMessage = freezed,Object? isTogglingStatus = null,Object? toggleError = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? users = null,Object? isLoadingUsers = null,Object? errorMessage = freezed,Object? togglingUserId = freezed,Object? toggleError = freezed,}) {
   return _then(_self.copyWith(
 users: null == users ? _self.users : users // ignore: cast_nullable_to_non_nullable
 as List<db.User>,isLoadingUsers: null == isLoadingUsers ? _self.isLoadingUsers : isLoadingUsers // ignore: cast_nullable_to_non_nullable
 as bool,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
-as String?,isTogglingStatus: null == isTogglingStatus ? _self.isTogglingStatus : isTogglingStatus // ignore: cast_nullable_to_non_nullable
-as bool,toggleError: freezed == toggleError ? _self.toggleError : toggleError // ignore: cast_nullable_to_non_nullable
+as String?,togglingUserId: freezed == togglingUserId ? _self.togglingUserId : togglingUserId // ignore: cast_nullable_to_non_nullable
+as String?,toggleError: freezed == toggleError ? _self.toggleError : toggleError // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -151,10 +151,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<db.User> users,  bool isLoadingUsers,  String? errorMessage,  bool isTogglingStatus,  String? toggleError)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<db.User> users,  bool isLoadingUsers,  String? errorMessage,  String? togglingUserId,  String? toggleError)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UserManagementState() when $default != null:
-return $default(_that.users,_that.isLoadingUsers,_that.errorMessage,_that.isTogglingStatus,_that.toggleError);case _:
+return $default(_that.users,_that.isLoadingUsers,_that.errorMessage,_that.togglingUserId,_that.toggleError);case _:
   return orElse();
 
 }
@@ -172,10 +172,10 @@ return $default(_that.users,_that.isLoadingUsers,_that.errorMessage,_that.isTogg
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<db.User> users,  bool isLoadingUsers,  String? errorMessage,  bool isTogglingStatus,  String? toggleError)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<db.User> users,  bool isLoadingUsers,  String? errorMessage,  String? togglingUserId,  String? toggleError)  $default,) {final _that = this;
 switch (_that) {
 case _UserManagementState():
-return $default(_that.users,_that.isLoadingUsers,_that.errorMessage,_that.isTogglingStatus,_that.toggleError);}
+return $default(_that.users,_that.isLoadingUsers,_that.errorMessage,_that.togglingUserId,_that.toggleError);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -189,10 +189,10 @@ return $default(_that.users,_that.isLoadingUsers,_that.errorMessage,_that.isTogg
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<db.User> users,  bool isLoadingUsers,  String? errorMessage,  bool isTogglingStatus,  String? toggleError)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<db.User> users,  bool isLoadingUsers,  String? errorMessage,  String? togglingUserId,  String? toggleError)?  $default,) {final _that = this;
 switch (_that) {
 case _UserManagementState() when $default != null:
-return $default(_that.users,_that.isLoadingUsers,_that.errorMessage,_that.isTogglingStatus,_that.toggleError);case _:
+return $default(_that.users,_that.isLoadingUsers,_that.errorMessage,_that.togglingUserId,_that.toggleError);case _:
   return null;
 
 }
@@ -204,7 +204,7 @@ return $default(_that.users,_that.isLoadingUsers,_that.errorMessage,_that.isTogg
 
 
 class _UserManagementState extends UserManagementState {
-  const _UserManagementState({final  List<db.User> users = const [], this.isLoadingUsers = false, this.errorMessage = null, this.isTogglingStatus = false, this.toggleError = null}): _users = users,super._();
+  const _UserManagementState({final  List<db.User> users = const [], this.isLoadingUsers = false, this.errorMessage = null, this.togglingUserId = null, this.toggleError = null}): _users = users,super._();
   
 
  final  List<db.User> _users;
@@ -216,7 +216,7 @@ class _UserManagementState extends UserManagementState {
 
 @override@JsonKey() final  bool isLoadingUsers;
 @override@JsonKey() final  String? errorMessage;
-@override@JsonKey() final  bool isTogglingStatus;
+@override@JsonKey() final  String? togglingUserId;
 @override@JsonKey() final  String? toggleError;
 
 /// Create a copy of UserManagementState
@@ -229,16 +229,16 @@ _$UserManagementStateCopyWith<_UserManagementState> get copyWith => __$UserManag
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserManagementState&&const DeepCollectionEquality().equals(other._users, _users)&&(identical(other.isLoadingUsers, isLoadingUsers) || other.isLoadingUsers == isLoadingUsers)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.isTogglingStatus, isTogglingStatus) || other.isTogglingStatus == isTogglingStatus)&&(identical(other.toggleError, toggleError) || other.toggleError == toggleError));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserManagementState&&const DeepCollectionEquality().equals(other._users, _users)&&(identical(other.isLoadingUsers, isLoadingUsers) || other.isLoadingUsers == isLoadingUsers)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.togglingUserId, togglingUserId) || other.togglingUserId == togglingUserId)&&(identical(other.toggleError, toggleError) || other.toggleError == toggleError));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_users),isLoadingUsers,errorMessage,isTogglingStatus,toggleError);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_users),isLoadingUsers,errorMessage,togglingUserId,toggleError);
 
 @override
 String toString() {
-  return 'UserManagementState(users: $users, isLoadingUsers: $isLoadingUsers, errorMessage: $errorMessage, isTogglingStatus: $isTogglingStatus, toggleError: $toggleError)';
+  return 'UserManagementState(users: $users, isLoadingUsers: $isLoadingUsers, errorMessage: $errorMessage, togglingUserId: $togglingUserId, toggleError: $toggleError)';
 }
 
 
@@ -249,7 +249,7 @@ abstract mixin class _$UserManagementStateCopyWith<$Res> implements $UserManagem
   factory _$UserManagementStateCopyWith(_UserManagementState value, $Res Function(_UserManagementState) _then) = __$UserManagementStateCopyWithImpl;
 @override @useResult
 $Res call({
- List<db.User> users, bool isLoadingUsers, String? errorMessage, bool isTogglingStatus, String? toggleError
+ List<db.User> users, bool isLoadingUsers, String? errorMessage, String? togglingUserId, String? toggleError
 });
 
 
@@ -266,13 +266,13 @@ class __$UserManagementStateCopyWithImpl<$Res>
 
 /// Create a copy of UserManagementState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? users = null,Object? isLoadingUsers = null,Object? errorMessage = freezed,Object? isTogglingStatus = null,Object? toggleError = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? users = null,Object? isLoadingUsers = null,Object? errorMessage = freezed,Object? togglingUserId = freezed,Object? toggleError = freezed,}) {
   return _then(_UserManagementState(
 users: null == users ? _self._users : users // ignore: cast_nullable_to_non_nullable
 as List<db.User>,isLoadingUsers: null == isLoadingUsers ? _self.isLoadingUsers : isLoadingUsers // ignore: cast_nullable_to_non_nullable
 as bool,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
-as String?,isTogglingStatus: null == isTogglingStatus ? _self.isTogglingStatus : isTogglingStatus // ignore: cast_nullable_to_non_nullable
-as bool,toggleError: freezed == toggleError ? _self.toggleError : toggleError // ignore: cast_nullable_to_non_nullable
+as String?,togglingUserId: freezed == togglingUserId ? _self.togglingUserId : togglingUserId // ignore: cast_nullable_to_non_nullable
+as String?,toggleError: freezed == toggleError ? _self.toggleError : toggleError // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

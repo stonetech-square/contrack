@@ -61,22 +61,42 @@ class UserManagementTableRow extends StatelessWidget {
                   color: context.colors.textBody,
                 ),
                 const SizedBox(width: 8),
-                IconButton(
-                  icon: Icon(Icons.power_settings_new, size: 18),
-                  onPressed: () async {
-                    final confirmed = await UserStatusDialog.show(
-                      context,
-                      user,
+                BlocBuilder<UserManagementBloc, UserManagementState>(
+                  buildWhen: (previous, current) =>
+                      (previous.togglingUserId == user.uid) !=
+                      (current.togglingUserId == user.uid),
+                  builder: (context, state) {
+                    final isToggling = state.togglingUserId == user.uid;
+                    return IconButton(
+                      key: ValueKey(user.uid),
+                      icon: isToggling
+                          ? SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(
+                                color: context.colors.neutralInverted,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : Icon(Icons.power_settings_new, size: 18),
+                      onPressed: isToggling
+                          ? null
+                          : () async {
+                              final confirmed = await UserStatusDialog.show(
+                                context,
+                                user,
+                              );
+                              if (confirmed == true && context.mounted) {
+                                context.read<UserManagementBloc>().add(
+                                  UserStatusToggled(user.uid),
+                                );
+                              }
+                            },
+                      color: user.isActive
+                          ? context.colors.error
+                          : context.colors.success,
                     );
-                    if (confirmed == true && context.mounted) {
-                      context.read<UserManagementBloc>().add(
-                        UserStatusToggled(user),
-                      );
-                    }
                   },
-                  color: user.isActive
-                      ? context.colors.error
-                      : context.colors.success,
                 ),
               ],
             ),

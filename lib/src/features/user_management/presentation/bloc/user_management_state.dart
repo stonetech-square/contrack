@@ -6,7 +6,7 @@ sealed class UserManagementState with _$UserManagementState {
     @Default([]) List<db.User> users,
     @Default(false) bool isLoadingUsers,
     @Default(null) String? errorMessage,
-    @Default(false) bool isTogglingStatus,
+    @Default(null) String? togglingUserId,
     @Default(null) String? toggleError,
   }) = _UserManagementState;
 

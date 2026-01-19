@@ -17,10 +17,10 @@ class UserWatchStarted extends UserManagementEvent {
 }
 
 class UserStatusToggled extends UserManagementEvent {
-  final db.User user;
+  final String userId;
 
-  const UserStatusToggled(this.user);
+  const UserStatusToggled(this.userId);
 
   @override
-  List<Object?> get props => [user];
+  List<Object?> get props => [userId];
 }

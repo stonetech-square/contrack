@@ -145,19 +145,14 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
       throw Exception('You are not authorized to toggle user status');
     }
 
-    final isSucess = await _remoteDataSource.toggleUserStatus(userId);
-    if (!isSucess) {
+    final result = await _remoteDataSource.toggleUserStatus(userId);
+    if (!result.success) {
       throw Exception('Failed to toggle user status');
     }
 
-    final userCompanion = UsersCompanion(
-      uid: Value(userId),
-      isActive: Value(!currentUser.isActive),
-      updatedAt: Value(DateTime.now()),
-    );
-
-    await _localDataSource.updateUser(
-      userCompanion,
+    await _localDataSource.updateUserStatus(
+      userId,
+      result.isActive,
       currentUserRole: currentUser.role,
     );
   }

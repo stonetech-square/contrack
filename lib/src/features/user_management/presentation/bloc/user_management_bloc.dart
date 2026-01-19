@@ -2,7 +2,8 @@ import 'dart:async';
 
 import 'package:contrack/src/core/database/database.dart' as db;
 import 'package:contrack/src/core/errors/failures.dart';
-import 'package:contrack/src/features/user_management/domain/usecase/update_user_use_case.dart';
+import 'package:contrack/src/features/user_management/domain/usecase/toggle_user_status_use_case.dart';
+
 import 'package:contrack/src/features/user_management/domain/usecase/watch_users_use_case.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,9 +18,8 @@ part 'user_management_bloc.freezed.dart';
 class UserManagementBloc
     extends Bloc<UserManagementEvent, UserManagementState> {
   final WatchUsersUseCase _watchUsersUseCase;
-  final UpdateUserUseCase _updateUserUseCase;
-
-  UserManagementBloc(this._watchUsersUseCase, this._updateUserUseCase)
+  final ToggleUserStatusUseCase _toggleUserStatusUseCase;
+  UserManagementBloc(this._watchUsersUseCase, this._toggleUserStatusUseCase)
     : super(const UserManagementState()) {
     on<UserWatchStarted>(_onWatchStarted);
     on<UserStatusToggled>(_onStatusToggled);
@@ -47,23 +47,16 @@ class UserManagementBloc
     UserStatusToggled event,
     Emitter<UserManagementState> emit,
   ) async {
-    emit(state.copyWith(isTogglingStatus: true, toggleError: null));
+    emit(state.copyWith(togglingUserId: event.userId, toggleError: null));
     try {
-      await _updateUserUseCase(
-        UpdateUserParams(
-          userId: event.user.uid,
-          fullName: event.user.fullName,
-          email: event.user.email,
-          username: event.user.username,
-        ),
-      );
-      emit(state.copyWith(isTogglingStatus: false));
+      await _toggleUserStatusUseCase(ToggleUserStatusParams(event.userId));
+      emit(state.copyWith(togglingUserId: null));
     } catch (e, stackTrace) {
       final failure = e is Failure
           ? e
           : AppFailure.fromException(e, stackTrace);
       emit(
-        state.copyWith(isTogglingStatus: false, toggleError: failure.message),
+        state.copyWith(togglingUserId: null, toggleError: failure.message),
       );
     }
   }
