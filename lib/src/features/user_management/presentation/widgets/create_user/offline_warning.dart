@@ -24,6 +24,8 @@ class OfflineWarning extends StatelessWidget {
 
         return AnimatedSwitcher(
           duration: const Duration(milliseconds: 300),
+          switchInCurve: Curves.easeOut,
+          switchOutCurve: Curves.easeIn,
           transitionBuilder: (child, animation) {
             return FadeTransition(
               opacity: animation,

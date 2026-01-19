@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:contrack/src/app/router/app_router.dart';
 import 'package:contrack/src/features/dashboard/presentation/bloc/dashboard_bloc.dart';
+import 'package:contrack/src/core/utils/toast_extension.dart';
 import 'package:contrack/src/features/dashboard/presentation/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,7 +27,13 @@ class DashboardView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<DashboardBloc, DashboardState>(
+      listenWhen: (previous, current) =>
+          previous.importedProjects != current.importedProjects ||
+          previous.error != current.error,
       listener: (context, state) {
+        if (state.error != null) {
+          context.toast.error(state.error!, title: 'Import Failed');
+        }
         if (state.importedProjects != null &&
             state.importedProjects!.isNotEmpty) {
           context.router.navigate(
