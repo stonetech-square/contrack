@@ -97,8 +97,6 @@ import '../../features/user_management/domain/usecase/create_user_use_case.dart'
     as _i836;
 import '../../features/user_management/domain/usecase/toggle_user_status_use_case.dart'
     as _i848;
-import '../../features/user_management/domain/usecase/update_user_use_case.dart'
-    as _i40;
 import '../../features/user_management/domain/usecase/watch_users_use_case.dart'
     as _i641;
 import '../../features/user_management/presentation/bloc/create_user/create_user_bloc.dart'
@@ -300,9 +298,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i848.ToggleUserStatusUseCase>(
       () => _i848.ToggleUserStatusUseCase(gh<_i282.UserManagementRepository>()),
-    );
-    gh.lazySingleton<_i40.UpdateUserUseCase>(
-      () => _i40.UpdateUserUseCase(gh<_i282.UserManagementRepository>()),
     );
     gh.lazySingleton<_i641.WatchUsersUseCase>(
       () => _i641.WatchUsersUseCase(gh<_i282.UserManagementRepository>()),

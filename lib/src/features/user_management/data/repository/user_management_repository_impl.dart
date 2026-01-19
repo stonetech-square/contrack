@@ -4,7 +4,6 @@ import 'package:contrack/src/core/session/user_session.dart';
 import 'package:contrack/src/features/user_management/data/datasource/user_management_local_datasource.dart';
 import 'package:contrack/src/features/user_management/data/datasource/user_management_remote_datasource.dart';
 import 'package:contrack/src/features/user_management/domain/repository/user_management_repository.dart';
-import 'package:drift/drift.dart';
 import 'package:injectable/injectable.dart';
 
 @LazySingleton(as: UserManagementRepository)
@@ -54,45 +53,6 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
     );
 
     await _localDataSource.createUser(user, currentUserRole: currentUser.role);
-  }
-
-  @override
-  Future<void> updateUser({
-    required String userId,
-    String? fullName,
-    String? email,
-    String? username,
-  }) async {
-    final currentUser = _userSession.currentUser;
-    if (currentUser == null) {
-      throw Exception('No active user session');
-    }
-    if (!currentUser.role.isAnyAdmin) {
-      throw Exception('You are not authorized to update users');
-    }
-
-    final isSucess = await _remoteDataSource.updateUser(
-      userId: userId,
-      fullName: fullName,
-      email: email,
-      username: username,
-    );
-    if (!isSucess) {
-      throw Exception('Failed to update user');
-    }
-
-    final userCompanion = UsersCompanion(
-      uid: Value(userId),
-      fullName: Value(fullName),
-      email: email != null ? Value(email) : const Value.absent(),
-      username: username != null ? Value(username) : const Value.absent(),
-      updatedAt: Value(DateTime.now()),
-    );
-
-    await _localDataSource.updateUser(
-      userCompanion,
-      currentUserRole: currentUser.role,
-    );
   }
 
   @override

@@ -9,12 +9,7 @@ abstract class UserManagementRepository {
     required String username,
     required UserRole role,
   });
-  Future<void> updateUser({
-    required String userId,
-    String? fullName,
-    String? email,
-    String? username,
-  });
+
   Future<void> toggleUserStatus(String userId);
   Future<void> changeUserRole(String userId, UserRole role);
 }

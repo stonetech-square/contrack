@@ -10,10 +10,7 @@ abstract class UserManagementLocalDataSource {
     required UserRole currentUserRole,
   });
   Future<void> createUser(User user, {required UserRole currentUserRole});
-  Future<void> updateUser(
-    UsersCompanion user, {
-    required UserRole currentUserRole,
-  });
+
   Future<void> updateUserStatus(
     String userId,
     bool isActive, {
@@ -48,15 +45,6 @@ class UserManagementLocalDataSourceImpl
       )..where((t) => t.email.equals(user.email))).go();
     }
     await _database.into(_database.users).insert(user);
-  }
-
-  @override
-  Future<void> updateUser(
-    UsersCompanion user, {
-    required UserRole currentUserRole,
-  }) async {
-    if (!currentUserRole.isAnyAdmin) return;
-    await _database.into(_database.users).insertOnConflictUpdate(user);
   }
 
   @override
