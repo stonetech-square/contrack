@@ -2,34 +2,54 @@ import 'package:contrack/src/app/presentation/widgets/widgets.dart';
 import 'package:contrack/src/app/theme/app_colors.dart';
 import 'package:contrack/src/app/theme/app_typography.dart';
 import 'package:contrack/src/core/database/database.dart' hide State;
-import 'package:contrack/src/core/utils/toast_extension.dart';
-import 'package:contrack/src/features/master_data/domain/entities/agency_input.dart';
+import 'package:contrack/src/features/master_data/data/models/agency_with_ministry.dart';
+import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 
-class AddAgencyDialog extends StatefulWidget {
+class EditAgencyDialog extends StatefulWidget {
+  final AgencyWithMinistry agencyWithMinistry;
   final List<Ministry> ministries;
 
-  const AddAgencyDialog({super.key, required this.ministries});
+  const EditAgencyDialog({
+    super.key,
+    required this.agencyWithMinistry,
+    required this.ministries,
+  });
 
-  static Future<AgencyInput?> show(
+  /// Shows the dialog and returns the updated AgencyWithMinistry if changes were made,
+  /// or null if cancelled or no changes were made.
+  static Future<AgencyWithMinistry?> show(
     BuildContext context, {
+    required AgencyWithMinistry agencyWithMinistry,
     required List<Ministry> ministries,
   }) {
-    return showDialog<AgencyInput>(
+    return showDialog<AgencyWithMinistry>(
       context: context,
-      builder: (context) => AddAgencyDialog(ministries: ministries),
+      builder: (context) => EditAgencyDialog(
+        agencyWithMinistry: agencyWithMinistry,
+        ministries: ministries,
+      ),
     );
   }
 
   @override
-  State<AddAgencyDialog> createState() => _AddAgencyDialogState();
+  State<EditAgencyDialog> createState() => _EditAgencyDialogState();
 }
 
-class _AddAgencyDialogState extends State<AddAgencyDialog> {
+class _EditAgencyDialogState extends State<EditAgencyDialog> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _codeController = TextEditingController();
-  Ministry? _selectedMinistry;
+  late final TextEditingController _nameController;
+  late final TextEditingController _codeController;
+  late Ministry? _selectedMinistry;
+
+  @override
+  void initState() {
+    super.initState();
+    final agency = widget.agencyWithMinistry.agency;
+    _nameController = TextEditingController(text: agency.name);
+    _codeController = TextEditingController(text: agency.code ?? '');
+    _selectedMinistry = widget.agencyWithMinistry.ministry;
+  }
 
   @override
   void dispose() {
@@ -39,17 +59,33 @@ class _AddAgencyDialogState extends State<AddAgencyDialog> {
   }
 
   void _submit() {
-    if (_formKey.currentState!.validate() && _selectedMinistry != null) {
-      Navigator.of(context).pop(
-        AgencyInput(
-          name: _nameController.text.trim(),
-          code: _codeController.text.trim(),
-          ministryId: _selectedMinistry!.id,
-          ministryRemoteId: _selectedMinistry!.remoteId,
-        ),
+    if (_formKey.currentState!.validate()) {
+      final newName = _nameController.text.trim();
+      final newCode = _codeController.text.trim();
+      final originalAgency = widget.agencyWithMinistry.agency;
+      final originalMinistry = widget.agencyWithMinistry.ministry;
+
+      // Check if anything changed
+      final nameChanged = newName != originalAgency.name;
+      final codeChanged = newCode != (originalAgency.code ?? '');
+      final ministryChanged = _selectedMinistry?.id != originalMinistry.id;
+
+      if (!nameChanged && !codeChanged && !ministryChanged) {
+        Navigator.of(context).pop();
+        return;
+      }
+
+      // Return updated agency with ministry
+      final updatedAgency = originalAgency.copyWith(
+        name: newName,
+        code: Value(newCode.isEmpty ? null : newCode),
+        ministryId: _selectedMinistry!.id,
       );
-    } else {
-      context.toast.warning('Please select a ministry');
+      final result = AgencyWithMinistry(
+        agency: updatedAgency,
+        ministry: _selectedMinistry!,
+      );
+      Navigator.of(context).pop(result);
     }
   }
 
@@ -70,7 +106,7 @@ class _AddAgencyDialogState extends State<AddAgencyDialog> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Add New Agency',
+                    'Edit Agency',
                     style: context.textStyles.titleLarge.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -110,22 +146,30 @@ class _AddAgencyDialogState extends State<AddAgencyDialog> {
                 },
               ),
               const SizedBox(height: 16),
-              AppDropDownField<Ministry>(
-                value: _selectedMinistry,
-                label: 'Ministry',
-                hintText: 'Select a Ministry',
-                isRequired: true,
-                items: widget.ministries
-                    .map(
-                      (ministry) => DropdownMenuItem(
-                        value: ministry,
-                        child: Text(ministry.name),
-                      ),
-                    )
-                    .toList(),
-                onChanged: (value) {
+              Text(
+                'Ministry *',
+                style: context.textStyles.labelMedium.copyWith(
+                  color: context.colors.textBody,
+                ),
+              ),
+              const SizedBox(height: 8),
+              DropdownButtonFormField<Ministry>(
+                initialValue: _selectedMinistry,
+                decoration: InputDecoration(
+                  hintText: 'Select ministry',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                items: widget.ministries.map((ministry) {
+                  return DropdownMenuItem<Ministry>(
+                    value: ministry,
+                    child: Text(ministry.name),
+                  );
+                }).toList(),
+                onChanged: (ministry) {
                   setState(() {
-                    _selectedMinistry = value;
+                    _selectedMinistry = ministry;
                   });
                 },
                 validator: (value) {
@@ -147,7 +191,7 @@ class _AddAgencyDialogState extends State<AddAgencyDialog> {
                         backgroundColor: context.colors.surfaceVariant,
                         minimumSize: const Size.fromHeight(54),
                       ),
-                      child: const Text('Close'),
+                      child: const Text('Cancel'),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -155,7 +199,7 @@ class _AddAgencyDialogState extends State<AddAgencyDialog> {
                     child: FilledButton.icon(
                       onPressed: _submit,
                       icon: const Icon(Icons.save_outlined, size: 20),
-                      label: const Text('Add Agency'),
+                      label: const Text('Save Changes'),
                     ),
                   ),
                 ],

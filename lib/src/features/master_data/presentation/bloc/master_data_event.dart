@@ -14,14 +14,6 @@ class MasterDataStarted extends MasterDataEvent {
   List<Object?> get props => [];
 }
 
-class AgencySearchChanged extends MasterDataEvent {
-  final String query;
-  const AgencySearchChanged(this.query);
-
-  @override
-  List<Object?> get props => [query];
-}
-
 class MinistrySearchChanged extends MasterDataEvent {
   final String query;
   const MinistrySearchChanged(this.query);
@@ -30,30 +22,46 @@ class MinistrySearchChanged extends MasterDataEvent {
   List<Object?> get props => [query];
 }
 
-class AgencyAdded extends MasterDataEvent {
-  final String name;
-  final String code;
-  const AgencyAdded({required this.name, required this.code});
+class AgencySearchChanged extends MasterDataEvent {
+  final String query;
+  const AgencySearchChanged(this.query);
 
   @override
-  List<Object?> get props => [name, code];
+  List<Object?> get props => [query];
 }
 
 class MinistryAdded extends MasterDataEvent {
   final String name;
   final String code;
-  final int agencyId;
-  final String? agencyRemoteId;
+  const MinistryAdded({required this.name, required this.code});
 
-  const MinistryAdded({
+  @override
+  List<Object?> get props => [name, code];
+}
+
+class AgencyAdded extends MasterDataEvent {
+  final String name;
+  final String code;
+  final int ministryId;
+  final String? ministryRemoteId;
+
+  const AgencyAdded({
     required this.name,
     required this.code,
-    required this.agencyId,
-    this.agencyRemoteId,
+    required this.ministryId,
+    this.ministryRemoteId,
   });
 
   @override
-  List<Object?> get props => [name, code, agencyId, agencyRemoteId];
+  List<Object?> get props => [name, code, ministryId, ministryRemoteId];
+}
+
+class MinistryDeleted extends MasterDataEvent {
+  final Ministry ministry;
+  const MinistryDeleted(this.ministry);
+
+  @override
+  List<Object?> get props => [ministry];
 }
 
 class AgencyDeleted extends MasterDataEvent {
@@ -64,10 +72,18 @@ class AgencyDeleted extends MasterDataEvent {
   List<Object?> get props => [agency];
 }
 
-class MinistryDeleted extends MasterDataEvent {
+class MinistryUpdated extends MasterDataEvent {
   final Ministry ministry;
-  const MinistryDeleted(this.ministry);
+  const MinistryUpdated(this.ministry);
 
   @override
   List<Object?> get props => [ministry];
+}
+
+class AgencyUpdated extends MasterDataEvent {
+  final AgencyWithMinistry agencyWithMinistry;
+  const AgencyUpdated(this.agencyWithMinistry);
+
+  @override
+  List<Object?> get props => [agencyWithMinistry];
 }

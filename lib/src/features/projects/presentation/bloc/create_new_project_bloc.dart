@@ -56,7 +56,7 @@ class CreateNewProjectBloc
   ) async {
     try {
       final zones = await _getGeopoliticalZonesUseCase(NoParams());
-      final agencies = await _getImplementingAgenciesUseCase(NoParams());
+      final ministries = await _getSupervisingMinistriesUseCase(NoParams());
 
       final entries = event.projects != null
           ? await _projectsToEntries(event.projects!)
@@ -66,7 +66,7 @@ class CreateNewProjectBloc
         state.copyWith(
           entries: entries,
           zones: zones,
-          agencies: agencies,
+          ministries: ministries,
           viewStatus: CreateProjectViewStatus.filling,
         ),
       );
@@ -88,9 +88,9 @@ class CreateNewProjectBloc
   ) async {
     final entries = <ProjectEntryFormData>[];
     for (final project in projects) {
-      final ministries = project.agencyId > 0
-          ? await _getSupervisingMinistriesUseCase(project.agencyId)
-          : <SupervisingMinistry>[];
+      final agencies = project.ministryId > 0
+          ? await _getImplementingAgenciesUseCase(project.ministryId)
+          : <ImplementingAgency>[];
       final states = project.zoneId > 0
           ? await _getStatesUseCase(project.zoneId)
           : <NigerianState>[];
@@ -99,8 +99,8 @@ class CreateNewProjectBloc
         ProjectEntryFormData(
           code: project.code,
           status: RequiredProjectStatus.dirty(project.status),
-          implementingAgencyId: RequiredId.dirty(project.agencyId),
           supervisingMinistryId: RequiredId.dirty(project.ministryId),
+          implementingAgencyId: RequiredId.dirty(project.agencyId),
           geopoliticalZoneId: RequiredId.dirty(project.zoneId),
           stateId: RequiredId.dirty(project.stateId),
           constituency: RequiredText.dirty(project.constituency),
@@ -109,7 +109,7 @@ class CreateNewProjectBloc
           budget: RequiredDouble.dirty(project.amount),
           startDate: const RequiredDate.pure(),
           endDate: const RequiredDate.pure(),
-          ministries: ministries,
+          agencies: agencies,
           states: states,
         ),
       );
@@ -167,25 +167,25 @@ class CreateNewProjectBloc
       entry = entry.copyWith(status: RequiredProjectStatus.dirty(event.status));
     }
 
-    if (event.implementingAgencyId != null) {
+    if (event.supervisingMinistryId != null) {
       entry = entry.copyWith(
-        implementingAgencyId: RequiredId.dirty(event.implementingAgencyId!),
-        supervisingMinistryId: const RequiredId.pure(),
-        ministries: [],
+        supervisingMinistryId: RequiredId.dirty(event.supervisingMinistryId!),
+        implementingAgencyId: const RequiredId.pure(),
+        agencies: [],
       );
       _emitUpdatedEntry(emit, event.index, entry);
 
-      final ministries = await _getSupervisingMinistriesUseCase(
-        event.implementingAgencyId!,
+      final agencies = await _getImplementingAgenciesUseCase(
+        event.supervisingMinistryId!,
       );
-      entry = state.entries[event.index].copyWith(ministries: ministries);
+      entry = state.entries[event.index].copyWith(agencies: agencies);
       _emitUpdatedEntry(emit, event.index, entry);
       return;
     }
 
-    if (event.supervisingMinistryId != null) {
+    if (event.implementingAgencyId != null) {
       entry = entry.copyWith(
-        supervisingMinistryId: RequiredId.dirty(event.supervisingMinistryId!),
+        implementingAgencyId: RequiredId.dirty(event.implementingAgencyId!),
       );
     }
 

@@ -78,20 +78,8 @@ class MetadataSyncDelegate {
     final name = data['name'] as String;
     final code = data['code'] as String;
     final isActive = data['is_active'] as bool?;
-    final agencyIdStr = data['agency_id'] as String;
     final createdAt = DateTime.parse(data['created_at'] as String);
     final updatedAt = DateTime.parse(data['updated_at'] as String);
-
-    final agency = await (_database.select(
-      _database.agencies,
-    )..where((t) => t.remoteId.equals(agencyIdStr))).getSingleOrNull();
-
-    if (agency == null) {
-      _logger.warning(
-        'Cannot sync ministry $name: Agency $agencyIdStr not found locally',
-      );
-      return;
-    }
 
     final localRecord = await (_database.select(
       _database.ministries,
@@ -102,7 +90,6 @@ class MetadataSyncDelegate {
         localRecord.name,
         localRecord.code,
         localRecord.isActive,
-        localRecord.agencyId,
         localRecord.createdAt,
         localRecord.updatedAt,
       );
@@ -110,7 +97,6 @@ class MetadataSyncDelegate {
         name,
         code,
         isActive ?? true,
-        agency.id,
         createdAt,
         updatedAt,
       );
@@ -123,7 +109,6 @@ class MetadataSyncDelegate {
       name: Value(name),
       code: Value(code),
       isActive: Value(isActive ?? true),
-      agencyId: Value(agency.id),
       isSynced: const Value(true),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
@@ -199,19 +184,20 @@ class MetadataSyncDelegate {
     final name = data['name'] as String;
     final code = data['code'] as String;
     final isActive = data['is_active'] as bool?;
+    final ministryIdStr = data['ministry_id'] as String;
     final createdAt = DateTime.parse(data['created_at'] as String);
     final updatedAt = DateTime.parse(data['updated_at'] as String);
 
-    final companion = db.AgenciesCompanion(
-      remoteId: Value(remoteId),
-      name: Value(name),
-      code: Value(code),
-      isActive: Value(isActive ?? true),
-      isSynced: const Value(true),
-      createdAt: Value(createdAt),
-      updatedAt: Value(updatedAt),
-      lastSyncedAt: Value(DateTime.now()),
-    );
+    final ministry = await (_database.select(
+      _database.ministries,
+    )..where((t) => t.remoteId.equals(ministryIdStr))).getSingleOrNull();
+
+    if (ministry == null) {
+      _logger.warning(
+        'Cannot sync agency $name: Ministry $ministryIdStr not found locally',
+      );
+      return;
+    }
 
     final localRecord = await (_database.select(
       _database.agencies,
@@ -222,6 +208,7 @@ class MetadataSyncDelegate {
         localRecord.name,
         localRecord.code,
         localRecord.isActive,
+        localRecord.ministryId,
         localRecord.createdAt,
         localRecord.updatedAt,
       );
@@ -229,12 +216,25 @@ class MetadataSyncDelegate {
         name,
         code,
         isActive ?? true,
+        ministry.id,
         createdAt,
         updatedAt,
       );
 
       if (localDigest == remoteDigest) return;
     }
+
+    final companion = db.AgenciesCompanion(
+      remoteId: Value(remoteId),
+      name: Value(name),
+      code: Value(code),
+      isActive: Value(isActive ?? true),
+      ministryId: Value(ministry.id),
+      isSynced: const Value(true),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      lastSyncedAt: Value(DateTime.now()),
+    );
 
     await _database
         .into(_database.agencies)
@@ -259,11 +259,10 @@ class MetadataSyncDelegate {
     String? name,
     String? code,
     bool? isActive,
-    int? agencyId,
     DateTime createdAt,
     DateTime updatedAt,
   ) {
-    return Object.hash(name, code, isActive, agencyId, createdAt, updatedAt);
+    return Object.hash(name, code, isActive, createdAt, updatedAt);
   }
 
   int _computeStateDigest(
@@ -279,10 +278,11 @@ class MetadataSyncDelegate {
     String? name,
     String? code,
     bool? isActive,
+    int? ministryId,
     DateTime createdAt,
     DateTime updatedAt,
   ) {
-    return Object.hash(name, code, isActive, createdAt, updatedAt);
+    return Object.hash(name, code, isActive, ministryId, createdAt, updatedAt);
   }
 
   // Push methods for local-to-remote sync
@@ -308,19 +308,32 @@ class MetadataSyncDelegate {
   }
 
   Future<void> pushAgency(db.Agency agency) async {
+    // Get the ministry's remoteId for the foreign key reference
+    final ministry = await (_database.select(_database.ministries)
+          ..where((t) => t.id.equals(agency.ministryId)))
+        .getSingleOrNull();
+
+    if (ministry == null || ministry.remoteId == null) {
+      _logger.warning(
+        'Cannot push agency ${agency.name}: Ministry not found or not synced',
+      );
+      return;
+    }
+
     if (agency.remoteId == null) {
-      await _insertAgency(agency);
+      await _insertAgency(agency, ministry.remoteId!);
     } else {
-      await _updateAgency(agency);
+      await _updateAgency(agency, ministry.remoteId!);
     }
   }
 
-  Future<void> _insertAgency(db.Agency agency) async {
+  Future<void> _insertAgency(db.Agency agency, String ministryRemoteId) async {
     final response = await _supabase
         .from('agencies')
         .insert({
           'name': agency.name,
           'code': agency.code,
+          'ministry_id': ministryRemoteId,
           'is_active': agency.isActive,
           'created_at': agency.createdAt.toIso8601String(),
           'updated_at': agency.updatedAt.toIso8601String(),
@@ -341,12 +354,13 @@ class MetadataSyncDelegate {
     _logger.info('Inserted agency ${agency.name} with remoteId $remoteId');
   }
 
-  Future<void> _updateAgency(db.Agency agency) async {
+  Future<void> _updateAgency(db.Agency agency, String ministryRemoteId) async {
     await _supabase
         .from('agencies')
         .update({
           'name': agency.name,
           'code': agency.code,
+          'ministry_id': ministryRemoteId,
           'is_active': agency.isActive,
           'updated_at': agency.updatedAt.toIso8601String(),
         })
@@ -363,32 +377,19 @@ class MetadataSyncDelegate {
   }
 
   Future<void> pushMinistry(db.Ministry ministry) async {
-    // Get the agency's remoteId for the foreign key reference
-    final agency = await (_database.select(_database.agencies)
-          ..where((t) => t.id.equals(ministry.agencyId)))
-        .getSingleOrNull();
-
-    if (agency == null || agency.remoteId == null) {
-      _logger.warning(
-        'Cannot push ministry ${ministry.name}: Agency not found or not synced',
-      );
-      return;
-    }
-
     if (ministry.remoteId == null) {
-      await _insertMinistry(ministry, agency.remoteId!);
+      await _insertMinistry(ministry);
     } else {
-      await _updateMinistry(ministry, agency.remoteId!);
+      await _updateMinistry(ministry);
     }
   }
 
-  Future<void> _insertMinistry(db.Ministry ministry, String agencyRemoteId) async {
+  Future<void> _insertMinistry(db.Ministry ministry) async {
     final response = await _supabase
         .from('ministries')
         .insert({
           'name': ministry.name,
           'code': ministry.code,
-          'agency_id': agencyRemoteId,
           'is_active': ministry.isActive,
           'created_at': ministry.createdAt.toIso8601String(),
           'updated_at': ministry.updatedAt.toIso8601String(),
@@ -409,13 +410,12 @@ class MetadataSyncDelegate {
     _logger.info('Inserted ministry ${ministry.name} with remoteId $remoteId');
   }
 
-  Future<void> _updateMinistry(db.Ministry ministry, String agencyRemoteId) async {
+  Future<void> _updateMinistry(db.Ministry ministry) async {
     await _supabase
         .from('ministries')
         .update({
           'name': ministry.name,
           'code': ministry.code,
-          'agency_id': agencyRemoteId,
           'is_active': ministry.isActive,
           'updated_at': ministry.updatedAt.toIso8601String(),
         })

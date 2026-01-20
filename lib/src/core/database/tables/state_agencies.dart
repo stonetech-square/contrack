@@ -17,7 +17,7 @@ class GeopoliticalZones extends Table {
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 }
 
-class Agencies extends Table {
+class Ministries extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get name => text().withLength(min: 2, max: 200).unique()();
   TextColumn get code => text().withLength(min: 2, max: 50).nullable()();
@@ -29,13 +29,13 @@ class Agencies extends Table {
   DateTimeColumn get lastSyncedAt => dateTime().nullable()();
 }
 
-class Ministries extends Table {
+class Agencies extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get name => text().withLength(min: 2, max: 200).unique()();
   TextColumn get code => text().withLength(min: 2, max: 50).nullable()();
   TextColumn get remoteId => text().nullable()();
-  IntColumn get agencyId =>
-      integer().references(Agencies, #id, onDelete: KeyAction.cascade)();
+  IntColumn get ministryId =>
+      integer().references(Ministries, #id, onDelete: KeyAction.cascade)();
   BoolColumn get isActive => boolean().withDefault(const Constant(true))();
   BoolColumn get isSynced => boolean().withDefault(const Constant(false))();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();

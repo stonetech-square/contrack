@@ -1,16 +1,16 @@
 import 'package:contrack/src/core/database/database.dart';
-import 'package:contrack/src/features/master_data/data/models/ministry_with_agency.dart';
+import 'package:contrack/src/features/master_data/data/models/agency_with_ministry.dart';
 import 'package:injectable/injectable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract class MasterDataRemoteDatasource {
-  Future<String> addAgency(Agency agency);
-  Future<String> addMinistry(MinistryWithAgency ministryWithAgency);
-  Future<void> updateAgency(Agency agency);
-  Future<void> updateMinistry(MinistryWithAgency ministryWithAgency);
-  Future<void> deleteAgency(Agency agency);
+  Future<String> addMinistry(Ministry ministry);
+  Future<String> addAgency(AgencyWithMinistry agencyWithMinistry);
+  Future<void> updateMinistry(Ministry ministry);
+  Future<void> updateAgency(AgencyWithMinistry agencyWithMinistry);
   Future<void> deleteMinistry(Ministry ministry);
-  Future<String?> getAgencyRemoteIdByCode(String? code);
+  Future<void> deleteAgency(Agency agency);
+  Future<String?> getMinistryRemoteIdByCode(String? code);
 }
 
 @LazySingleton(as: MasterDataRemoteDatasource)
@@ -20,37 +20,12 @@ class MasterDataRemoteDatasourceImpl implements MasterDataRemoteDatasource {
   MasterDataRemoteDatasourceImpl(this._supabase);
 
   @override
-  Future<String> addAgency(Agency agency) async {
-    final data = {
-      if (agency.remoteId != null) 'id': agency.remoteId,
-      'name': agency.name,
-      'code': agency.code,
-      'is_active': agency.isActive,
-    };
-    final result = await _supabase
-        .from('agencies')
-        .insert(data)
-        .select('id')
-        .single();
-    return result['id'];
-  }
-
-  @override
-  Future<String> addMinistry(MinistryWithAgency ministryWithAgency) async {
-    final ministry = ministryWithAgency.ministry;
-    final agency = ministryWithAgency.agency;
-    final agencyRemoteId = agency.remoteId;
-
-    if (agencyRemoteId == null) {
-      throw Exception('Cannot add ministry: Agency has no remote ID');
-    }
-
+  Future<String> addMinistry(Ministry ministry) async {
     final data = {
       if (ministry.remoteId != null) 'id': ministry.remoteId,
       'name': ministry.name,
       'code': ministry.code,
       'is_active': ministry.isActive,
-      'agency_id': agencyRemoteId,
     };
     final result = await _supabase
         .from('ministries')
@@ -61,44 +36,63 @@ class MasterDataRemoteDatasourceImpl implements MasterDataRemoteDatasource {
   }
 
   @override
-  Future<void> updateAgency(Agency agency) async {
-    if (agency.remoteId == null) return;
-    await _supabase
+  Future<String> addAgency(AgencyWithMinistry agencyWithMinistry) async {
+    final agency = agencyWithMinistry.agency;
+    final ministry = agencyWithMinistry.ministry;
+    final ministryRemoteId = ministry.remoteId;
+
+    if (ministryRemoteId == null) {
+      throw Exception('Cannot add agency: Ministry has no remote ID');
+    }
+
+    final data = {
+      if (agency.remoteId != null) 'id': agency.remoteId,
+      'name': agency.name,
+      'code': agency.code,
+      'is_active': agency.isActive,
+      'ministry_id': ministryRemoteId,
+    };
+    final result = await _supabase
         .from('agencies')
-        .update({
-          'name': agency.name,
-          'code': agency.code,
-          'is_active': agency.isActive,
-        })
-        .eq('id', agency.remoteId!);
+        .insert(data)
+        .select('id')
+        .single();
+    return result['id'];
   }
 
   @override
-  Future<void> updateMinistry(MinistryWithAgency ministryWithAgency) async {
-    final ministry = ministryWithAgency.ministry;
-    final agency = ministryWithAgency.agency;
-    final agencyRemoteId = agency.remoteId;
-
+  Future<void> updateMinistry(Ministry ministry) async {
     if (ministry.remoteId == null) return;
-    if (agencyRemoteId == null) {
-      throw Exception('Cannot sync ministry update: Agency has no remote ID');
-    }
-
     await _supabase
         .from('ministries')
         .update({
           'name': ministry.name,
           'code': ministry.code,
           'is_active': ministry.isActive,
-          'agency_id': agencyRemoteId,
         })
         .eq('id', ministry.remoteId!);
   }
 
   @override
-  Future<void> deleteAgency(Agency agency) async {
+  Future<void> updateAgency(AgencyWithMinistry agencyWithMinistry) async {
+    final agency = agencyWithMinistry.agency;
+    final ministry = agencyWithMinistry.ministry;
+    final ministryRemoteId = ministry.remoteId;
+
     if (agency.remoteId == null) return;
-    await _supabase.from('agencies').delete().eq('id', agency.remoteId!);
+    if (ministryRemoteId == null) {
+      throw Exception('Cannot sync agency update: Ministry has no remote ID');
+    }
+
+    await _supabase
+        .from('agencies')
+        .update({
+          'name': agency.name,
+          'code': agency.code,
+          'is_active': agency.isActive,
+          'ministry_id': ministryRemoteId,
+        })
+        .eq('id', agency.remoteId!);
   }
 
   @override
@@ -108,10 +102,16 @@ class MasterDataRemoteDatasourceImpl implements MasterDataRemoteDatasource {
   }
 
   @override
-  Future<String?> getAgencyRemoteIdByCode(String? code) async {
+  Future<void> deleteAgency(Agency agency) async {
+    if (agency.remoteId == null) return;
+    await _supabase.from('agencies').delete().eq('id', agency.remoteId!);
+  }
+
+  @override
+  Future<String?> getMinistryRemoteIdByCode(String? code) async {
     if (code == null || code.isEmpty) return null;
     final result = await _supabase
-        .from('agencies')
+        .from('ministries')
         .select('id')
         .eq('code', code)
         .maybeSingle();

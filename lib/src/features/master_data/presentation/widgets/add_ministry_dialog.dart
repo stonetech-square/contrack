@@ -1,23 +1,16 @@
 import 'package:contrack/src/app/presentation/widgets/widgets.dart';
 import 'package:contrack/src/app/theme/app_colors.dart';
 import 'package:contrack/src/app/theme/app_typography.dart';
-import 'package:contrack/src/core/database/database.dart' hide State;
-import 'package:contrack/src/core/utils/toast_extension.dart';
 import 'package:contrack/src/features/master_data/domain/entities/ministry_input.dart';
 import 'package:flutter/material.dart';
 
 class AddMinistryDialog extends StatefulWidget {
-  final List<Agency> agencies;
+  const AddMinistryDialog({super.key});
 
-  const AddMinistryDialog({super.key, required this.agencies});
-
-  static Future<MinistryInput?> show(
-    BuildContext context, {
-    required List<Agency> agencies,
-  }) {
+  static Future<MinistryInput?> show(BuildContext context) {
     return showDialog<MinistryInput>(
       context: context,
-      builder: (context) => AddMinistryDialog(agencies: agencies),
+      builder: (context) => const AddMinistryDialog(),
     );
   }
 
@@ -29,7 +22,6 @@ class _AddMinistryDialogState extends State<AddMinistryDialog> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _codeController = TextEditingController();
-  Agency? _selectedAgency;
 
   @override
   void dispose() {
@@ -39,17 +31,13 @@ class _AddMinistryDialogState extends State<AddMinistryDialog> {
   }
 
   void _submit() {
-    if (_formKey.currentState!.validate() && _selectedAgency != null) {
+    if (_formKey.currentState!.validate()) {
       Navigator.of(context).pop(
         MinistryInput(
           name: _nameController.text.trim(),
           code: _codeController.text.trim(),
-          agencyId: _selectedAgency!.id,
-          agencyRemoteId: _selectedAgency!.remoteId,
         ),
       );
-    } else {
-      context.toast.warning('Please select an agency');
     }
   }
 
@@ -87,7 +75,7 @@ class _AddMinistryDialogState extends State<AddMinistryDialog> {
               AppTextField(
                 controller: _nameController,
                 label: 'Ministry Name',
-                hintText: 'e.g. Ministry of Works',
+                hintText: 'e.g. Federal Ministry of Works',
                 isRequired: true,
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
@@ -105,32 +93,6 @@ class _AddMinistryDialogState extends State<AddMinistryDialog> {
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return 'Ministry code is required';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              AppDropDownField<Agency>(
-                value: _selectedAgency,
-                label: 'Agency',
-                hintText: 'Select an Agency',
-                isRequired: true,
-                items: widget.agencies
-                    .map(
-                      (agency) => DropdownMenuItem(
-                        value: agency,
-                        child: Text(agency.name),
-                      ),
-                    )
-                    .toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedAgency = value;
-                  });
-                },
-                validator: (value) {
-                  if (value == null) {
-                    return 'Please select an agency';
                   }
                   return null;
                 },

@@ -27,6 +27,17 @@ class AgenciesTableHeader extends StatelessWidget {
           ),
           const SizedBox(width: 16),
           Expanded(
+            flex: 2,
+            child: Text(
+              'MINISTRY',
+              style: context.textStyles.labelSmall.copyWith(
+                color: context.colors.textSubtle,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
             child: Text(
               'CODE',
               style: context.textStyles.labelSmall.copyWith(

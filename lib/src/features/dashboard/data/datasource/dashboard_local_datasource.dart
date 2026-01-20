@@ -26,8 +26,9 @@ abstract class DashboardLocalDataSource {
 
   Future<List<GeopoliticalZone>> getAllGeopoliticalZones();
   Future<List<Agency>> getAllImplementingAgencies();
+  Future<List<Ministry>> getAllSupervisingMinistries();
   Future<List<State>> getStatesByZoneId(int zoneId);
-  Future<List<Ministry>> getMinistriesByAgencyId(int agencyId);
+  Future<List<Agency>> getAgenciesByMinistryId(int ministryId);
   Future<User?> getUserByUid(String uid);
 }
 
@@ -200,6 +201,11 @@ class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
   }
 
   @override
+  Future<List<Ministry>> getAllSupervisingMinistries() async {
+    return await database.select(database.ministries).get();
+  }
+
+  @override
   Future<List<State>> getStatesByZoneId(int zoneId) async {
     return await (database.select(
       database.states,
@@ -207,10 +213,10 @@ class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
   }
 
   @override
-  Future<List<Ministry>> getMinistriesByAgencyId(int agencyId) async {
+  Future<List<Agency>> getAgenciesByMinistryId(int ministryId) async {
     return await (database.select(
-      database.ministries,
-    )..where((t) => t.agencyId.equals(agencyId))).get();
+      database.agencies,
+    )..where((t) => t.ministryId.equals(ministryId))).get();
   }
 
   @override

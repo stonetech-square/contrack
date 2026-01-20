@@ -36,10 +36,8 @@ class MinistriesTable extends StatelessWidget {
                 return ListView.builder(
                   itemCount: state.ministries.length,
                   itemBuilder: (context, index) {
-                    final ministryWithAgency = state.ministries[index];
-                    return MinistriesTableRow(
-                      ministryWithAgency: ministryWithAgency,
-                    );
+                    final ministry = state.ministries[index];
+                    return MinistriesTableRow(ministry: ministry);
                   },
                 );
               },

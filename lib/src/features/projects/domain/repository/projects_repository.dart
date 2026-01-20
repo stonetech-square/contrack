@@ -13,8 +13,8 @@ abstract class ProjectsRepository {
 
   Future<List<GeopoliticalZone>> getGeopoliticalZones();
   Future<List<NigerianState>> getStates(int zoneId);
-  Future<List<ImplementingAgency>> getImplementingAgencies();
-  Future<List<SupervisingMinistry>> getSupervisingMinistries(int agencyId);
+  Future<List<SupervisingMinistry>> getSupervisingMinistries();
+  Future<List<ImplementingAgency>> getImplementingAgencies(int ministryId);
   Future<ProjectWithDetails?> getProjectByCode(String code);
   Stream<List<Project>> watchProjectsForUser({
     String? query,

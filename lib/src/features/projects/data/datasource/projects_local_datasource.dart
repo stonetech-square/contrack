@@ -28,8 +28,9 @@ abstract class ProjectsLocalDataSource {
   Future<List<State>> getAllStatesByGeopoliticalZoneId(int geopoliticalZoneId);
   Future<List<GeopoliticalZone>> getAllGeopoliticalZones();
   Future<List<Agency>> getAllImplementingAgencies();
-  Future<List<Ministry>> getAllSupervisingMinistriesByImplementingAgencyId(
-    int implementingAgencyId,
+  Future<List<Ministry>> getAllSupervisingMinistries();
+  Future<List<Agency>> getAllImplementingAgenciesBySupervisingMinistryId(
+    int supervisingMinistryId,
   );
   Future<void> recordExport({
     required String userId,
@@ -77,6 +78,10 @@ class ProjectsLocalDataSourceImpl implements ProjectsLocalDataSource {
       await _database.select(_database.agencies).get();
 
   @override
+  Future<List<Ministry>> getAllSupervisingMinistries() async =>
+      await _database.select(_database.ministries).get();
+
+  @override
   Future<List<State>> getAllStatesByGeopoliticalZoneId(
     int geopoliticalZoneId,
   ) async {
@@ -86,11 +91,11 @@ class ProjectsLocalDataSourceImpl implements ProjectsLocalDataSource {
   }
 
   @override
-  Future<List<Ministry>> getAllSupervisingMinistriesByImplementingAgencyId(
-    int implementingAgencyId,
+  Future<List<Agency>> getAllImplementingAgenciesBySupervisingMinistryId(
+    int supervisingMinistryId,
   ) async {
-    final query = _database.select(_database.ministries)
-      ..where((t) => t.agencyId.equals(implementingAgencyId));
+    final query = _database.select(_database.agencies)
+      ..where((t) => t.ministryId.equals(supervisingMinistryId));
     return await query.get();
   }
 

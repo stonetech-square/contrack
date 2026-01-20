@@ -1,18 +1,31 @@
 import 'package:contrack/src/app/theme/app_colors.dart';
 import 'package:contrack/src/app/theme/app_typography.dart';
-import 'package:contrack/src/features/master_data/data/models/ministry_with_agency.dart';
+import 'package:contrack/src/core/database/database.dart' hide State;
 import 'package:contrack/src/features/master_data/presentation/bloc/master_data_bloc.dart';
 import 'package:contrack/src/features/master_data/presentation/widgets/delete_confirmation_dialog.dart';
+import 'package:contrack/src/features/master_data/presentation/widgets/edit_ministry_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MinistriesTableRow extends StatelessWidget {
-  final MinistryWithAgency ministryWithAgency;
+  final Ministry ministry;
 
-  const MinistriesTableRow({super.key, required this.ministryWithAgency});
+  const MinistriesTableRow({
+    super.key,
+    required this.ministry,
+  });
+
+  Future<void> _onEditPressed(BuildContext context) async {
+    final updatedMinistry = await EditMinistryDialog.show(
+      context,
+      ministry: ministry,
+    );
+    if (updatedMinistry != null && context.mounted) {
+      context.read<MasterDataBloc>().add(MinistryUpdated(updatedMinistry));
+    }
+  }
 
   Future<void> _onDeletePressed(BuildContext context) async {
-    final ministry = ministryWithAgency.ministry;
     final confirmed = await DeleteConfirmationDialog.show(
       context,
       title: 'Delete Ministry',
@@ -25,9 +38,6 @@ class MinistriesTableRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ministry = ministryWithAgency.ministry;
-    final agency = ministryWithAgency.agency;
-
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -50,16 +60,6 @@ class MinistriesTableRow extends StatelessWidget {
               ),
               const SizedBox(width: 16),
               Expanded(
-                flex: 2,
-                child: Text(
-                  agency.name,
-                  style: context.textStyles.bodyMedium.copyWith(
-                    color: context.colors.textBody,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
                 child: Text(
                   ministry.code ?? '',
                   style: context.textStyles.bodyMedium.copyWith(
@@ -74,7 +74,7 @@ class MinistriesTableRow extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () => _onEditPressed(context),
                       tooltip: 'Edit',
                       icon: Icon(
                         Icons.edit_outlined,

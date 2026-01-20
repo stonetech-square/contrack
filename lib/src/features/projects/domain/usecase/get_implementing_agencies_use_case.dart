@@ -5,13 +5,13 @@ import 'package:injectable/injectable.dart';
 
 @injectable
 class GetImplementingAgenciesUseCase
-    implements UseCase<Future<List<ImplementingAgency>>, NoParams> {
+    implements UseCase<Future<List<ImplementingAgency>>, int> {
   final ProjectsRepository _repository;
 
   GetImplementingAgenciesUseCase(this._repository);
 
   @override
-  Future<List<ImplementingAgency>> call(NoParams params) async {
-    return _repository.getImplementingAgencies();
+  Future<List<ImplementingAgency>> call(int ministryId) async {
+    return _repository.getImplementingAgencies(ministryId);
   }
 }

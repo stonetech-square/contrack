@@ -1,17 +1,36 @@
 import 'package:contrack/src/app/theme/app_colors.dart';
 import 'package:contrack/src/app/theme/app_typography.dart';
 import 'package:contrack/src/core/database/database.dart';
+import 'package:contrack/src/features/master_data/data/models/agency_with_ministry.dart';
 import 'package:contrack/src/features/master_data/presentation/bloc/master_data_bloc.dart';
 import 'package:contrack/src/features/master_data/presentation/widgets/delete_confirmation_dialog.dart';
+import 'package:contrack/src/features/master_data/presentation/widgets/edit_agency_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AgenciesTableRow extends StatelessWidget {
-  final Agency agency;
+  final AgencyWithMinistry agencyWithMinistry;
+  final List<Ministry> ministries;
 
-  const AgenciesTableRow({super.key, required this.agency});
+  const AgenciesTableRow({
+    super.key,
+    required this.agencyWithMinistry,
+    required this.ministries,
+  });
+
+  Future<void> _onEditPressed(BuildContext context) async {
+    final updatedAgencyWithMinistry = await EditAgencyDialog.show(
+      context,
+      agencyWithMinistry: agencyWithMinistry,
+      ministries: ministries,
+    );
+    if (updatedAgencyWithMinistry != null && context.mounted) {
+      context.read<MasterDataBloc>().add(AgencyUpdated(updatedAgencyWithMinistry));
+    }
+  }
 
   Future<void> _onDeletePressed(BuildContext context) async {
+    final agency = agencyWithMinistry.agency;
     final confirmed = await DeleteConfirmationDialog.show(
       context,
       title: 'Delete Agency',
@@ -24,6 +43,9 @@ class AgenciesTableRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final agency = agencyWithMinistry.agency;
+    final ministry = agencyWithMinistry.ministry;
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -46,6 +68,16 @@ class AgenciesTableRow extends StatelessWidget {
               ),
               const SizedBox(width: 16),
               Expanded(
+                flex: 2,
+                child: Text(
+                  ministry.name,
+                  style: context.textStyles.bodyMedium.copyWith(
+                    color: context.colors.textBody,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
                 child: Text(
                   agency.code ?? '',
                   style: context.textStyles.bodyMedium.copyWith(
@@ -60,7 +92,7 @@ class AgenciesTableRow extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () => _onEditPressed(context),
                       tooltip: 'Edit',
                       icon: Icon(
                         Icons.edit_outlined,

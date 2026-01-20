@@ -29,7 +29,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   static QueryExecutor _openConnection() {
     return LazyDatabase(() async {
@@ -84,17 +84,20 @@ class AppDatabase extends _$AppDatabase {
           'UPDATE ministries SET is_synced = 1 WHERE remote_id IS NOT NULL',
         );
       }
-      if (from < 3) {
-        // Recreate ministries table with CASCADE delete on agency_id foreign key
-        // SQLite doesn't support ALTER FOREIGN KEY, so we need to recreate the table
+      if (from < 4) {
+        // Major refactor: Ministry now comes before Agency (Ministry has many Agencies)
+        // Drop old tables and recreate with correct relationship
         await customStatement('PRAGMA foreign_keys = OFF');
+        await customStatement('DROP TABLE IF EXISTS ministries');
+        await customStatement('DROP TABLE IF EXISTS agencies');
+
+        // Create ministries table first (parent table)
         await customStatement('''
-          CREATE TABLE ministries_new (
+          CREATE TABLE ministries (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL UNIQUE,
             code TEXT,
             remote_id TEXT,
-            agency_id INTEGER NOT NULL REFERENCES agencies(id) ON DELETE CASCADE,
             is_active INTEGER NOT NULL DEFAULT 1,
             is_synced INTEGER NOT NULL DEFAULT 0,
             created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
@@ -102,14 +105,22 @@ class AppDatabase extends _$AppDatabase {
             last_synced_at INTEGER
           )
         ''');
+
+        // Create agencies table with ministry_id foreign key
         await customStatement('''
-          INSERT INTO ministries_new
-          SELECT id, name, code, remote_id, agency_id, is_active, is_synced,
-                 created_at, updated_at, last_synced_at
-          FROM ministries
+          CREATE TABLE agencies (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL UNIQUE,
+            code TEXT,
+            remote_id TEXT,
+            ministry_id INTEGER NOT NULL REFERENCES ministries(id) ON DELETE CASCADE,
+            is_active INTEGER NOT NULL DEFAULT 1,
+            is_synced INTEGER NOT NULL DEFAULT 0,
+            created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
+            updated_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
+            last_synced_at INTEGER
+          )
         ''');
-        await customStatement('DROP TABLE ministries');
-        await customStatement('ALTER TABLE ministries_new RENAME TO ministries');
         await customStatement('PRAGMA foreign_keys = ON');
       }
     },

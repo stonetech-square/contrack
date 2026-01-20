@@ -1,25 +1,25 @@
 import 'package:contrack/src/core/database/database.dart';
 import 'package:drift/drift.dart';
-import 'package:contrack/src/features/master_data/data/models/ministry_with_agency.dart';
+import 'package:contrack/src/features/master_data/data/models/agency_with_ministry.dart';
 import 'package:injectable/injectable.dart';
 
 abstract class MasterDataLocalDatasource {
-  Stream<List<Agency>> watchAgencies({String? query});
-  Stream<List<MinistryWithAgency>> watchMinistries({
+  Stream<List<Ministry>> watchMinistries({String? query});
+  Stream<List<AgencyWithMinistry>> watchAgencies({
     String? query,
-    int? agencyId,
+    int? ministryId,
   });
-  Future<Agency> addAgency({required String name, required String code});
-  Future<Ministry> addMinistry({
+  Future<Ministry> addMinistry({required String name, required String code});
+  Future<Agency> addAgency({
     required String name,
     required String code,
-    required int agencyId,
+    required int ministryId,
   });
-  Future<void> updateAgency(Agency agency);
   Future<void> updateMinistry(Ministry ministry);
-  Future<void> deleteAgency(Agency agency);
+  Future<void> updateAgency(Agency agency);
   Future<void> deleteMinistry(Ministry ministry);
-  Future<Agency?> getAgencyById(int id);
+  Future<void> deleteAgency(Agency agency);
+  Future<Ministry?> getMinistryById(int id);
 }
 
 @LazySingleton(as: MasterDataLocalDatasource)
@@ -28,35 +28,17 @@ class MasterDataLocalDatasourceImpl implements MasterDataLocalDatasource {
   final AppDatabase _database;
 
   @override
-  Future<Agency> addAgency({required String name, required String code}) async {
-    final companion = AgenciesCompanion.insert(
-      name: name,
-      code: Value(code.toUpperCase()),
-      createdAt: Value(DateTime.now()),
-      updatedAt: Value(DateTime.now()),
-      isActive: const Value(true),
-      isSynced: const Value(false),
-    );
-    final id = await _database.into(_database.agencies).insert(companion);
-    return (await (_database.select(
-      _database.agencies,
-    )..where((t) => t.id.equals(id))).getSingle());
-  }
-
-  @override
   Future<Ministry> addMinistry({
     required String name,
     required String code,
-    required int agencyId,
   }) async {
     final companion = MinistriesCompanion.insert(
       name: name,
       code: Value(code.toUpperCase()),
-      agencyId: agencyId,
       createdAt: Value(DateTime.now()),
       updatedAt: Value(DateTime.now()),
-      isSynced: const Value(false),
       isActive: const Value(true),
+      isSynced: const Value(false),
     );
     final id = await _database.into(_database.ministries).insert(companion);
     return (await (_database.select(
@@ -65,8 +47,24 @@ class MasterDataLocalDatasourceImpl implements MasterDataLocalDatasource {
   }
 
   @override
-  Future<void> deleteAgency(Agency agency) async {
-    await _database.delete(_database.agencies).delete(agency);
+  Future<Agency> addAgency({
+    required String name,
+    required String code,
+    required int ministryId,
+  }) async {
+    final companion = AgenciesCompanion.insert(
+      name: name,
+      code: Value(code.toUpperCase()),
+      ministryId: ministryId,
+      createdAt: Value(DateTime.now()),
+      updatedAt: Value(DateTime.now()),
+      isSynced: const Value(false),
+      isActive: const Value(true),
+    );
+    final id = await _database.into(_database.agencies).insert(companion);
+    return (await (_database.select(
+      _database.agencies,
+    )..where((t) => t.id.equals(id))).getSingle());
   }
 
   @override
@@ -75,12 +73,8 @@ class MasterDataLocalDatasourceImpl implements MasterDataLocalDatasource {
   }
 
   @override
-  Future<void> updateAgency(Agency agency) async {
-    final updatedAgency = agency.copyWith(
-      isSynced: false,
-      updatedAt: DateTime.now(),
-    );
-    await _database.update(_database.agencies).replace(updatedAgency);
+  Future<void> deleteAgency(Agency agency) async {
+    await _database.delete(_database.agencies).delete(agency);
   }
 
   @override
@@ -93,16 +87,25 @@ class MasterDataLocalDatasourceImpl implements MasterDataLocalDatasource {
   }
 
   @override
-  Future<Agency?> getAgencyById(int id) async {
+  Future<void> updateAgency(Agency agency) async {
+    final updatedAgency = agency.copyWith(
+      isSynced: false,
+      updatedAt: DateTime.now(),
+    );
+    await _database.update(_database.agencies).replace(updatedAgency);
+  }
+
+  @override
+  Future<Ministry?> getMinistryById(int id) async {
     return (_database.select(
-      _database.agencies,
+      _database.ministries,
     )..where((t) => t.id.equals(id))).getSingleOrNull();
   }
 
   @override
-  Stream<List<Agency>> watchAgencies({String? query}) {
+  Stream<List<Ministry>> watchMinistries({String? query}) {
     final normalizedQuery = query?.trim().toLowerCase() ?? '';
-    final baseQuery = _database.select(_database.agencies);
+    final baseQuery = _database.select(_database.ministries);
     if (normalizedQuery.isNotEmpty) {
       baseQuery.where(
         (tbl) =>
@@ -119,44 +122,44 @@ class MasterDataLocalDatasourceImpl implements MasterDataLocalDatasource {
   }
 
   @override
-  Stream<List<MinistryWithAgency>> watchMinistries({
+  Stream<List<AgencyWithMinistry>> watchAgencies({
     String? query,
-    int? agencyId,
+    int? ministryId,
   }) {
     final normalizedQuery = query?.trim().toLowerCase() ?? '';
 
-    final baseQuery = _database.select(_database.ministries).join([
+    final baseQuery = _database.select(_database.agencies).join([
       innerJoin(
-        _database.agencies,
-        _database.agencies.id.equalsExp(_database.ministries.agencyId),
+        _database.ministries,
+        _database.ministries.id.equalsExp(_database.agencies.ministryId),
       ),
     ]);
 
     if (normalizedQuery.isNotEmpty) {
       baseQuery.where(
-        _database.ministries.name.lower().contains(normalizedQuery) |
-            _database.ministries.code.lower().contains(normalizedQuery) |
-            _database.agencies.name.lower().contains(normalizedQuery),
+        _database.agencies.name.lower().contains(normalizedQuery) |
+            _database.agencies.code.lower().contains(normalizedQuery) |
+            _database.ministries.name.lower().contains(normalizedQuery),
       );
     }
 
-    if (agencyId != null) {
-      baseQuery.where(_database.ministries.agencyId.equals(agencyId));
+    if (ministryId != null) {
+      baseQuery.where(_database.agencies.ministryId.equals(ministryId));
     }
 
     baseQuery.orderBy([
       OrderingTerm(
-        expression: _database.ministries.updatedAt,
+        expression: _database.agencies.updatedAt,
         mode: OrderingMode.desc,
       ),
     ]);
 
     return baseQuery.watch().map((rows) {
       return rows.map((row) {
-        final ministry = row.readTable(_database.ministries);
         final agency = row.readTable(_database.agencies);
+        final ministry = row.readTable(_database.ministries);
 
-        return MinistryWithAgency(ministry: ministry, agency: agency);
+        return AgencyWithMinistry(agency: agency, ministry: ministry);
       }).toList();
     });
   }

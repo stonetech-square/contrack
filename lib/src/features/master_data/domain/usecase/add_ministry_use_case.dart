@@ -11,28 +11,16 @@ class AddMinistryUseCase implements UseCase<Future<void>, AddMinistryParams> {
 
   @override
   Future<void> call(AddMinistryParams params) {
-    return _repository.addMinistry(
-      name: params.name,
-      code: params.code,
-      agencyId: params.agencyId,
-      agencyRemoteId: params.agencyRemoteId,
-    );
+    return _repository.addMinistry(name: params.name, code: params.code);
   }
 }
 
 class AddMinistryParams extends Equatable {
   final String name;
   final String code;
-  final int agencyId;
-  final String agencyRemoteId;
 
-  const AddMinistryParams({
-    required this.name,
-    required this.code,
-    required this.agencyId,
-    required this.agencyRemoteId,
-  });
+  const AddMinistryParams({required this.name, required this.code});
 
   @override
-  List<Object?> get props => [name, code, agencyId, agencyRemoteId];
+  List<Object?> get props => [name, code];
 }

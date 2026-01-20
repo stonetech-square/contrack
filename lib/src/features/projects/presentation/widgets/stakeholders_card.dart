@@ -25,49 +25,49 @@ class StakeholdersCard extends StatelessWidget {
       headerIcon: Icons.people,
       children: [
         AppDropDownField<int>(
-          label: 'Implementing Agency',
-          hintText: 'Select an Agency',
-          isRequired: true,
-          value: entry.implementingAgencyId.value == 0
-              ? null
-              : entry.implementingAgencyId.value,
-          items: state.agencies
-              .map((e) => DropdownMenuItem(value: e.id, child: Text(e.name)))
-              .toList(),
-          onChanged: (value) {
-            if (value != null) {
-              context.read<CreateNewProjectBloc>().add(
-                    EntryFieldChanged(index: index, implementingAgencyId: value),
-                  );
-            }
-          },
-          errorText:
-              showErrors && entry.implementingAgencyId.displayError != null
-                  ? 'Agency is required'
-                  : null,
-        ),
-        const SizedBox(height: 15),
-        AppDropDownField<int>(
           label: 'Supervising Ministry',
           hintText: 'Select Ministry',
           isRequired: true,
           value: entry.supervisingMinistryId.value == 0
               ? null
               : entry.supervisingMinistryId.value,
-          items: entry.ministries
+          items: state.ministries
               .map((e) => DropdownMenuItem(value: e.id, child: Text(e.name)))
               .toList(),
           onChanged: (value) {
             if (value != null) {
               context.read<CreateNewProjectBloc>().add(
-                    EntryFieldChanged(index: index, supervisingMinistryId: value),
-                  );
+                EntryFieldChanged(index: index, supervisingMinistryId: value),
+              );
             }
           },
           errorText:
               showErrors && entry.supervisingMinistryId.displayError != null
-                  ? 'Ministry is required'
-                  : null,
+              ? 'Ministry is required'
+              : null,
+        ),
+        const SizedBox(height: 15),
+        AppDropDownField<int>(
+          label: 'Implementing Agency',
+          hintText: 'Select an Agency',
+          isRequired: true,
+          value: entry.implementingAgencyId.value == 0
+              ? null
+              : entry.implementingAgencyId.value,
+          items: entry.agencies
+              .map((e) => DropdownMenuItem(value: e.id, child: Text(e.name)))
+              .toList(),
+          onChanged: (value) {
+            if (value != null) {
+              context.read<CreateNewProjectBloc>().add(
+                EntryFieldChanged(index: index, implementingAgencyId: value),
+              );
+            }
+          },
+          errorText:
+              showErrors && entry.implementingAgencyId.displayError != null
+              ? 'Agency is required'
+              : null,
         ),
       ],
     );

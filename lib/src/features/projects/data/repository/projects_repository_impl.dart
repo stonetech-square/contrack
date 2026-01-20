@@ -63,10 +63,10 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
   }
 
   @override
-  Future<List<ImplementingAgency>> getImplementingAgencies() async {
-    final agencies = await _localDataSource.getAllImplementingAgencies();
-    return agencies
-        .map((e) => ImplementingAgency(id: e.id, name: e.name))
+  Future<List<SupervisingMinistry>> getSupervisingMinistries() async {
+    final ministries = await _localDataSource.getAllSupervisingMinistries();
+    return ministries
+        .map((e) => SupervisingMinistry(id: e.id, name: e.name))
         .toList();
   }
 
@@ -81,15 +81,15 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
   }
 
   @override
-  Future<List<SupervisingMinistry>> getSupervisingMinistries(
-    int agencyId,
+  Future<List<ImplementingAgency>> getImplementingAgencies(
+    int ministryId,
   ) async {
-    final ministries = await _localDataSource
-        .getAllSupervisingMinistriesByImplementingAgencyId(agencyId);
-    return ministries
+    final agencies = await _localDataSource
+        .getAllImplementingAgenciesBySupervisingMinistryId(ministryId);
+    return agencies
         .map(
           (e) =>
-              SupervisingMinistry(id: e.id, name: e.name, agencyId: agencyId),
+              ImplementingAgency(id: e.id, name: e.name, ministryId: ministryId),
         )
         .toList();
   }

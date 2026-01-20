@@ -71,16 +71,17 @@ class _MasterDataViewState extends State<MasterDataView> {
                 setState(() {
                   _expandedIndex = 0;
                 });
-                final result = await AddAgencyDialog.show(context);
+                final result = await AddMinistryDialog.show(context);
                 if (result != null && context.mounted) {
                   context.read<MasterDataBloc>().add(
-                    AgencyAdded(name: result.name, code: result.code),
+                    MinistryAdded(name: result.name, code: result.code),
                   );
                 }
               },
               icon: const Icon(Icons.add),
-              label: const Text('Add Agency'),
+              label: const Text('Add Ministry'),
             ),
+
             const SizedBox(width: 16),
             FilledButton.icon(
               style: FilledButton.styleFrom(
@@ -105,24 +106,23 @@ class _MasterDataViewState extends State<MasterDataView> {
                   _expandedIndex = 1;
                 });
                 final state = context.read<MasterDataBloc>().state;
-                final result = await AddMinistryDialog.show(
+                final result = await AddAgencyDialog.show(
                   context,
-                  agencies: state.agencies,
+                  ministries: state.ministries,
                 );
-
                 if (result != null && context.mounted) {
                   context.read<MasterDataBloc>().add(
-                    MinistryAdded(
+                    AgencyAdded(
                       name: result.name,
                       code: result.code,
-                      agencyId: result.agencyId,
-                      agencyRemoteId: result.agencyRemoteId,
+                      ministryId: result.ministryId,
+                      ministryRemoteId: result.ministryRemoteId,
                     ),
                   );
                 }
               },
               icon: const Icon(Icons.add),
-              label: const Text('Add Ministry'),
+              label: const Text('Add Agency'),
             ),
           ],
         ),
@@ -133,44 +133,12 @@ class _MasterDataViewState extends State<MasterDataView> {
               return Column(
                 children: [
                   MasterDataSectionHeader(
-                    title: 'Agencies',
-                    count: state.agencies.length,
+                    title: 'Ministries',
+                    count: state.ministries.length,
                     isExpanded: _expandedIndex == 0,
                     onTap: () => setState(() => _expandedIndex = 0),
                   ),
                   if (_expandedIndex == 0)
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 16),
-                        child: Column(
-                          children: [
-                            MasterDataSearchField(
-                              hintText: 'Search agencies...',
-                              onChanged: (val) => context
-                                  .read<MasterDataBloc>()
-                                  .add(AgencySearchChanged(val)),
-                            ),
-                            const SizedBox(height: 16),
-                            const Expanded(
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(16),
-                                ),
-                                child: AgenciesTable(),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  const SizedBox(height: 16),
-                  MasterDataSectionHeader(
-                    title: 'Ministries',
-                    count: state.ministries.length,
-                    isExpanded: _expandedIndex == 1,
-                    onTap: () => setState(() => _expandedIndex = 1),
-                  ),
-                  if (_expandedIndex == 1)
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.only(top: 16),
@@ -189,6 +157,38 @@ class _MasterDataViewState extends State<MasterDataView> {
                                   Radius.circular(16),
                                 ),
                                 child: MinistriesTable(),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  const SizedBox(height: 16),
+                  MasterDataSectionHeader(
+                    title: 'Agencies',
+                    count: state.agencies.length,
+                    isExpanded: _expandedIndex == 1,
+                    onTap: () => setState(() => _expandedIndex = 1),
+                  ),
+                  if (_expandedIndex == 1)
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Column(
+                          children: [
+                            MasterDataSearchField(
+                              hintText: 'Search agencies...',
+                              onChanged: (val) => context
+                                  .read<MasterDataBloc>()
+                                  .add(AgencySearchChanged(val)),
+                            ),
+                            const SizedBox(height: 16),
+                            const Expanded(
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(16),
+                                ),
+                                child: AgenciesTable(),
                               ),
                             ),
                           ],

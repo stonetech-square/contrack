@@ -127,18 +127,18 @@ class DashboardRepositoryImpl implements DashboardRepository {
     final successfulProjects = <Project>[];
 
     final zoneCache = <String, int>{};
-    final agencyCache = <String, int>{};
+    final ministryCache = <String, int>{};
     final stateCache = <int, Map<String, int>>{};
-    final ministryCache = <int, Map<String, int>>{};
+    final agencyCache = <int, Map<String, int>>{};
 
     try {
       final zones = await _localDataSource.getAllGeopoliticalZones();
       for (final z in zones) {
         zoneCache[z.name.toLowerCase()] = z.id;
       }
-      final agencies = await _localDataSource.getAllImplementingAgencies();
-      for (final a in agencies) {
-        agencyCache[a.name.toLowerCase()] = a.id;
+      final ministries = await _localDataSource.getAllSupervisingMinistries();
+      for (final m in ministries) {
+        ministryCache[m.name.toLowerCase()] = m.id;
       }
     } catch (e) {
       _logger.severe('Failed to load metadata: $e');
@@ -161,23 +161,23 @@ class DashboardRepositoryImpl implements DashboardRepository {
           throw Exception('State not found: ${dto.state} in zone ${dto.zone}');
         }
 
-        final agencyId = agencyCache[dto.agency.toLowerCase()];
-        if (agencyId == null) {
-          throw Exception('Agency not found: ${dto.agency}');
+        final ministryId = ministryCache[dto.ministry.toLowerCase()];
+        if (ministryId == null) {
+          throw Exception('Ministry not found: ${dto.ministry}');
         }
 
-        if (!ministryCache.containsKey(agencyId)) {
-          final ministries = await _localDataSource.getMinistriesByAgencyId(
-            agencyId,
+        if (!agencyCache.containsKey(ministryId)) {
+          final agencies = await _localDataSource.getAgenciesByMinistryId(
+            ministryId,
           );
-          ministryCache[agencyId] = {
-            for (var m in ministries) m.name.toLowerCase(): m.id,
+          agencyCache[ministryId] = {
+            for (var a in agencies) a.name.toLowerCase(): a.id,
           };
         }
-        final ministryId = ministryCache[agencyId]![dto.ministry.toLowerCase()];
-        if (ministryId == null) {
+        final agencyId = agencyCache[ministryId]![dto.agency.toLowerCase()];
+        if (agencyId == null) {
           throw Exception(
-            'Ministry not found: ${dto.ministry} for agency ${dto.agency}',
+            'Agency not found: ${dto.agency} for ministry ${dto.ministry}',
           );
         }
 

@@ -2,7 +2,7 @@ import 'package:contrack/src/core/database/database.dart';
 import 'package:contrack/src/core/session/user_session.dart';
 import 'package:contrack/src/features/master_data/data/datasource/master_data_local_datasource.dart';
 import 'package:contrack/src/features/master_data/data/datasource/master_data_remote_datasource.dart';
-import 'package:contrack/src/features/master_data/data/models/ministry_with_agency.dart';
+import 'package:contrack/src/features/master_data/data/models/agency_with_ministry.dart';
 import 'package:contrack/src/features/master_data/domain/repository/master_data_repository.dart';
 import 'package:drift/drift.dart';
 import 'package:injectable/injectable.dart';
@@ -19,86 +19,78 @@ class MasterDataRepositoryImpl implements MasterDataRepository {
   final MasterDataRemoteDatasource _remoteDatasource;
   final UserSession _userSession;
   final Logger _logger = Logger('MasterDataRepositoryImpl');
+
   @override
-  Future<void> addAgency({required String name, required String code}) async {
+  Future<void> addMinistry({required String name, required String code}) async {
     _ensureAdminPermission();
-    final agency = await _localDatasource.addAgency(name: name, code: code);
+    final ministry = await _localDatasource.addMinistry(name: name, code: code);
     try {
-      final newRemoteId = await _remoteDatasource.addAgency(agency);
-      await _localDatasource.updateAgency(
-        agency.copyWith(remoteId: Value(newRemoteId)),
+      final newRemoteId = await _remoteDatasource.addMinistry(ministry);
+      await _localDatasource.updateMinistry(
+        ministry.copyWith(remoteId: Value(newRemoteId)),
       );
     } catch (_) {
-      _logger.warning('Failed to add agency to remote');
+      _logger.warning('Failed to add ministry to remote');
     }
   }
 
   @override
-  Future<void> addMinistry({
+  Future<void> addAgency({
     required String name,
     required String code,
-    required int agencyId,
-    String? agencyRemoteId,
+    required int ministryId,
+    String? ministryRemoteId,
   }) async {
     _ensureAdminPermission();
-    final ministry = await _localDatasource.addMinistry(
+    final agency = await _localDatasource.addAgency(
       name: name,
       code: code,
-      agencyId: agencyId,
+      ministryId: ministryId,
     );
     try {
-      var agency = await _localDatasource.getAgencyById(agencyId);
-      if (agency != null) {
-        if (agency.remoteId == null) {
-          final remoteId = await _remoteDatasource.getAgencyRemoteIdByCode(
-            agency.code,
+      var ministry = await _localDatasource.getMinistryById(ministryId);
+      if (ministry != null) {
+        if (ministry.remoteId == null) {
+          final remoteId = await _remoteDatasource.getMinistryRemoteIdByCode(
+            ministry.code,
           );
           if (remoteId != null) {
-            agency = agency.copyWith(
+            ministry = ministry.copyWith(
               remoteId: Value(remoteId),
               isSynced: true,
               lastSyncedAt: Value(DateTime.now()),
             );
-            await _localDatasource.updateAgency(agency);
+            await _localDatasource.updateMinistry(ministry);
           } else {
-            final newAgencyRemoteId = await _remoteDatasource.addAgency(agency);
-            agency = agency.copyWith(
-              remoteId: Value(newAgencyRemoteId),
+            final newMinistryRemoteId = await _remoteDatasource.addMinistry(
+              ministry,
+            );
+            ministry = ministry.copyWith(
+              remoteId: Value(newMinistryRemoteId),
               isSynced: true,
               lastSyncedAt: Value(DateTime.now()),
             );
-            await _localDatasource.updateAgency(agency);
+            await _localDatasource.updateMinistry(ministry);
           }
         }
 
-        final ministryWithAgency = MinistryWithAgency(
-          ministry: ministry,
+        final agencyWithMinistry = AgencyWithMinistry(
           agency: agency,
+          ministry: ministry,
         );
-        final newMinistryRemoteId = await _remoteDatasource.addMinistry(
-          ministryWithAgency,
+        final newAgencyRemoteId = await _remoteDatasource.addAgency(
+          agencyWithMinistry,
         );
-        await _localDatasource.updateMinistry(
-          ministry.copyWith(
-            remoteId: Value(newMinistryRemoteId),
+        await _localDatasource.updateAgency(
+          agency.copyWith(
+            remoteId: Value(newAgencyRemoteId),
             isSynced: true,
             lastSyncedAt: Value(DateTime.now()),
           ),
         );
       }
     } catch (e) {
-      _logger.warning('Failed to add ministry to remote: $e');
-    }
-  }
-
-  @override
-  Future<void> deleteAgency(Agency agency) async {
-    _ensureAdminPermission();
-    await _localDatasource.deleteAgency(agency);
-    try {
-      await _remoteDatasource.deleteAgency(agency);
-    } catch (_) {
-      _logger.warning('Failed to delete agency from remote');
+      _logger.warning('Failed to add agency to remote: $e');
     }
   }
 
@@ -114,13 +106,13 @@ class MasterDataRepositoryImpl implements MasterDataRepository {
   }
 
   @override
-  Future<void> updateAgency(Agency agency) async {
+  Future<void> deleteAgency(Agency agency) async {
     _ensureAdminPermission();
-    await _localDatasource.updateAgency(agency);
+    await _localDatasource.deleteAgency(agency);
     try {
-      await _remoteDatasource.updateAgency(agency);
+      await _remoteDatasource.deleteAgency(agency);
     } catch (_) {
-      _logger.warning('Failed to update agency from remote');
+      _logger.warning('Failed to delete agency from remote');
     }
   }
 
@@ -129,30 +121,43 @@ class MasterDataRepositoryImpl implements MasterDataRepository {
     _ensureAdminPermission();
     await _localDatasource.updateMinistry(ministry);
     try {
-      final agency = await _localDatasource.getAgencyById(ministry.agencyId);
-      if (agency != null) {
-        final ministryWithAgency = MinistryWithAgency(
-          ministry: ministry,
-          agency: agency,
-        );
-        await _remoteDatasource.updateMinistry(ministryWithAgency);
-      }
+      await _remoteDatasource.updateMinistry(ministry);
     } catch (_) {
       _logger.warning('Failed to update ministry from remote');
     }
   }
 
   @override
-  Stream<List<Agency>> watchAgencies({String? query}) {
-    return _localDatasource.watchAgencies(query: query);
+  Future<void> updateAgency(Agency agency) async {
+    _ensureAdminPermission();
+    await _localDatasource.updateAgency(agency);
+    try {
+      final ministry = await _localDatasource.getMinistryById(
+        agency.ministryId,
+      );
+      if (ministry != null) {
+        final agencyWithMinistry = AgencyWithMinistry(
+          agency: agency,
+          ministry: ministry,
+        );
+        await _remoteDatasource.updateAgency(agencyWithMinistry);
+      }
+    } catch (_) {
+      _logger.warning('Failed to update agency from remote');
+    }
   }
 
   @override
-  Stream<List<MinistryWithAgency>> watchMinistries({
+  Stream<List<Ministry>> watchMinistries({String? query}) {
+    return _localDatasource.watchMinistries(query: query);
+  }
+
+  @override
+  Stream<List<AgencyWithMinistry>> watchAgencies({
     String? query,
-    int? agencyId,
+    int? ministryId,
   }) {
-    return _localDatasource.watchMinistries(query: query, agencyId: agencyId);
+    return _localDatasource.watchAgencies(query: query, ministryId: ministryId);
   }
 
   void _ensureAdminPermission() {

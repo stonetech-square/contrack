@@ -11,16 +11,28 @@ class AddAgencyUseCase implements UseCase<Future<void>, AddAgencyParams> {
 
   @override
   Future<void> call(AddAgencyParams params) {
-    return _repository.addAgency(name: params.name, code: params.code);
+    return _repository.addAgency(
+      name: params.name,
+      code: params.code,
+      ministryId: params.ministryId,
+      ministryRemoteId: params.ministryRemoteId,
+    );
   }
 }
 
 class AddAgencyParams extends Equatable {
   final String name;
   final String code;
+  final int ministryId;
+  final String ministryRemoteId;
 
-  const AddAgencyParams({required this.name, required this.code});
+  const AddAgencyParams({
+    required this.name,
+    required this.code,
+    required this.ministryId,
+    required this.ministryRemoteId,
+  });
 
   @override
-  List<Object?> get props => [name, code];
+  List<Object?> get props => [name, code, ministryId, ministryRemoteId];
 }

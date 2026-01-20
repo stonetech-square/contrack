@@ -36,8 +36,11 @@ class AgenciesTable extends StatelessWidget {
                 return ListView.builder(
                   itemCount: state.agencies.length,
                   itemBuilder: (context, index) {
-                    final agency = state.agencies[index];
-                    return AgenciesTableRow(agency: agency);
+                    final agencyWithMinistry = state.agencies[index];
+                    return AgenciesTableRow(
+                      agencyWithMinistry: agencyWithMinistry,
+                      ministries: state.ministries,
+                    );
                   },
                 );
               },

@@ -1,21 +1,21 @@
 import 'package:contrack/src/core/database/database.dart';
-import 'package:contrack/src/features/master_data/data/models/ministry_with_agency.dart';
+import 'package:contrack/src/features/master_data/data/models/agency_with_ministry.dart';
 
 abstract class MasterDataRepository {
-  Stream<List<Agency>> watchAgencies({String? query});
-  Stream<List<MinistryWithAgency>> watchMinistries({
+  Stream<List<Ministry>> watchMinistries({String? query});
+  Stream<List<AgencyWithMinistry>> watchAgencies({
     String? query,
-    int? agencyId,
+    int? ministryId,
   });
-  Future<void> addAgency({required String name, required String code});
-  Future<void> addMinistry({
+  Future<void> addMinistry({required String name, required String code});
+  Future<void> addAgency({
     required String name,
     required String code,
-    required int agencyId,
-    String? agencyRemoteId,
+    required int ministryId,
+    String? ministryRemoteId,
   });
-  Future<void> updateAgency(Agency agency);
   Future<void> updateMinistry(Ministry ministry);
-  Future<void> deleteAgency(Agency agency);
+  Future<void> updateAgency(Agency agency);
   Future<void> deleteMinistry(Ministry ministry);
+  Future<void> deleteAgency(Agency agency);
 }

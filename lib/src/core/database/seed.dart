@@ -16,8 +16,8 @@ class DatabaseSeeder {
   Future<void> seedAll() async {
     await seedGeopoliticalZones();
     await seedStates();
-    await seedAgencies();
     await seedMinistries();
+    await seedAgencies();
   }
 
   Future<void> seedGeopoliticalZones() async {
@@ -89,14 +89,14 @@ class DatabaseSeeder {
     }
   }
 
-  Future<void> seedAgencies() async {
+  Future<void> seedMinistries() async {
     try {
       final response = await supabase
-          .from('agencies')
+          .from('ministries')
           .select('id, name, code, is_active, created_at');
 
-      final agencies = (response as List).map((json) {
-        return AgenciesCompanion.insert(
+      final ministries = (response as List).map((json) {
+        return MinistriesCompanion.insert(
           name: json['name'] as String,
           code: Value(json['code'] as String?),
           isActive: Value(json['is_active'] as bool? ?? true),
@@ -104,43 +104,43 @@ class DatabaseSeeder {
         );
       }).toList();
 
-      for (final agency in agencies) {
+      for (final ministry in ministries) {
         await database
-            .into(database.agencies)
-            .insert(agency, mode: InsertMode.insertOrIgnore);
+            .into(database.ministries)
+            .insert(ministry, mode: InsertMode.insertOrIgnore);
       }
-      _logger.info('Seeded ${agencies.length} Agencies');
+      _logger.info('Seeded ${ministries.length} Ministries');
     } catch (e) {
-      _logger.severe('Failed to seed Agencies: $e');
+      _logger.severe('Failed to seed Ministries: $e');
     }
   }
 
-  Future<void> seedMinistries() async {
+  Future<void> seedAgencies() async {
     try {
       final response = await supabase
-          .from('ministries')
-          .select('id, name, code, agency_id, is_active, created_at');
+          .from('agencies')
+          .select('id, name, code, ministry_id, is_active, created_at');
 
-      final ministries = await Future.wait(
+      final agencies = await Future.wait(
         (response as List).map((json) async {
-          // Resolve local agency ID from remote agency ID
-          final remoteAgencyId = json['agency_id'] as String;
-          final localAgency =
-              await (database.agencies.select()
-                    ..where((tbl) => tbl.remoteId.equals(remoteAgencyId)))
+          // Resolve local ministry ID from remote ministry ID
+          final remoteMinistryId = json['ministry_id'] as String;
+          final localMinistry =
+              await (database.ministries.select()
+                    ..where((tbl) => tbl.remoteId.equals(remoteMinistryId)))
                   .getSingleOrNull();
 
-          if (localAgency == null) {
+          if (localMinistry == null) {
             _logger.warning(
-              'Skipping ministry ${json['name']}: referencing unknown agency $remoteAgencyId',
+              'Skipping agency ${json['name']}: referencing unknown ministry $remoteMinistryId',
             );
             return null;
           }
 
-          return MinistriesCompanion.insert(
+          return AgenciesCompanion.insert(
             name: json['name'] as String,
             code: Value(json['code'] as String?),
-            agencyId: localAgency.id,
+            ministryId: localMinistry.id,
             remoteId: Value(json['id'] as String),
             isActive: Value(json['is_active'] as bool? ?? true),
           );
@@ -148,15 +148,15 @@ class DatabaseSeeder {
       );
 
       var count = 0;
-      for (final ministry in ministries.whereType<MinistriesCompanion>()) {
+      for (final agency in agencies.whereType<AgenciesCompanion>()) {
         await database
-            .into(database.ministries)
-            .insert(ministry, mode: InsertMode.insertOrIgnore);
+            .into(database.agencies)
+            .insert(agency, mode: InsertMode.insertOrIgnore);
         count++;
       }
-      _logger.info('Seeded $count Ministries');
+      _logger.info('Seeded $count Agencies');
     } catch (e) {
-      _logger.severe('Failed to seed Ministries: $e');
+      _logger.severe('Failed to seed Agencies: $e');
     }
   }
 

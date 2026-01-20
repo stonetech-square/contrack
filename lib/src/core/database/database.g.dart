@@ -736,564 +736,6 @@ class UsersCompanion extends UpdateCompanion<User> {
   }
 }
 
-class $AgenciesTable extends Agencies with TableInfo<$AgenciesTable, Agency> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  $AgenciesTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
-    'id',
-    aliasedName,
-    false,
-    hasAutoIncrement: true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
-  );
-  static const VerificationMeta _nameMeta = const VerificationMeta('name');
-  @override
-  late final GeneratedColumn<String> name = GeneratedColumn<String>(
-    'name',
-    aliasedName,
-    false,
-    additionalChecks: GeneratedColumn.checkTextLength(
-      minTextLength: 2,
-      maxTextLength: 200,
-    ),
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
-  );
-  static const VerificationMeta _codeMeta = const VerificationMeta('code');
-  @override
-  late final GeneratedColumn<String> code = GeneratedColumn<String>(
-    'code',
-    aliasedName,
-    true,
-    additionalChecks: GeneratedColumn.checkTextLength(
-      minTextLength: 2,
-      maxTextLength: 50,
-    ),
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _remoteIdMeta = const VerificationMeta(
-    'remoteId',
-  );
-  @override
-  late final GeneratedColumn<String> remoteId = GeneratedColumn<String>(
-    'remote_id',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _isActiveMeta = const VerificationMeta(
-    'isActive',
-  );
-  @override
-  late final GeneratedColumn<bool> isActive = GeneratedColumn<bool>(
-    'is_active',
-    aliasedName,
-    false,
-    type: DriftSqlType.bool,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'CHECK ("is_active" IN (0, 1))',
-    ),
-    defaultValue: const Constant(true),
-  );
-  static const VerificationMeta _isSyncedMeta = const VerificationMeta(
-    'isSynced',
-  );
-  @override
-  late final GeneratedColumn<bool> isSynced = GeneratedColumn<bool>(
-    'is_synced',
-    aliasedName,
-    false,
-    type: DriftSqlType.bool,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'CHECK ("is_synced" IN (0, 1))',
-    ),
-    defaultValue: const Constant(false),
-  );
-  static const VerificationMeta _createdAtMeta = const VerificationMeta(
-    'createdAt',
-  );
-  @override
-  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
-    'created_at',
-    aliasedName,
-    false,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: false,
-    defaultValue: currentDateAndTime,
-  );
-  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
-    'updatedAt',
-  );
-  @override
-  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
-    'updated_at',
-    aliasedName,
-    false,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: false,
-    defaultValue: currentDateAndTime,
-  );
-  static const VerificationMeta _lastSyncedAtMeta = const VerificationMeta(
-    'lastSyncedAt',
-  );
-  @override
-  late final GeneratedColumn<DateTime> lastSyncedAt = GeneratedColumn<DateTime>(
-    'last_synced_at',
-    aliasedName,
-    true,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: false,
-  );
-  @override
-  List<GeneratedColumn> get $columns => [
-    id,
-    name,
-    code,
-    remoteId,
-    isActive,
-    isSynced,
-    createdAt,
-    updatedAt,
-    lastSyncedAt,
-  ];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'agencies';
-  @override
-  VerificationContext validateIntegrity(
-    Insertable<Agency> instance, {
-    bool isInserting = false,
-  }) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
-    if (data.containsKey('name')) {
-      context.handle(
-        _nameMeta,
-        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_nameMeta);
-    }
-    if (data.containsKey('code')) {
-      context.handle(
-        _codeMeta,
-        code.isAcceptableOrUnknown(data['code']!, _codeMeta),
-      );
-    }
-    if (data.containsKey('remote_id')) {
-      context.handle(
-        _remoteIdMeta,
-        remoteId.isAcceptableOrUnknown(data['remote_id']!, _remoteIdMeta),
-      );
-    }
-    if (data.containsKey('is_active')) {
-      context.handle(
-        _isActiveMeta,
-        isActive.isAcceptableOrUnknown(data['is_active']!, _isActiveMeta),
-      );
-    }
-    if (data.containsKey('is_synced')) {
-      context.handle(
-        _isSyncedMeta,
-        isSynced.isAcceptableOrUnknown(data['is_synced']!, _isSyncedMeta),
-      );
-    }
-    if (data.containsKey('created_at')) {
-      context.handle(
-        _createdAtMeta,
-        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
-      );
-    }
-    if (data.containsKey('updated_at')) {
-      context.handle(
-        _updatedAtMeta,
-        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
-      );
-    }
-    if (data.containsKey('last_synced_at')) {
-      context.handle(
-        _lastSyncedAtMeta,
-        lastSyncedAt.isAcceptableOrUnknown(
-          data['last_synced_at']!,
-          _lastSyncedAtMeta,
-        ),
-      );
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  Agency map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Agency(
-      id: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}id'],
-      )!,
-      name: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}name'],
-      )!,
-      code: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}code'],
-      ),
-      remoteId: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}remote_id'],
-      ),
-      isActive: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
-        data['${effectivePrefix}is_active'],
-      )!,
-      isSynced: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
-        data['${effectivePrefix}is_synced'],
-      )!,
-      createdAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}created_at'],
-      )!,
-      updatedAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}updated_at'],
-      )!,
-      lastSyncedAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}last_synced_at'],
-      ),
-    );
-  }
-
-  @override
-  $AgenciesTable createAlias(String alias) {
-    return $AgenciesTable(attachedDatabase, alias);
-  }
-}
-
-class Agency extends DataClass implements Insertable<Agency> {
-  final int id;
-  final String name;
-  final String? code;
-  final String? remoteId;
-  final bool isActive;
-  final bool isSynced;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-  final DateTime? lastSyncedAt;
-  const Agency({
-    required this.id,
-    required this.name,
-    this.code,
-    this.remoteId,
-    required this.isActive,
-    required this.isSynced,
-    required this.createdAt,
-    required this.updatedAt,
-    this.lastSyncedAt,
-  });
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
-    map['name'] = Variable<String>(name);
-    if (!nullToAbsent || code != null) {
-      map['code'] = Variable<String>(code);
-    }
-    if (!nullToAbsent || remoteId != null) {
-      map['remote_id'] = Variable<String>(remoteId);
-    }
-    map['is_active'] = Variable<bool>(isActive);
-    map['is_synced'] = Variable<bool>(isSynced);
-    map['created_at'] = Variable<DateTime>(createdAt);
-    map['updated_at'] = Variable<DateTime>(updatedAt);
-    if (!nullToAbsent || lastSyncedAt != null) {
-      map['last_synced_at'] = Variable<DateTime>(lastSyncedAt);
-    }
-    return map;
-  }
-
-  AgenciesCompanion toCompanion(bool nullToAbsent) {
-    return AgenciesCompanion(
-      id: Value(id),
-      name: Value(name),
-      code: code == null && nullToAbsent ? const Value.absent() : Value(code),
-      remoteId: remoteId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(remoteId),
-      isActive: Value(isActive),
-      isSynced: Value(isSynced),
-      createdAt: Value(createdAt),
-      updatedAt: Value(updatedAt),
-      lastSyncedAt: lastSyncedAt == null && nullToAbsent
-          ? const Value.absent()
-          : Value(lastSyncedAt),
-    );
-  }
-
-  factory Agency.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return Agency(
-      id: serializer.fromJson<int>(json['id']),
-      name: serializer.fromJson<String>(json['name']),
-      code: serializer.fromJson<String?>(json['code']),
-      remoteId: serializer.fromJson<String?>(json['remoteId']),
-      isActive: serializer.fromJson<bool>(json['isActive']),
-      isSynced: serializer.fromJson<bool>(json['isSynced']),
-      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
-      lastSyncedAt: serializer.fromJson<DateTime?>(json['lastSyncedAt']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
-      'name': serializer.toJson<String>(name),
-      'code': serializer.toJson<String?>(code),
-      'remoteId': serializer.toJson<String?>(remoteId),
-      'isActive': serializer.toJson<bool>(isActive),
-      'isSynced': serializer.toJson<bool>(isSynced),
-      'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
-      'lastSyncedAt': serializer.toJson<DateTime?>(lastSyncedAt),
-    };
-  }
-
-  Agency copyWith({
-    int? id,
-    String? name,
-    Value<String?> code = const Value.absent(),
-    Value<String?> remoteId = const Value.absent(),
-    bool? isActive,
-    bool? isSynced,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-    Value<DateTime?> lastSyncedAt = const Value.absent(),
-  }) => Agency(
-    id: id ?? this.id,
-    name: name ?? this.name,
-    code: code.present ? code.value : this.code,
-    remoteId: remoteId.present ? remoteId.value : this.remoteId,
-    isActive: isActive ?? this.isActive,
-    isSynced: isSynced ?? this.isSynced,
-    createdAt: createdAt ?? this.createdAt,
-    updatedAt: updatedAt ?? this.updatedAt,
-    lastSyncedAt: lastSyncedAt.present ? lastSyncedAt.value : this.lastSyncedAt,
-  );
-  Agency copyWithCompanion(AgenciesCompanion data) {
-    return Agency(
-      id: data.id.present ? data.id.value : this.id,
-      name: data.name.present ? data.name.value : this.name,
-      code: data.code.present ? data.code.value : this.code,
-      remoteId: data.remoteId.present ? data.remoteId.value : this.remoteId,
-      isActive: data.isActive.present ? data.isActive.value : this.isActive,
-      isSynced: data.isSynced.present ? data.isSynced.value : this.isSynced,
-      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
-      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
-      lastSyncedAt: data.lastSyncedAt.present
-          ? data.lastSyncedAt.value
-          : this.lastSyncedAt,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('Agency(')
-          ..write('id: $id, ')
-          ..write('name: $name, ')
-          ..write('code: $code, ')
-          ..write('remoteId: $remoteId, ')
-          ..write('isActive: $isActive, ')
-          ..write('isSynced: $isSynced, ')
-          ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt, ')
-          ..write('lastSyncedAt: $lastSyncedAt')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(
-    id,
-    name,
-    code,
-    remoteId,
-    isActive,
-    isSynced,
-    createdAt,
-    updatedAt,
-    lastSyncedAt,
-  );
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is Agency &&
-          other.id == this.id &&
-          other.name == this.name &&
-          other.code == this.code &&
-          other.remoteId == this.remoteId &&
-          other.isActive == this.isActive &&
-          other.isSynced == this.isSynced &&
-          other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt &&
-          other.lastSyncedAt == this.lastSyncedAt);
-}
-
-class AgenciesCompanion extends UpdateCompanion<Agency> {
-  final Value<int> id;
-  final Value<String> name;
-  final Value<String?> code;
-  final Value<String?> remoteId;
-  final Value<bool> isActive;
-  final Value<bool> isSynced;
-  final Value<DateTime> createdAt;
-  final Value<DateTime> updatedAt;
-  final Value<DateTime?> lastSyncedAt;
-  const AgenciesCompanion({
-    this.id = const Value.absent(),
-    this.name = const Value.absent(),
-    this.code = const Value.absent(),
-    this.remoteId = const Value.absent(),
-    this.isActive = const Value.absent(),
-    this.isSynced = const Value.absent(),
-    this.createdAt = const Value.absent(),
-    this.updatedAt = const Value.absent(),
-    this.lastSyncedAt = const Value.absent(),
-  });
-  AgenciesCompanion.insert({
-    this.id = const Value.absent(),
-    required String name,
-    this.code = const Value.absent(),
-    this.remoteId = const Value.absent(),
-    this.isActive = const Value.absent(),
-    this.isSynced = const Value.absent(),
-    this.createdAt = const Value.absent(),
-    this.updatedAt = const Value.absent(),
-    this.lastSyncedAt = const Value.absent(),
-  }) : name = Value(name);
-  static Insertable<Agency> custom({
-    Expression<int>? id,
-    Expression<String>? name,
-    Expression<String>? code,
-    Expression<String>? remoteId,
-    Expression<bool>? isActive,
-    Expression<bool>? isSynced,
-    Expression<DateTime>? createdAt,
-    Expression<DateTime>? updatedAt,
-    Expression<DateTime>? lastSyncedAt,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (name != null) 'name': name,
-      if (code != null) 'code': code,
-      if (remoteId != null) 'remote_id': remoteId,
-      if (isActive != null) 'is_active': isActive,
-      if (isSynced != null) 'is_synced': isSynced,
-      if (createdAt != null) 'created_at': createdAt,
-      if (updatedAt != null) 'updated_at': updatedAt,
-      if (lastSyncedAt != null) 'last_synced_at': lastSyncedAt,
-    });
-  }
-
-  AgenciesCompanion copyWith({
-    Value<int>? id,
-    Value<String>? name,
-    Value<String?>? code,
-    Value<String?>? remoteId,
-    Value<bool>? isActive,
-    Value<bool>? isSynced,
-    Value<DateTime>? createdAt,
-    Value<DateTime>? updatedAt,
-    Value<DateTime?>? lastSyncedAt,
-  }) {
-    return AgenciesCompanion(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      code: code ?? this.code,
-      remoteId: remoteId ?? this.remoteId,
-      isActive: isActive ?? this.isActive,
-      isSynced: isSynced ?? this.isSynced,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-      lastSyncedAt: lastSyncedAt ?? this.lastSyncedAt,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<int>(id.value);
-    }
-    if (name.present) {
-      map['name'] = Variable<String>(name.value);
-    }
-    if (code.present) {
-      map['code'] = Variable<String>(code.value);
-    }
-    if (remoteId.present) {
-      map['remote_id'] = Variable<String>(remoteId.value);
-    }
-    if (isActive.present) {
-      map['is_active'] = Variable<bool>(isActive.value);
-    }
-    if (isSynced.present) {
-      map['is_synced'] = Variable<bool>(isSynced.value);
-    }
-    if (createdAt.present) {
-      map['created_at'] = Variable<DateTime>(createdAt.value);
-    }
-    if (updatedAt.present) {
-      map['updated_at'] = Variable<DateTime>(updatedAt.value);
-    }
-    if (lastSyncedAt.present) {
-      map['last_synced_at'] = Variable<DateTime>(lastSyncedAt.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('AgenciesCompanion(')
-          ..write('id: $id, ')
-          ..write('name: $name, ')
-          ..write('code: $code, ')
-          ..write('remoteId: $remoteId, ')
-          ..write('isActive: $isActive, ')
-          ..write('isSynced: $isSynced, ')
-          ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt, ')
-          ..write('lastSyncedAt: $lastSyncedAt')
-          ..write(')'))
-        .toString();
-  }
-}
-
 class $MinistriesTable extends Ministries
     with TableInfo<$MinistriesTable, Ministry> {
   @override
@@ -1351,20 +793,6 @@ class $MinistriesTable extends Ministries
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _agencyIdMeta = const VerificationMeta(
-    'agencyId',
-  );
-  @override
-  late final GeneratedColumn<int> agencyId = GeneratedColumn<int>(
-    'agency_id',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES agencies (id) ON DELETE CASCADE',
-    ),
-  );
   static const VerificationMeta _isActiveMeta = const VerificationMeta(
     'isActive',
   );
@@ -1436,7 +864,6 @@ class $MinistriesTable extends Ministries
     name,
     code,
     remoteId,
-    agencyId,
     isActive,
     isSynced,
     createdAt,
@@ -1477,14 +904,6 @@ class $MinistriesTable extends Ministries
         _remoteIdMeta,
         remoteId.isAcceptableOrUnknown(data['remote_id']!, _remoteIdMeta),
       );
-    }
-    if (data.containsKey('agency_id')) {
-      context.handle(
-        _agencyIdMeta,
-        agencyId.isAcceptableOrUnknown(data['agency_id']!, _agencyIdMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_agencyIdMeta);
     }
     if (data.containsKey('is_active')) {
       context.handle(
@@ -1544,10 +963,6 @@ class $MinistriesTable extends Ministries
         DriftSqlType.string,
         data['${effectivePrefix}remote_id'],
       ),
-      agencyId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}agency_id'],
-      )!,
       isActive: attachedDatabase.typeMapping.read(
         DriftSqlType.bool,
         data['${effectivePrefix}is_active'],
@@ -1582,7 +997,6 @@ class Ministry extends DataClass implements Insertable<Ministry> {
   final String name;
   final String? code;
   final String? remoteId;
-  final int agencyId;
   final bool isActive;
   final bool isSynced;
   final DateTime createdAt;
@@ -1593,7 +1007,6 @@ class Ministry extends DataClass implements Insertable<Ministry> {
     required this.name,
     this.code,
     this.remoteId,
-    required this.agencyId,
     required this.isActive,
     required this.isSynced,
     required this.createdAt,
@@ -1611,7 +1024,6 @@ class Ministry extends DataClass implements Insertable<Ministry> {
     if (!nullToAbsent || remoteId != null) {
       map['remote_id'] = Variable<String>(remoteId);
     }
-    map['agency_id'] = Variable<int>(agencyId);
     map['is_active'] = Variable<bool>(isActive);
     map['is_synced'] = Variable<bool>(isSynced);
     map['created_at'] = Variable<DateTime>(createdAt);
@@ -1630,7 +1042,6 @@ class Ministry extends DataClass implements Insertable<Ministry> {
       remoteId: remoteId == null && nullToAbsent
           ? const Value.absent()
           : Value(remoteId),
-      agencyId: Value(agencyId),
       isActive: Value(isActive),
       isSynced: Value(isSynced),
       createdAt: Value(createdAt),
@@ -1651,7 +1062,6 @@ class Ministry extends DataClass implements Insertable<Ministry> {
       name: serializer.fromJson<String>(json['name']),
       code: serializer.fromJson<String?>(json['code']),
       remoteId: serializer.fromJson<String?>(json['remoteId']),
-      agencyId: serializer.fromJson<int>(json['agencyId']),
       isActive: serializer.fromJson<bool>(json['isActive']),
       isSynced: serializer.fromJson<bool>(json['isSynced']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
@@ -1667,7 +1077,6 @@ class Ministry extends DataClass implements Insertable<Ministry> {
       'name': serializer.toJson<String>(name),
       'code': serializer.toJson<String?>(code),
       'remoteId': serializer.toJson<String?>(remoteId),
-      'agencyId': serializer.toJson<int>(agencyId),
       'isActive': serializer.toJson<bool>(isActive),
       'isSynced': serializer.toJson<bool>(isSynced),
       'createdAt': serializer.toJson<DateTime>(createdAt),
@@ -1681,7 +1090,6 @@ class Ministry extends DataClass implements Insertable<Ministry> {
     String? name,
     Value<String?> code = const Value.absent(),
     Value<String?> remoteId = const Value.absent(),
-    int? agencyId,
     bool? isActive,
     bool? isSynced,
     DateTime? createdAt,
@@ -1692,7 +1100,6 @@ class Ministry extends DataClass implements Insertable<Ministry> {
     name: name ?? this.name,
     code: code.present ? code.value : this.code,
     remoteId: remoteId.present ? remoteId.value : this.remoteId,
-    agencyId: agencyId ?? this.agencyId,
     isActive: isActive ?? this.isActive,
     isSynced: isSynced ?? this.isSynced,
     createdAt: createdAt ?? this.createdAt,
@@ -1705,7 +1112,6 @@ class Ministry extends DataClass implements Insertable<Ministry> {
       name: data.name.present ? data.name.value : this.name,
       code: data.code.present ? data.code.value : this.code,
       remoteId: data.remoteId.present ? data.remoteId.value : this.remoteId,
-      agencyId: data.agencyId.present ? data.agencyId.value : this.agencyId,
       isActive: data.isActive.present ? data.isActive.value : this.isActive,
       isSynced: data.isSynced.present ? data.isSynced.value : this.isSynced,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
@@ -1723,7 +1129,6 @@ class Ministry extends DataClass implements Insertable<Ministry> {
           ..write('name: $name, ')
           ..write('code: $code, ')
           ..write('remoteId: $remoteId, ')
-          ..write('agencyId: $agencyId, ')
           ..write('isActive: $isActive, ')
           ..write('isSynced: $isSynced, ')
           ..write('createdAt: $createdAt, ')
@@ -1739,7 +1144,6 @@ class Ministry extends DataClass implements Insertable<Ministry> {
     name,
     code,
     remoteId,
-    agencyId,
     isActive,
     isSynced,
     createdAt,
@@ -1754,7 +1158,6 @@ class Ministry extends DataClass implements Insertable<Ministry> {
           other.name == this.name &&
           other.code == this.code &&
           other.remoteId == this.remoteId &&
-          other.agencyId == this.agencyId &&
           other.isActive == this.isActive &&
           other.isSynced == this.isSynced &&
           other.createdAt == this.createdAt &&
@@ -1767,7 +1170,6 @@ class MinistriesCompanion extends UpdateCompanion<Ministry> {
   final Value<String> name;
   final Value<String?> code;
   final Value<String?> remoteId;
-  final Value<int> agencyId;
   final Value<bool> isActive;
   final Value<bool> isSynced;
   final Value<DateTime> createdAt;
@@ -1778,7 +1180,6 @@ class MinistriesCompanion extends UpdateCompanion<Ministry> {
     this.name = const Value.absent(),
     this.code = const Value.absent(),
     this.remoteId = const Value.absent(),
-    this.agencyId = const Value.absent(),
     this.isActive = const Value.absent(),
     this.isSynced = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -1790,20 +1191,17 @@ class MinistriesCompanion extends UpdateCompanion<Ministry> {
     required String name,
     this.code = const Value.absent(),
     this.remoteId = const Value.absent(),
-    required int agencyId,
     this.isActive = const Value.absent(),
     this.isSynced = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.lastSyncedAt = const Value.absent(),
-  }) : name = Value(name),
-       agencyId = Value(agencyId);
+  }) : name = Value(name);
   static Insertable<Ministry> custom({
     Expression<int>? id,
     Expression<String>? name,
     Expression<String>? code,
     Expression<String>? remoteId,
-    Expression<int>? agencyId,
     Expression<bool>? isActive,
     Expression<bool>? isSynced,
     Expression<DateTime>? createdAt,
@@ -1815,7 +1213,6 @@ class MinistriesCompanion extends UpdateCompanion<Ministry> {
       if (name != null) 'name': name,
       if (code != null) 'code': code,
       if (remoteId != null) 'remote_id': remoteId,
-      if (agencyId != null) 'agency_id': agencyId,
       if (isActive != null) 'is_active': isActive,
       if (isSynced != null) 'is_synced': isSynced,
       if (createdAt != null) 'created_at': createdAt,
@@ -1829,7 +1226,6 @@ class MinistriesCompanion extends UpdateCompanion<Ministry> {
     Value<String>? name,
     Value<String?>? code,
     Value<String?>? remoteId,
-    Value<int>? agencyId,
     Value<bool>? isActive,
     Value<bool>? isSynced,
     Value<DateTime>? createdAt,
@@ -1841,7 +1237,6 @@ class MinistriesCompanion extends UpdateCompanion<Ministry> {
       name: name ?? this.name,
       code: code ?? this.code,
       remoteId: remoteId ?? this.remoteId,
-      agencyId: agencyId ?? this.agencyId,
       isActive: isActive ?? this.isActive,
       isSynced: isSynced ?? this.isSynced,
       createdAt: createdAt ?? this.createdAt,
@@ -1864,9 +1259,6 @@ class MinistriesCompanion extends UpdateCompanion<Ministry> {
     }
     if (remoteId.present) {
       map['remote_id'] = Variable<String>(remoteId.value);
-    }
-    if (agencyId.present) {
-      map['agency_id'] = Variable<int>(agencyId.value);
     }
     if (isActive.present) {
       map['is_active'] = Variable<bool>(isActive.value);
@@ -1893,7 +1285,617 @@ class MinistriesCompanion extends UpdateCompanion<Ministry> {
           ..write('name: $name, ')
           ..write('code: $code, ')
           ..write('remoteId: $remoteId, ')
-          ..write('agencyId: $agencyId, ')
+          ..write('isActive: $isActive, ')
+          ..write('isSynced: $isSynced, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('lastSyncedAt: $lastSyncedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $AgenciesTable extends Agencies with TableInfo<$AgenciesTable, Agency> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AgenciesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 2,
+      maxTextLength: 200,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
+  );
+  static const VerificationMeta _codeMeta = const VerificationMeta('code');
+  @override
+  late final GeneratedColumn<String> code = GeneratedColumn<String>(
+    'code',
+    aliasedName,
+    true,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 2,
+      maxTextLength: 50,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _remoteIdMeta = const VerificationMeta(
+    'remoteId',
+  );
+  @override
+  late final GeneratedColumn<String> remoteId = GeneratedColumn<String>(
+    'remote_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _ministryIdMeta = const VerificationMeta(
+    'ministryId',
+  );
+  @override
+  late final GeneratedColumn<int> ministryId = GeneratedColumn<int>(
+    'ministry_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES ministries (id) ON DELETE CASCADE',
+    ),
+  );
+  static const VerificationMeta _isActiveMeta = const VerificationMeta(
+    'isActive',
+  );
+  @override
+  late final GeneratedColumn<bool> isActive = GeneratedColumn<bool>(
+    'is_active',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_active" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _isSyncedMeta = const VerificationMeta(
+    'isSynced',
+  );
+  @override
+  late final GeneratedColumn<bool> isSynced = GeneratedColumn<bool>(
+    'is_synced',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_synced" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _lastSyncedAtMeta = const VerificationMeta(
+    'lastSyncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> lastSyncedAt = GeneratedColumn<DateTime>(
+    'last_synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    name,
+    code,
+    remoteId,
+    ministryId,
+    isActive,
+    isSynced,
+    createdAt,
+    updatedAt,
+    lastSyncedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'agencies';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Agency> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('code')) {
+      context.handle(
+        _codeMeta,
+        code.isAcceptableOrUnknown(data['code']!, _codeMeta),
+      );
+    }
+    if (data.containsKey('remote_id')) {
+      context.handle(
+        _remoteIdMeta,
+        remoteId.isAcceptableOrUnknown(data['remote_id']!, _remoteIdMeta),
+      );
+    }
+    if (data.containsKey('ministry_id')) {
+      context.handle(
+        _ministryIdMeta,
+        ministryId.isAcceptableOrUnknown(data['ministry_id']!, _ministryIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_ministryIdMeta);
+    }
+    if (data.containsKey('is_active')) {
+      context.handle(
+        _isActiveMeta,
+        isActive.isAcceptableOrUnknown(data['is_active']!, _isActiveMeta),
+      );
+    }
+    if (data.containsKey('is_synced')) {
+      context.handle(
+        _isSyncedMeta,
+        isSynced.isAcceptableOrUnknown(data['is_synced']!, _isSyncedMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('last_synced_at')) {
+      context.handle(
+        _lastSyncedAtMeta,
+        lastSyncedAt.isAcceptableOrUnknown(
+          data['last_synced_at']!,
+          _lastSyncedAtMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Agency map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Agency(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      code: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}code'],
+      ),
+      remoteId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}remote_id'],
+      ),
+      ministryId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}ministry_id'],
+      )!,
+      isActive: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_active'],
+      )!,
+      isSynced: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_synced'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      lastSyncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_synced_at'],
+      ),
+    );
+  }
+
+  @override
+  $AgenciesTable createAlias(String alias) {
+    return $AgenciesTable(attachedDatabase, alias);
+  }
+}
+
+class Agency extends DataClass implements Insertable<Agency> {
+  final int id;
+  final String name;
+  final String? code;
+  final String? remoteId;
+  final int ministryId;
+  final bool isActive;
+  final bool isSynced;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final DateTime? lastSyncedAt;
+  const Agency({
+    required this.id,
+    required this.name,
+    this.code,
+    this.remoteId,
+    required this.ministryId,
+    required this.isActive,
+    required this.isSynced,
+    required this.createdAt,
+    required this.updatedAt,
+    this.lastSyncedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['name'] = Variable<String>(name);
+    if (!nullToAbsent || code != null) {
+      map['code'] = Variable<String>(code);
+    }
+    if (!nullToAbsent || remoteId != null) {
+      map['remote_id'] = Variable<String>(remoteId);
+    }
+    map['ministry_id'] = Variable<int>(ministryId);
+    map['is_active'] = Variable<bool>(isActive);
+    map['is_synced'] = Variable<bool>(isSynced);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || lastSyncedAt != null) {
+      map['last_synced_at'] = Variable<DateTime>(lastSyncedAt);
+    }
+    return map;
+  }
+
+  AgenciesCompanion toCompanion(bool nullToAbsent) {
+    return AgenciesCompanion(
+      id: Value(id),
+      name: Value(name),
+      code: code == null && nullToAbsent ? const Value.absent() : Value(code),
+      remoteId: remoteId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(remoteId),
+      ministryId: Value(ministryId),
+      isActive: Value(isActive),
+      isSynced: Value(isSynced),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      lastSyncedAt: lastSyncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastSyncedAt),
+    );
+  }
+
+  factory Agency.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Agency(
+      id: serializer.fromJson<int>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      code: serializer.fromJson<String?>(json['code']),
+      remoteId: serializer.fromJson<String?>(json['remoteId']),
+      ministryId: serializer.fromJson<int>(json['ministryId']),
+      isActive: serializer.fromJson<bool>(json['isActive']),
+      isSynced: serializer.fromJson<bool>(json['isSynced']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      lastSyncedAt: serializer.fromJson<DateTime?>(json['lastSyncedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'name': serializer.toJson<String>(name),
+      'code': serializer.toJson<String?>(code),
+      'remoteId': serializer.toJson<String?>(remoteId),
+      'ministryId': serializer.toJson<int>(ministryId),
+      'isActive': serializer.toJson<bool>(isActive),
+      'isSynced': serializer.toJson<bool>(isSynced),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'lastSyncedAt': serializer.toJson<DateTime?>(lastSyncedAt),
+    };
+  }
+
+  Agency copyWith({
+    int? id,
+    String? name,
+    Value<String?> code = const Value.absent(),
+    Value<String?> remoteId = const Value.absent(),
+    int? ministryId,
+    bool? isActive,
+    bool? isSynced,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    Value<DateTime?> lastSyncedAt = const Value.absent(),
+  }) => Agency(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    code: code.present ? code.value : this.code,
+    remoteId: remoteId.present ? remoteId.value : this.remoteId,
+    ministryId: ministryId ?? this.ministryId,
+    isActive: isActive ?? this.isActive,
+    isSynced: isSynced ?? this.isSynced,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    lastSyncedAt: lastSyncedAt.present ? lastSyncedAt.value : this.lastSyncedAt,
+  );
+  Agency copyWithCompanion(AgenciesCompanion data) {
+    return Agency(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      code: data.code.present ? data.code.value : this.code,
+      remoteId: data.remoteId.present ? data.remoteId.value : this.remoteId,
+      ministryId: data.ministryId.present
+          ? data.ministryId.value
+          : this.ministryId,
+      isActive: data.isActive.present ? data.isActive.value : this.isActive,
+      isSynced: data.isSynced.present ? data.isSynced.value : this.isSynced,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      lastSyncedAt: data.lastSyncedAt.present
+          ? data.lastSyncedAt.value
+          : this.lastSyncedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Agency(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('code: $code, ')
+          ..write('remoteId: $remoteId, ')
+          ..write('ministryId: $ministryId, ')
+          ..write('isActive: $isActive, ')
+          ..write('isSynced: $isSynced, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('lastSyncedAt: $lastSyncedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    name,
+    code,
+    remoteId,
+    ministryId,
+    isActive,
+    isSynced,
+    createdAt,
+    updatedAt,
+    lastSyncedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Agency &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.code == this.code &&
+          other.remoteId == this.remoteId &&
+          other.ministryId == this.ministryId &&
+          other.isActive == this.isActive &&
+          other.isSynced == this.isSynced &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.lastSyncedAt == this.lastSyncedAt);
+}
+
+class AgenciesCompanion extends UpdateCompanion<Agency> {
+  final Value<int> id;
+  final Value<String> name;
+  final Value<String?> code;
+  final Value<String?> remoteId;
+  final Value<int> ministryId;
+  final Value<bool> isActive;
+  final Value<bool> isSynced;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<DateTime?> lastSyncedAt;
+  const AgenciesCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.code = const Value.absent(),
+    this.remoteId = const Value.absent(),
+    this.ministryId = const Value.absent(),
+    this.isActive = const Value.absent(),
+    this.isSynced = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.lastSyncedAt = const Value.absent(),
+  });
+  AgenciesCompanion.insert({
+    this.id = const Value.absent(),
+    required String name,
+    this.code = const Value.absent(),
+    this.remoteId = const Value.absent(),
+    required int ministryId,
+    this.isActive = const Value.absent(),
+    this.isSynced = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.lastSyncedAt = const Value.absent(),
+  }) : name = Value(name),
+       ministryId = Value(ministryId);
+  static Insertable<Agency> custom({
+    Expression<int>? id,
+    Expression<String>? name,
+    Expression<String>? code,
+    Expression<String>? remoteId,
+    Expression<int>? ministryId,
+    Expression<bool>? isActive,
+    Expression<bool>? isSynced,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<DateTime>? lastSyncedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (code != null) 'code': code,
+      if (remoteId != null) 'remote_id': remoteId,
+      if (ministryId != null) 'ministry_id': ministryId,
+      if (isActive != null) 'is_active': isActive,
+      if (isSynced != null) 'is_synced': isSynced,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (lastSyncedAt != null) 'last_synced_at': lastSyncedAt,
+    });
+  }
+
+  AgenciesCompanion copyWith({
+    Value<int>? id,
+    Value<String>? name,
+    Value<String?>? code,
+    Value<String?>? remoteId,
+    Value<int>? ministryId,
+    Value<bool>? isActive,
+    Value<bool>? isSynced,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<DateTime?>? lastSyncedAt,
+  }) {
+    return AgenciesCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      code: code ?? this.code,
+      remoteId: remoteId ?? this.remoteId,
+      ministryId: ministryId ?? this.ministryId,
+      isActive: isActive ?? this.isActive,
+      isSynced: isSynced ?? this.isSynced,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      lastSyncedAt: lastSyncedAt ?? this.lastSyncedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (code.present) {
+      map['code'] = Variable<String>(code.value);
+    }
+    if (remoteId.present) {
+      map['remote_id'] = Variable<String>(remoteId.value);
+    }
+    if (ministryId.present) {
+      map['ministry_id'] = Variable<int>(ministryId.value);
+    }
+    if (isActive.present) {
+      map['is_active'] = Variable<bool>(isActive.value);
+    }
+    if (isSynced.present) {
+      map['is_synced'] = Variable<bool>(isSynced.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (lastSyncedAt.present) {
+      map['last_synced_at'] = Variable<DateTime>(lastSyncedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AgenciesCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('code: $code, ')
+          ..write('remoteId: $remoteId, ')
+          ..write('ministryId: $ministryId, ')
           ..write('isActive: $isActive, ')
           ..write('isSynced: $isSynced, ')
           ..write('createdAt: $createdAt, ')
@@ -5085,8 +5087,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $UsersTable users = $UsersTable(this);
-  late final $AgenciesTable agencies = $AgenciesTable(this);
   late final $MinistriesTable ministries = $MinistriesTable(this);
+  late final $AgenciesTable agencies = $AgenciesTable(this);
   late final $GeopoliticalZonesTable geopoliticalZones =
       $GeopoliticalZonesTable(this);
   late final $StatesTable states = $StatesTable(this);
@@ -5100,8 +5102,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
     users,
-    agencies,
     ministries,
+    agencies,
     geopoliticalZones,
     states,
     projects,
@@ -5113,10 +5115,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
     WritePropagation(
       on: TableUpdateQuery.onTableName(
-        'agencies',
+        'ministries',
         limitUpdateKind: UpdateKind.delete,
       ),
-      result: [TableUpdate('ministries', kind: UpdateKind.delete)],
+      result: [TableUpdate('agencies', kind: UpdateKind.delete)],
     ),
     WritePropagation(
       on: TableUpdateQuery.onTableName(
@@ -5932,482 +5934,12 @@ typedef $$UsersTableProcessedTableManager =
         bool sessionsRefs,
       })
     >;
-typedef $$AgenciesTableCreateCompanionBuilder =
-    AgenciesCompanion Function({
-      Value<int> id,
-      required String name,
-      Value<String?> code,
-      Value<String?> remoteId,
-      Value<bool> isActive,
-      Value<bool> isSynced,
-      Value<DateTime> createdAt,
-      Value<DateTime> updatedAt,
-      Value<DateTime?> lastSyncedAt,
-    });
-typedef $$AgenciesTableUpdateCompanionBuilder =
-    AgenciesCompanion Function({
-      Value<int> id,
-      Value<String> name,
-      Value<String?> code,
-      Value<String?> remoteId,
-      Value<bool> isActive,
-      Value<bool> isSynced,
-      Value<DateTime> createdAt,
-      Value<DateTime> updatedAt,
-      Value<DateTime?> lastSyncedAt,
-    });
-
-final class $$AgenciesTableReferences
-    extends BaseReferences<_$AppDatabase, $AgenciesTable, Agency> {
-  $$AgenciesTableReferences(super.$_db, super.$_table, super.$_typedResult);
-
-  static MultiTypedResultKey<$MinistriesTable, List<Ministry>>
-  _ministriesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
-    db.ministries,
-    aliasName: $_aliasNameGenerator(db.agencies.id, db.ministries.agencyId),
-  );
-
-  $$MinistriesTableProcessedTableManager get ministriesRefs {
-    final manager = $$MinistriesTableTableManager(
-      $_db,
-      $_db.ministries,
-    ).filter((f) => f.agencyId.id.sqlEquals($_itemColumn<int>('id')!));
-
-    final cache = $_typedResult.readTableOrNull(_ministriesRefsTable($_db));
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: cache),
-    );
-  }
-
-  static MultiTypedResultKey<$ProjectsTable, List<Project>> _projectsRefsTable(
-    _$AppDatabase db,
-  ) => MultiTypedResultKey.fromTable(
-    db.projects,
-    aliasName: $_aliasNameGenerator(db.agencies.id, db.projects.agencyId),
-  );
-
-  $$ProjectsTableProcessedTableManager get projectsRefs {
-    final manager = $$ProjectsTableTableManager(
-      $_db,
-      $_db.projects,
-    ).filter((f) => f.agencyId.id.sqlEquals($_itemColumn<int>('id')!));
-
-    final cache = $_typedResult.readTableOrNull(_projectsRefsTable($_db));
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: cache),
-    );
-  }
-}
-
-class $$AgenciesTableFilterComposer
-    extends Composer<_$AppDatabase, $AgenciesTable> {
-  $$AgenciesTableFilterComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnFilters<int> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get name => $composableBuilder(
-    column: $table.name,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get code => $composableBuilder(
-    column: $table.code,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get remoteId => $composableBuilder(
-    column: $table.remoteId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<bool> get isActive => $composableBuilder(
-    column: $table.isActive,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<bool> get isSynced => $composableBuilder(
-    column: $table.isSynced,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get createdAt => $composableBuilder(
-    column: $table.createdAt,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
-    column: $table.updatedAt,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get lastSyncedAt => $composableBuilder(
-    column: $table.lastSyncedAt,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  Expression<bool> ministriesRefs(
-    Expression<bool> Function($$MinistriesTableFilterComposer f) f,
-  ) {
-    final $$MinistriesTableFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.ministries,
-      getReferencedColumn: (t) => t.agencyId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$MinistriesTableFilterComposer(
-            $db: $db,
-            $table: $db.ministries,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
-
-  Expression<bool> projectsRefs(
-    Expression<bool> Function($$ProjectsTableFilterComposer f) f,
-  ) {
-    final $$ProjectsTableFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.projects,
-      getReferencedColumn: (t) => t.agencyId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$ProjectsTableFilterComposer(
-            $db: $db,
-            $table: $db.projects,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
-}
-
-class $$AgenciesTableOrderingComposer
-    extends Composer<_$AppDatabase, $AgenciesTable> {
-  $$AgenciesTableOrderingComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnOrderings<int> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get name => $composableBuilder(
-    column: $table.name,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get code => $composableBuilder(
-    column: $table.code,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get remoteId => $composableBuilder(
-    column: $table.remoteId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<bool> get isActive => $composableBuilder(
-    column: $table.isActive,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<bool> get isSynced => $composableBuilder(
-    column: $table.isSynced,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
-    column: $table.createdAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
-    column: $table.updatedAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get lastSyncedAt => $composableBuilder(
-    column: $table.lastSyncedAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-}
-
-class $$AgenciesTableAnnotationComposer
-    extends Composer<_$AppDatabase, $AgenciesTable> {
-  $$AgenciesTableAnnotationComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  GeneratedColumn<int> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<String> get name =>
-      $composableBuilder(column: $table.name, builder: (column) => column);
-
-  GeneratedColumn<String> get code =>
-      $composableBuilder(column: $table.code, builder: (column) => column);
-
-  GeneratedColumn<String> get remoteId =>
-      $composableBuilder(column: $table.remoteId, builder: (column) => column);
-
-  GeneratedColumn<bool> get isActive =>
-      $composableBuilder(column: $table.isActive, builder: (column) => column);
-
-  GeneratedColumn<bool> get isSynced =>
-      $composableBuilder(column: $table.isSynced, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get createdAt =>
-      $composableBuilder(column: $table.createdAt, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get updatedAt =>
-      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get lastSyncedAt => $composableBuilder(
-    column: $table.lastSyncedAt,
-    builder: (column) => column,
-  );
-
-  Expression<T> ministriesRefs<T extends Object>(
-    Expression<T> Function($$MinistriesTableAnnotationComposer a) f,
-  ) {
-    final $$MinistriesTableAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.ministries,
-      getReferencedColumn: (t) => t.agencyId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$MinistriesTableAnnotationComposer(
-            $db: $db,
-            $table: $db.ministries,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
-
-  Expression<T> projectsRefs<T extends Object>(
-    Expression<T> Function($$ProjectsTableAnnotationComposer a) f,
-  ) {
-    final $$ProjectsTableAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.projects,
-      getReferencedColumn: (t) => t.agencyId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$ProjectsTableAnnotationComposer(
-            $db: $db,
-            $table: $db.projects,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
-}
-
-class $$AgenciesTableTableManager
-    extends
-        RootTableManager<
-          _$AppDatabase,
-          $AgenciesTable,
-          Agency,
-          $$AgenciesTableFilterComposer,
-          $$AgenciesTableOrderingComposer,
-          $$AgenciesTableAnnotationComposer,
-          $$AgenciesTableCreateCompanionBuilder,
-          $$AgenciesTableUpdateCompanionBuilder,
-          (Agency, $$AgenciesTableReferences),
-          Agency,
-          PrefetchHooks Function({bool ministriesRefs, bool projectsRefs})
-        > {
-  $$AgenciesTableTableManager(_$AppDatabase db, $AgenciesTable table)
-    : super(
-        TableManagerState(
-          db: db,
-          table: table,
-          createFilteringComposer: () =>
-              $$AgenciesTableFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $$AgenciesTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer: () =>
-              $$AgenciesTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback:
-              ({
-                Value<int> id = const Value.absent(),
-                Value<String> name = const Value.absent(),
-                Value<String?> code = const Value.absent(),
-                Value<String?> remoteId = const Value.absent(),
-                Value<bool> isActive = const Value.absent(),
-                Value<bool> isSynced = const Value.absent(),
-                Value<DateTime> createdAt = const Value.absent(),
-                Value<DateTime> updatedAt = const Value.absent(),
-                Value<DateTime?> lastSyncedAt = const Value.absent(),
-              }) => AgenciesCompanion(
-                id: id,
-                name: name,
-                code: code,
-                remoteId: remoteId,
-                isActive: isActive,
-                isSynced: isSynced,
-                createdAt: createdAt,
-                updatedAt: updatedAt,
-                lastSyncedAt: lastSyncedAt,
-              ),
-          createCompanionCallback:
-              ({
-                Value<int> id = const Value.absent(),
-                required String name,
-                Value<String?> code = const Value.absent(),
-                Value<String?> remoteId = const Value.absent(),
-                Value<bool> isActive = const Value.absent(),
-                Value<bool> isSynced = const Value.absent(),
-                Value<DateTime> createdAt = const Value.absent(),
-                Value<DateTime> updatedAt = const Value.absent(),
-                Value<DateTime?> lastSyncedAt = const Value.absent(),
-              }) => AgenciesCompanion.insert(
-                id: id,
-                name: name,
-                code: code,
-                remoteId: remoteId,
-                isActive: isActive,
-                isSynced: isSynced,
-                createdAt: createdAt,
-                updatedAt: updatedAt,
-                lastSyncedAt: lastSyncedAt,
-              ),
-          withReferenceMapper: (p0) => p0
-              .map(
-                (e) => (
-                  e.readTable(table),
-                  $$AgenciesTableReferences(db, table, e),
-                ),
-              )
-              .toList(),
-          prefetchHooksCallback:
-              ({ministriesRefs = false, projectsRefs = false}) {
-                return PrefetchHooks(
-                  db: db,
-                  explicitlyWatchedTables: [
-                    if (ministriesRefs) db.ministries,
-                    if (projectsRefs) db.projects,
-                  ],
-                  addJoins: null,
-                  getPrefetchedDataCallback: (items) async {
-                    return [
-                      if (ministriesRefs)
-                        await $_getPrefetchedData<
-                          Agency,
-                          $AgenciesTable,
-                          Ministry
-                        >(
-                          currentTable: table,
-                          referencedTable: $$AgenciesTableReferences
-                              ._ministriesRefsTable(db),
-                          managerFromTypedResult: (p0) =>
-                              $$AgenciesTableReferences(
-                                db,
-                                table,
-                                p0,
-                              ).ministriesRefs,
-                          referencedItemsForCurrentItem:
-                              (item, referencedItems) => referencedItems.where(
-                                (e) => e.agencyId == item.id,
-                              ),
-                          typedResults: items,
-                        ),
-                      if (projectsRefs)
-                        await $_getPrefetchedData<
-                          Agency,
-                          $AgenciesTable,
-                          Project
-                        >(
-                          currentTable: table,
-                          referencedTable: $$AgenciesTableReferences
-                              ._projectsRefsTable(db),
-                          managerFromTypedResult: (p0) =>
-                              $$AgenciesTableReferences(
-                                db,
-                                table,
-                                p0,
-                              ).projectsRefs,
-                          referencedItemsForCurrentItem:
-                              (item, referencedItems) => referencedItems.where(
-                                (e) => e.agencyId == item.id,
-                              ),
-                          typedResults: items,
-                        ),
-                    ];
-                  },
-                );
-              },
-        ),
-      );
-}
-
-typedef $$AgenciesTableProcessedTableManager =
-    ProcessedTableManager<
-      _$AppDatabase,
-      $AgenciesTable,
-      Agency,
-      $$AgenciesTableFilterComposer,
-      $$AgenciesTableOrderingComposer,
-      $$AgenciesTableAnnotationComposer,
-      $$AgenciesTableCreateCompanionBuilder,
-      $$AgenciesTableUpdateCompanionBuilder,
-      (Agency, $$AgenciesTableReferences),
-      Agency,
-      PrefetchHooks Function({bool ministriesRefs, bool projectsRefs})
-    >;
 typedef $$MinistriesTableCreateCompanionBuilder =
     MinistriesCompanion Function({
       Value<int> id,
       required String name,
       Value<String?> code,
       Value<String?> remoteId,
-      required int agencyId,
       Value<bool> isActive,
       Value<bool> isSynced,
       Value<DateTime> createdAt,
@@ -6420,7 +5952,6 @@ typedef $$MinistriesTableUpdateCompanionBuilder =
       Value<String> name,
       Value<String?> code,
       Value<String?> remoteId,
-      Value<int> agencyId,
       Value<bool> isActive,
       Value<bool> isSynced,
       Value<DateTime> createdAt,
@@ -6432,22 +5963,22 @@ final class $$MinistriesTableReferences
     extends BaseReferences<_$AppDatabase, $MinistriesTable, Ministry> {
   $$MinistriesTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static $AgenciesTable _agencyIdTable(_$AppDatabase db) =>
-      db.agencies.createAlias(
-        $_aliasNameGenerator(db.ministries.agencyId, db.agencies.id),
-      );
+  static MultiTypedResultKey<$AgenciesTable, List<Agency>> _agenciesRefsTable(
+    _$AppDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.agencies,
+    aliasName: $_aliasNameGenerator(db.ministries.id, db.agencies.ministryId),
+  );
 
-  $$AgenciesTableProcessedTableManager get agencyId {
-    final $_column = $_itemColumn<int>('agency_id')!;
-
+  $$AgenciesTableProcessedTableManager get agenciesRefs {
     final manager = $$AgenciesTableTableManager(
       $_db,
       $_db.agencies,
-    ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_agencyIdTable($_db));
-    if (item == null) return manager;
+    ).filter((f) => f.ministryId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_agenciesRefsTable($_db));
     return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: [item]),
+      manager.$state.copyWith(prefetchedData: cache),
     );
   }
 
@@ -6525,12 +6056,14 @@ class $$MinistriesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  $$AgenciesTableFilterComposer get agencyId {
+  Expression<bool> agenciesRefs(
+    Expression<bool> Function($$AgenciesTableFilterComposer f) f,
+  ) {
     final $$AgenciesTableFilterComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.agencyId,
+      getCurrentColumn: (t) => t.id,
       referencedTable: $db.agencies,
-      getReferencedColumn: (t) => t.id,
+      getReferencedColumn: (t) => t.ministryId,
       builder:
           (
             joinBuilder, {
@@ -6545,7 +6078,7 @@ class $$MinistriesTableFilterComposer
                 $removeJoinBuilderFromRootComposer,
           ),
     );
-    return composer;
+    return f(composer);
   }
 
   Expression<bool> projectsRefs(
@@ -6627,29 +6160,6 @@ class $$MinistriesTableOrderingComposer
     column: $table.lastSyncedAt,
     builder: (column) => ColumnOrderings(column),
   );
-
-  $$AgenciesTableOrderingComposer get agencyId {
-    final $$AgenciesTableOrderingComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.agencyId,
-      referencedTable: $db.agencies,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$AgenciesTableOrderingComposer(
-            $db: $db,
-            $table: $db.agencies,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
 }
 
 class $$MinistriesTableAnnotationComposer
@@ -6690,12 +6200,14 @@ class $$MinistriesTableAnnotationComposer
     builder: (column) => column,
   );
 
-  $$AgenciesTableAnnotationComposer get agencyId {
+  Expression<T> agenciesRefs<T extends Object>(
+    Expression<T> Function($$AgenciesTableAnnotationComposer a) f,
+  ) {
     final $$AgenciesTableAnnotationComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.agencyId,
+      getCurrentColumn: (t) => t.id,
       referencedTable: $db.agencies,
-      getReferencedColumn: (t) => t.id,
+      getReferencedColumn: (t) => t.ministryId,
       builder:
           (
             joinBuilder, {
@@ -6710,7 +6222,7 @@ class $$MinistriesTableAnnotationComposer
                 $removeJoinBuilderFromRootComposer,
           ),
     );
-    return composer;
+    return f(composer);
   }
 
   Expression<T> projectsRefs<T extends Object>(
@@ -6752,7 +6264,7 @@ class $$MinistriesTableTableManager
           $$MinistriesTableUpdateCompanionBuilder,
           (Ministry, $$MinistriesTableReferences),
           Ministry,
-          PrefetchHooks Function({bool agencyId, bool projectsRefs})
+          PrefetchHooks Function({bool agenciesRefs, bool projectsRefs})
         > {
   $$MinistriesTableTableManager(_$AppDatabase db, $MinistriesTable table)
     : super(
@@ -6771,7 +6283,6 @@ class $$MinistriesTableTableManager
                 Value<String> name = const Value.absent(),
                 Value<String?> code = const Value.absent(),
                 Value<String?> remoteId = const Value.absent(),
-                Value<int> agencyId = const Value.absent(),
                 Value<bool> isActive = const Value.absent(),
                 Value<bool> isSynced = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
@@ -6782,7 +6293,6 @@ class $$MinistriesTableTableManager
                 name: name,
                 code: code,
                 remoteId: remoteId,
-                agencyId: agencyId,
                 isActive: isActive,
                 isSynced: isSynced,
                 createdAt: createdAt,
@@ -6795,7 +6305,6 @@ class $$MinistriesTableTableManager
                 required String name,
                 Value<String?> code = const Value.absent(),
                 Value<String?> remoteId = const Value.absent(),
-                required int agencyId,
                 Value<bool> isActive = const Value.absent(),
                 Value<bool> isSynced = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
@@ -6806,7 +6315,6 @@ class $$MinistriesTableTableManager
                 name: name,
                 code: code,
                 remoteId: remoteId,
-                agencyId: agencyId,
                 isActive: isActive,
                 isSynced: isSynced,
                 createdAt: createdAt,
@@ -6821,7 +6329,502 @@ class $$MinistriesTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({agencyId = false, projectsRefs = false}) {
+          prefetchHooksCallback:
+              ({agenciesRefs = false, projectsRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (agenciesRefs) db.agencies,
+                    if (projectsRefs) db.projects,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (agenciesRefs)
+                        await $_getPrefetchedData<
+                          Ministry,
+                          $MinistriesTable,
+                          Agency
+                        >(
+                          currentTable: table,
+                          referencedTable: $$MinistriesTableReferences
+                              ._agenciesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$MinistriesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).agenciesRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.ministryId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (projectsRefs)
+                        await $_getPrefetchedData<
+                          Ministry,
+                          $MinistriesTable,
+                          Project
+                        >(
+                          currentTable: table,
+                          referencedTable: $$MinistriesTableReferences
+                              ._projectsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$MinistriesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).projectsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.ministryId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$MinistriesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $MinistriesTable,
+      Ministry,
+      $$MinistriesTableFilterComposer,
+      $$MinistriesTableOrderingComposer,
+      $$MinistriesTableAnnotationComposer,
+      $$MinistriesTableCreateCompanionBuilder,
+      $$MinistriesTableUpdateCompanionBuilder,
+      (Ministry, $$MinistriesTableReferences),
+      Ministry,
+      PrefetchHooks Function({bool agenciesRefs, bool projectsRefs})
+    >;
+typedef $$AgenciesTableCreateCompanionBuilder =
+    AgenciesCompanion Function({
+      Value<int> id,
+      required String name,
+      Value<String?> code,
+      Value<String?> remoteId,
+      required int ministryId,
+      Value<bool> isActive,
+      Value<bool> isSynced,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> lastSyncedAt,
+    });
+typedef $$AgenciesTableUpdateCompanionBuilder =
+    AgenciesCompanion Function({
+      Value<int> id,
+      Value<String> name,
+      Value<String?> code,
+      Value<String?> remoteId,
+      Value<int> ministryId,
+      Value<bool> isActive,
+      Value<bool> isSynced,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> lastSyncedAt,
+    });
+
+final class $$AgenciesTableReferences
+    extends BaseReferences<_$AppDatabase, $AgenciesTable, Agency> {
+  $$AgenciesTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $MinistriesTable _ministryIdTable(_$AppDatabase db) =>
+      db.ministries.createAlias(
+        $_aliasNameGenerator(db.agencies.ministryId, db.ministries.id),
+      );
+
+  $$MinistriesTableProcessedTableManager get ministryId {
+    final $_column = $_itemColumn<int>('ministry_id')!;
+
+    final manager = $$MinistriesTableTableManager(
+      $_db,
+      $_db.ministries,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_ministryIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static MultiTypedResultKey<$ProjectsTable, List<Project>> _projectsRefsTable(
+    _$AppDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.projects,
+    aliasName: $_aliasNameGenerator(db.agencies.id, db.projects.agencyId),
+  );
+
+  $$ProjectsTableProcessedTableManager get projectsRefs {
+    final manager = $$ProjectsTableTableManager(
+      $_db,
+      $_db.projects,
+    ).filter((f) => f.agencyId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_projectsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$AgenciesTableFilterComposer
+    extends Composer<_$AppDatabase, $AgenciesTable> {
+  $$AgenciesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get code => $composableBuilder(
+    column: $table.code,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get remoteId => $composableBuilder(
+    column: $table.remoteId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isActive => $composableBuilder(
+    column: $table.isActive,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isSynced => $composableBuilder(
+    column: $table.isSynced,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get lastSyncedAt => $composableBuilder(
+    column: $table.lastSyncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$MinistriesTableFilterComposer get ministryId {
+    final $$MinistriesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.ministryId,
+      referencedTable: $db.ministries,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MinistriesTableFilterComposer(
+            $db: $db,
+            $table: $db.ministries,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<bool> projectsRefs(
+    Expression<bool> Function($$ProjectsTableFilterComposer f) f,
+  ) {
+    final $$ProjectsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.projects,
+      getReferencedColumn: (t) => t.agencyId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectsTableFilterComposer(
+            $db: $db,
+            $table: $db.projects,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$AgenciesTableOrderingComposer
+    extends Composer<_$AppDatabase, $AgenciesTable> {
+  $$AgenciesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get code => $composableBuilder(
+    column: $table.code,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get remoteId => $composableBuilder(
+    column: $table.remoteId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isActive => $composableBuilder(
+    column: $table.isActive,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isSynced => $composableBuilder(
+    column: $table.isSynced,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get lastSyncedAt => $composableBuilder(
+    column: $table.lastSyncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$MinistriesTableOrderingComposer get ministryId {
+    final $$MinistriesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.ministryId,
+      referencedTable: $db.ministries,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MinistriesTableOrderingComposer(
+            $db: $db,
+            $table: $db.ministries,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$AgenciesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $AgenciesTable> {
+  $$AgenciesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get code =>
+      $composableBuilder(column: $table.code, builder: (column) => column);
+
+  GeneratedColumn<String> get remoteId =>
+      $composableBuilder(column: $table.remoteId, builder: (column) => column);
+
+  GeneratedColumn<bool> get isActive =>
+      $composableBuilder(column: $table.isActive, builder: (column) => column);
+
+  GeneratedColumn<bool> get isSynced =>
+      $composableBuilder(column: $table.isSynced, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get lastSyncedAt => $composableBuilder(
+    column: $table.lastSyncedAt,
+    builder: (column) => column,
+  );
+
+  $$MinistriesTableAnnotationComposer get ministryId {
+    final $$MinistriesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.ministryId,
+      referencedTable: $db.ministries,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MinistriesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.ministries,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<T> projectsRefs<T extends Object>(
+    Expression<T> Function($$ProjectsTableAnnotationComposer a) f,
+  ) {
+    final $$ProjectsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.projects,
+      getReferencedColumn: (t) => t.agencyId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.projects,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$AgenciesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $AgenciesTable,
+          Agency,
+          $$AgenciesTableFilterComposer,
+          $$AgenciesTableOrderingComposer,
+          $$AgenciesTableAnnotationComposer,
+          $$AgenciesTableCreateCompanionBuilder,
+          $$AgenciesTableUpdateCompanionBuilder,
+          (Agency, $$AgenciesTableReferences),
+          Agency,
+          PrefetchHooks Function({bool ministryId, bool projectsRefs})
+        > {
+  $$AgenciesTableTableManager(_$AppDatabase db, $AgenciesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$AgenciesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$AgenciesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$AgenciesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String?> code = const Value.absent(),
+                Value<String?> remoteId = const Value.absent(),
+                Value<int> ministryId = const Value.absent(),
+                Value<bool> isActive = const Value.absent(),
+                Value<bool> isSynced = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> lastSyncedAt = const Value.absent(),
+              }) => AgenciesCompanion(
+                id: id,
+                name: name,
+                code: code,
+                remoteId: remoteId,
+                ministryId: ministryId,
+                isActive: isActive,
+                isSynced: isSynced,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                lastSyncedAt: lastSyncedAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String name,
+                Value<String?> code = const Value.absent(),
+                Value<String?> remoteId = const Value.absent(),
+                required int ministryId,
+                Value<bool> isActive = const Value.absent(),
+                Value<bool> isSynced = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> lastSyncedAt = const Value.absent(),
+              }) => AgenciesCompanion.insert(
+                id: id,
+                name: name,
+                code: code,
+                remoteId: remoteId,
+                ministryId: ministryId,
+                isActive: isActive,
+                isSynced: isSynced,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                lastSyncedAt: lastSyncedAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$AgenciesTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({ministryId = false, projectsRefs = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [if (projectsRefs) db.projects],
@@ -6841,15 +6844,15 @@ class $$MinistriesTableTableManager
                       dynamic
                     >
                   >(state) {
-                    if (agencyId) {
+                    if (ministryId) {
                       state =
                           state.withJoin(
                                 currentTable: table,
-                                currentColumn: table.agencyId,
-                                referencedTable: $$MinistriesTableReferences
-                                    ._agencyIdTable(db),
-                                referencedColumn: $$MinistriesTableReferences
-                                    ._agencyIdTable(db)
+                                currentColumn: table.ministryId,
+                                referencedTable: $$AgenciesTableReferences
+                                    ._ministryIdTable(db),
+                                referencedColumn: $$AgenciesTableReferences
+                                    ._ministryIdTable(db)
                                     .id,
                               )
                               as T;
@@ -6860,22 +6863,14 @@ class $$MinistriesTableTableManager
               getPrefetchedDataCallback: (items) async {
                 return [
                   if (projectsRefs)
-                    await $_getPrefetchedData<
-                      Ministry,
-                      $MinistriesTable,
-                      Project
-                    >(
+                    await $_getPrefetchedData<Agency, $AgenciesTable, Project>(
                       currentTable: table,
-                      referencedTable: $$MinistriesTableReferences
+                      referencedTable: $$AgenciesTableReferences
                           ._projectsRefsTable(db),
                       managerFromTypedResult: (p0) =>
-                          $$MinistriesTableReferences(
-                            db,
-                            table,
-                            p0,
-                          ).projectsRefs,
+                          $$AgenciesTableReferences(db, table, p0).projectsRefs,
                       referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where((e) => e.ministryId == item.id),
+                          referencedItems.where((e) => e.agencyId == item.id),
                       typedResults: items,
                     ),
                 ];
@@ -6886,19 +6881,19 @@ class $$MinistriesTableTableManager
       );
 }
 
-typedef $$MinistriesTableProcessedTableManager =
+typedef $$AgenciesTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
-      $MinistriesTable,
-      Ministry,
-      $$MinistriesTableFilterComposer,
-      $$MinistriesTableOrderingComposer,
-      $$MinistriesTableAnnotationComposer,
-      $$MinistriesTableCreateCompanionBuilder,
-      $$MinistriesTableUpdateCompanionBuilder,
-      (Ministry, $$MinistriesTableReferences),
-      Ministry,
-      PrefetchHooks Function({bool agencyId, bool projectsRefs})
+      $AgenciesTable,
+      Agency,
+      $$AgenciesTableFilterComposer,
+      $$AgenciesTableOrderingComposer,
+      $$AgenciesTableAnnotationComposer,
+      $$AgenciesTableCreateCompanionBuilder,
+      $$AgenciesTableUpdateCompanionBuilder,
+      (Agency, $$AgenciesTableReferences),
+      Agency,
+      PrefetchHooks Function({bool ministryId, bool projectsRefs})
     >;
 typedef $$GeopoliticalZonesTableCreateCompanionBuilder =
     GeopoliticalZonesCompanion Function({
@@ -9999,10 +9994,10 @@ class $AppDatabaseManager {
   $AppDatabaseManager(this._db);
   $$UsersTableTableManager get users =>
       $$UsersTableTableManager(_db, _db.users);
-  $$AgenciesTableTableManager get agencies =>
-      $$AgenciesTableTableManager(_db, _db.agencies);
   $$MinistriesTableTableManager get ministries =>
       $$MinistriesTableTableManager(_db, _db.ministries);
+  $$AgenciesTableTableManager get agencies =>
+      $$AgenciesTableTableManager(_db, _db.agencies);
   $$GeopoliticalZonesTableTableManager get geopoliticalZones =>
       $$GeopoliticalZonesTableTableManager(_db, _db.geopoliticalZones);
   $$StatesTableTableManager get states =>
