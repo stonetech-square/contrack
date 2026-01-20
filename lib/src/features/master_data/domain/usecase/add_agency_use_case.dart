@@ -1,4 +1,3 @@
-import 'package:contrack/src/core/database/database.dart';
 import 'package:contrack/src/core/usecase/usecase.dart';
 import 'package:contrack/src/features/master_data/domain/repository/master_data_repository.dart';
 import 'package:equatable/equatable.dart';
@@ -12,15 +11,16 @@ class AddAgencyUseCase implements UseCase<Future<void>, AddAgencyParams> {
 
   @override
   Future<void> call(AddAgencyParams params) {
-    return _repository.addAgency(params.agency);
+    return _repository.addAgency(name: params.name, code: params.code);
   }
 }
 
 class AddAgencyParams extends Equatable {
-  final Agency agency;
+  final String name;
+  final String code;
 
-  const AddAgencyParams(this.agency);
+  const AddAgencyParams({required this.name, required this.code});
 
   @override
-  List<Object?> get props => [agency];
+  List<Object?> get props => [name, code];
 }

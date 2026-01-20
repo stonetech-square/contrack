@@ -9,8 +9,12 @@ abstract class MasterDataLocalDatasource {
     String? query,
     int? agencyId,
   });
-  Future<void> addAgency(Agency agency);
-  Future<void> addMinistry(Ministry ministry);
+  Future<Agency> addAgency({required String name, required String code});
+  Future<Ministry> addMinistry({
+    required String name,
+    required String code,
+    required int agencyId,
+  });
   Future<void> updateAgency(Agency agency);
   Future<void> updateMinistry(Ministry ministry);
   Future<void> deleteAgency(Agency agency);
@@ -24,17 +28,40 @@ class MasterDataLocalDatasourceImpl implements MasterDataLocalDatasource {
   final AppDatabase _database;
 
   @override
-  Future<void> addAgency(Agency agency) async {
-    await _database
-        .into(_database.agencies)
-        .insert(agency, mode: InsertMode.insertOrIgnore);
+  Future<Agency> addAgency({required String name, required String code}) async {
+    final companion = AgenciesCompanion.insert(
+      name: name,
+      code: Value(code.toUpperCase()),
+      createdAt: Value(DateTime.now()),
+      updatedAt: Value(DateTime.now()),
+      isActive: const Value(true),
+      isSynced: const Value(false),
+    );
+    final id = await _database.into(_database.agencies).insert(companion);
+    return (await (_database.select(
+      _database.agencies,
+    )..where((t) => t.id.equals(id))).getSingle());
   }
 
   @override
-  Future<void> addMinistry(Ministry ministry) async {
-    await _database
-        .into(_database.ministries)
-        .insert(ministry, mode: InsertMode.insertOrIgnore);
+  Future<Ministry> addMinistry({
+    required String name,
+    required String code,
+    required int agencyId,
+  }) async {
+    final companion = MinistriesCompanion.insert(
+      name: name,
+      code: Value(code.toUpperCase()),
+      agencyId: agencyId,
+      createdAt: Value(DateTime.now()),
+      updatedAt: Value(DateTime.now()),
+      isSynced: const Value(false),
+      isActive: const Value(true),
+    );
+    final id = await _database.into(_database.ministries).insert(companion);
+    return (await (_database.select(
+      _database.ministries,
+    )..where((t) => t.id.equals(id))).getSingle());
   }
 
   @override
@@ -49,12 +76,20 @@ class MasterDataLocalDatasourceImpl implements MasterDataLocalDatasource {
 
   @override
   Future<void> updateAgency(Agency agency) async {
-    await _database.update(_database.agencies).replace(agency);
+    final updatedAgency = agency.copyWith(
+      isSynced: false,
+      updatedAt: DateTime.now(),
+    );
+    await _database.update(_database.agencies).replace(updatedAgency);
   }
 
   @override
   Future<void> updateMinistry(Ministry ministry) async {
-    await _database.update(_database.ministries).replace(ministry);
+    final updatedMinistry = ministry.copyWith(
+      isSynced: false,
+      updatedAt: DateTime.now(),
+    );
+    await _database.update(_database.ministries).replace(updatedMinistry);
   }
 
   @override
@@ -75,6 +110,10 @@ class MasterDataLocalDatasourceImpl implements MasterDataLocalDatasource {
             tbl.code.lower().contains(normalizedQuery),
       );
     }
+
+    baseQuery.orderBy([
+      (tbl) => OrderingTerm(expression: tbl.updatedAt, mode: OrderingMode.desc),
+    ]);
 
     return baseQuery.watch();
   }
@@ -104,6 +143,13 @@ class MasterDataLocalDatasourceImpl implements MasterDataLocalDatasource {
     if (agencyId != null) {
       baseQuery.where(_database.ministries.agencyId.equals(agencyId));
     }
+
+    baseQuery.orderBy([
+      OrderingTerm(
+        expression: _database.ministries.updatedAt,
+        mode: OrderingMode.desc,
+      ),
+    ]);
 
     return baseQuery.watch().map((rows) {
       return rows.map((row) {

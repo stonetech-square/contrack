@@ -124,8 +124,10 @@ class MetadataSyncDelegate {
       code: Value(code),
       isActive: Value(isActive ?? true),
       agencyId: Value(agency.id),
+      isSynced: const Value(true),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      lastSyncedAt: Value(DateTime.now()),
     );
 
     await _database
@@ -205,8 +207,10 @@ class MetadataSyncDelegate {
       name: Value(name),
       code: Value(code),
       isActive: Value(isActive ?? true),
+      isSynced: const Value(true),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      lastSyncedAt: Value(DateTime.now()),
     );
 
     final localRecord = await (_database.select(
@@ -279,5 +283,151 @@ class MetadataSyncDelegate {
     DateTime updatedAt,
   ) {
     return Object.hash(name, code, isActive, createdAt, updatedAt);
+  }
+
+  // Push methods for local-to-remote sync
+
+  Future<List<db.Agency>> getUnsyncedAgencies({required int limit}) async {
+    return (_database.select(_database.agencies)
+          ..where((t) => t.isSynced.equals(false))
+          ..orderBy([
+            (t) => OrderingTerm(expression: t.createdAt, mode: OrderingMode.asc),
+          ])
+          ..limit(limit))
+        .get();
+  }
+
+  Future<List<db.Ministry>> getUnsyncedMinistries({required int limit}) async {
+    return (_database.select(_database.ministries)
+          ..where((t) => t.isSynced.equals(false))
+          ..orderBy([
+            (t) => OrderingTerm(expression: t.createdAt, mode: OrderingMode.asc),
+          ])
+          ..limit(limit))
+        .get();
+  }
+
+  Future<void> pushAgency(db.Agency agency) async {
+    if (agency.remoteId == null) {
+      await _insertAgency(agency);
+    } else {
+      await _updateAgency(agency);
+    }
+  }
+
+  Future<void> _insertAgency(db.Agency agency) async {
+    final response = await _supabase
+        .from('agencies')
+        .insert({
+          'name': agency.name,
+          'code': agency.code,
+          'is_active': agency.isActive,
+          'created_at': agency.createdAt.toIso8601String(),
+          'updated_at': agency.updatedAt.toIso8601String(),
+        })
+        .select('id')
+        .single();
+
+    final remoteId = response['id'] as String;
+
+    await (_database.update(_database.agencies)
+          ..where((t) => t.id.equals(agency.id)))
+        .write(db.AgenciesCompanion(
+          remoteId: Value(remoteId),
+          isSynced: const Value(true),
+          lastSyncedAt: Value(DateTime.now()),
+        ));
+
+    _logger.info('Inserted agency ${agency.name} with remoteId $remoteId');
+  }
+
+  Future<void> _updateAgency(db.Agency agency) async {
+    await _supabase
+        .from('agencies')
+        .update({
+          'name': agency.name,
+          'code': agency.code,
+          'is_active': agency.isActive,
+          'updated_at': agency.updatedAt.toIso8601String(),
+        })
+        .eq('id', agency.remoteId!);
+
+    await (_database.update(_database.agencies)
+          ..where((t) => t.id.equals(agency.id)))
+        .write(db.AgenciesCompanion(
+          isSynced: const Value(true),
+          lastSyncedAt: Value(DateTime.now()),
+        ));
+
+    _logger.info('Updated agency ${agency.name}');
+  }
+
+  Future<void> pushMinistry(db.Ministry ministry) async {
+    // Get the agency's remoteId for the foreign key reference
+    final agency = await (_database.select(_database.agencies)
+          ..where((t) => t.id.equals(ministry.agencyId)))
+        .getSingleOrNull();
+
+    if (agency == null || agency.remoteId == null) {
+      _logger.warning(
+        'Cannot push ministry ${ministry.name}: Agency not found or not synced',
+      );
+      return;
+    }
+
+    if (ministry.remoteId == null) {
+      await _insertMinistry(ministry, agency.remoteId!);
+    } else {
+      await _updateMinistry(ministry, agency.remoteId!);
+    }
+  }
+
+  Future<void> _insertMinistry(db.Ministry ministry, String agencyRemoteId) async {
+    final response = await _supabase
+        .from('ministries')
+        .insert({
+          'name': ministry.name,
+          'code': ministry.code,
+          'agency_id': agencyRemoteId,
+          'is_active': ministry.isActive,
+          'created_at': ministry.createdAt.toIso8601String(),
+          'updated_at': ministry.updatedAt.toIso8601String(),
+        })
+        .select('id')
+        .single();
+
+    final remoteId = response['id'] as String;
+
+    await (_database.update(_database.ministries)
+          ..where((t) => t.id.equals(ministry.id)))
+        .write(db.MinistriesCompanion(
+          remoteId: Value(remoteId),
+          isSynced: const Value(true),
+          lastSyncedAt: Value(DateTime.now()),
+        ));
+
+    _logger.info('Inserted ministry ${ministry.name} with remoteId $remoteId');
+  }
+
+  Future<void> _updateMinistry(db.Ministry ministry, String agencyRemoteId) async {
+    await _supabase
+        .from('ministries')
+        .update({
+          'name': ministry.name,
+          'code': ministry.code,
+          'agency_id': agencyRemoteId,
+          'is_active': ministry.isActive,
+          'updated_at': ministry.updatedAt.toIso8601String(),
+        })
+        .eq('id', ministry.remoteId!);
+
+    await (_database.update(_database.ministries)
+          ..where((t) => t.id.equals(ministry.id)))
+        .write(db.MinistriesCompanion(
+          isSynced: const Value(true),
+          lastSyncedAt: Value(DateTime.now()),
+        ));
+
+    _logger.info('Updated ministry ${ministry.name}');
   }
 }

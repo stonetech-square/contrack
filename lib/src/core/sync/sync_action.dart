@@ -26,6 +26,8 @@ abstract class SyncAction {
   );
 
   Future<void> pushUser(db.User user);
+  Future<void> pushAgency(db.Agency agency);
+  Future<void> pushMinistry(db.Ministry ministry);
 
   Future<void> upsertRemoteGeopoliticalZone(Map<String, dynamic> data);
   Future<void> upsertRemoteMinistry(Map<String, dynamic> data);
@@ -46,6 +48,8 @@ abstract class SyncAction {
 
   Future<List<UnsyncedProject>> getUnsyncedProjects({required int limit});
   Future<List<db.User>> getUnsyncedUsers({required int limit});
+  Future<List<db.Agency>> getUnsyncedAgencies({required int limit});
+  Future<List<db.Ministry>> getUnsyncedMinistries({required int limit});
   Future<db.User?> getActiveSessionUser();
 }
 
@@ -88,6 +92,16 @@ class SyncActionImpl implements SyncAction {
   @override
   Future<void> pushUser(db.User user) {
     return _userDelegate.pushUser(user);
+  }
+
+  @override
+  Future<void> pushAgency(db.Agency agency) {
+    return _metadataDelegate.pushAgency(agency);
+  }
+
+  @override
+  Future<void> pushMinistry(db.Ministry ministry) {
+    return _metadataDelegate.pushMinistry(ministry);
   }
 
   @override
@@ -161,6 +175,16 @@ class SyncActionImpl implements SyncAction {
   @override
   Future<List<db.User>> getUnsyncedUsers({required int limit}) {
     return _userDelegate.getUnsyncedUsers(limit: limit);
+  }
+
+  @override
+  Future<List<db.Agency>> getUnsyncedAgencies({required int limit}) {
+    return _metadataDelegate.getUnsyncedAgencies(limit: limit);
+  }
+
+  @override
+  Future<List<db.Ministry>> getUnsyncedMinistries({required int limit}) {
+    return _metadataDelegate.getUnsyncedMinistries(limit: limit);
   }
 
   @override

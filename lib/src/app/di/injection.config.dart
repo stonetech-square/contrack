@@ -338,6 +338,16 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i689.WatchMinistriesUseCase>(
       () => _i689.WatchMinistriesUseCase(gh<_i939.MasterDataRepository>()),
     );
+    gh.factory<_i1070.MasterDataBloc>(
+      () => _i1070.MasterDataBloc(
+        gh<_i1060.WatchAgenciesUseCase>(),
+        gh<_i689.WatchMinistriesUseCase>(),
+        gh<_i29.AddAgencyUseCase>(),
+        gh<_i826.AddMinistryUseCase>(),
+        gh<_i334.DeleteAgencyUseCase>(),
+        gh<_i599.DeleteMinistryUseCase>(),
+      ),
+    );
     gh.factory<_i948.SyncNowUseCase>(
       () => _i948.SyncNowUseCase(gh<_i454.AppRepository>()),
     );
@@ -428,12 +438,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i835.WatchRecentProjectsWithDetailsUseCase>(),
         gh<_i304.ImportProjectsUseCase>(),
         gh<_i1037.PickProjectFileUseCase>(),
-      ),
-    );
-    gh.factory<_i1070.MasterDataBloc>(
-      () => _i1070.MasterDataBloc(
-        gh<_i1060.WatchAgenciesUseCase>(),
-        gh<_i689.WatchMinistriesUseCase>(),
       ),
     );
     return this;

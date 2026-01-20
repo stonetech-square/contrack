@@ -1,4 +1,3 @@
-import 'package:contrack/src/core/database/database.dart';
 import 'package:contrack/src/core/usecase/usecase.dart';
 import 'package:contrack/src/features/master_data/domain/repository/master_data_repository.dart';
 import 'package:equatable/equatable.dart';
@@ -12,15 +11,28 @@ class AddMinistryUseCase implements UseCase<Future<void>, AddMinistryParams> {
 
   @override
   Future<void> call(AddMinistryParams params) {
-    return _repository.addMinistry(params.ministry);
+    return _repository.addMinistry(
+      name: params.name,
+      code: params.code,
+      agencyId: params.agencyId,
+      agencyRemoteId: params.agencyRemoteId,
+    );
   }
 }
 
 class AddMinistryParams extends Equatable {
-  final Ministry ministry;
+  final String name;
+  final String code;
+  final int agencyId;
+  final String agencyRemoteId;
 
-  const AddMinistryParams(this.ministry);
+  const AddMinistryParams({
+    required this.name,
+    required this.code,
+    required this.agencyId,
+    required this.agencyRemoteId,
+  });
 
   @override
-  List<Object?> get props => [ministry];
+  List<Object?> get props => [name, code, agencyId, agencyRemoteId];
 }

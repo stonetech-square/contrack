@@ -137,9 +137,13 @@ class SyncServiceImpl implements SyncService {
   }
 
   Future<void> _performPushSync() async {
+    // Push agencies first (ministries depend on agencies having remoteId)
+    final agenciesSynced = await _performAgencySync();
+    final ministriesSynced = await _performMinistrySync();
     final projectsSynced = await _performProjectSync();
     final usersSynced = await _performUserSync();
-    final totalSynced = projectsSynced + usersSynced;
+    final totalSynced =
+        agenciesSynced + ministriesSynced + projectsSynced + usersSynced;
 
     if (totalSynced > 0) {
       _logger.info('Pushed $totalSynced items');
@@ -208,6 +212,64 @@ class SyncServiceImpl implements SyncService {
     for (final profile in response) {
       await _syncAction.upsertRemoteProfile(profile);
     }
+  }
+
+  Future<int> _performAgencySync() async {
+    int synced = 0;
+
+    while (!_isDisposed) {
+      final results = await _syncAction.getUnsyncedAgencies(limit: _batchSize);
+
+      if (results.isEmpty) break;
+
+      for (final agency in results) {
+        if (_isDisposed) break;
+
+        try {
+          await _syncAction.pushAgency(agency);
+          synced++;
+        } catch (e, stackTrace) {
+          _logger.severe(
+            'Failed to sync agency ${agency.name}',
+            e,
+            stackTrace,
+          );
+        }
+      }
+
+      if (results.length < _batchSize) break;
+    }
+
+    return synced;
+  }
+
+  Future<int> _performMinistrySync() async {
+    int synced = 0;
+
+    while (!_isDisposed) {
+      final results = await _syncAction.getUnsyncedMinistries(limit: _batchSize);
+
+      if (results.isEmpty) break;
+
+      for (final ministry in results) {
+        if (_isDisposed) break;
+
+        try {
+          await _syncAction.pushMinistry(ministry);
+          synced++;
+        } catch (e, stackTrace) {
+          _logger.severe(
+            'Failed to sync ministry ${ministry.name}',
+            e,
+            stackTrace,
+          );
+        }
+      }
+
+      if (results.length < _batchSize) break;
+    }
+
+    return synced;
   }
 
   Future<int> _performProjectSync() async {

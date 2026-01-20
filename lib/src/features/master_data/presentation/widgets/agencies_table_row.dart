@@ -1,12 +1,26 @@
 import 'package:contrack/src/app/theme/app_colors.dart';
 import 'package:contrack/src/app/theme/app_typography.dart';
 import 'package:contrack/src/core/database/database.dart';
+import 'package:contrack/src/features/master_data/presentation/bloc/master_data_bloc.dart';
+import 'package:contrack/src/features/master_data/presentation/widgets/delete_confirmation_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AgenciesTableRow extends StatelessWidget {
   final Agency agency;
 
   const AgenciesTableRow({super.key, required this.agency});
+
+  Future<void> _onDeletePressed(BuildContext context) async {
+    final confirmed = await DeleteConfirmationDialog.show(
+      context,
+      title: 'Delete Agency',
+      itemName: agency.name,
+    );
+    if (confirmed == true && context.mounted) {
+      context.read<MasterDataBloc>().add(AgencyDeleted(agency));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,9 +68,8 @@ class AgenciesTableRow extends StatelessWidget {
                         color: context.colors.textSubtle,
                       ),
                     ),
-
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () => _onDeletePressed(context),
                       tooltip: 'Delete',
                       icon: Icon(
                         Icons.delete_outline,

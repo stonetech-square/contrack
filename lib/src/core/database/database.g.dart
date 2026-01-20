@@ -807,6 +807,21 @@ class $AgenciesTable extends Agencies with TableInfo<$AgenciesTable, Agency> {
     ),
     defaultValue: const Constant(true),
   );
+  static const VerificationMeta _isSyncedMeta = const VerificationMeta(
+    'isSynced',
+  );
+  @override
+  late final GeneratedColumn<bool> isSynced = GeneratedColumn<bool>(
+    'is_synced',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_synced" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -831,6 +846,17 @@ class $AgenciesTable extends Agencies with TableInfo<$AgenciesTable, Agency> {
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _lastSyncedAtMeta = const VerificationMeta(
+    'lastSyncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> lastSyncedAt = GeneratedColumn<DateTime>(
+    'last_synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -838,8 +864,10 @@ class $AgenciesTable extends Agencies with TableInfo<$AgenciesTable, Agency> {
     code,
     remoteId,
     isActive,
+    isSynced,
     createdAt,
     updatedAt,
+    lastSyncedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -882,6 +910,12 @@ class $AgenciesTable extends Agencies with TableInfo<$AgenciesTable, Agency> {
         isActive.isAcceptableOrUnknown(data['is_active']!, _isActiveMeta),
       );
     }
+    if (data.containsKey('is_synced')) {
+      context.handle(
+        _isSyncedMeta,
+        isSynced.isAcceptableOrUnknown(data['is_synced']!, _isSyncedMeta),
+      );
+    }
     if (data.containsKey('created_at')) {
       context.handle(
         _createdAtMeta,
@@ -892,6 +926,15 @@ class $AgenciesTable extends Agencies with TableInfo<$AgenciesTable, Agency> {
       context.handle(
         _updatedAtMeta,
         updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('last_synced_at')) {
+      context.handle(
+        _lastSyncedAtMeta,
+        lastSyncedAt.isAcceptableOrUnknown(
+          data['last_synced_at']!,
+          _lastSyncedAtMeta,
+        ),
       );
     }
     return context;
@@ -923,6 +966,10 @@ class $AgenciesTable extends Agencies with TableInfo<$AgenciesTable, Agency> {
         DriftSqlType.bool,
         data['${effectivePrefix}is_active'],
       )!,
+      isSynced: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_synced'],
+      )!,
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -931,6 +978,10 @@ class $AgenciesTable extends Agencies with TableInfo<$AgenciesTable, Agency> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
       )!,
+      lastSyncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_synced_at'],
+      ),
     );
   }
 
@@ -946,16 +997,20 @@ class Agency extends DataClass implements Insertable<Agency> {
   final String? code;
   final String? remoteId;
   final bool isActive;
+  final bool isSynced;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final DateTime? lastSyncedAt;
   const Agency({
     required this.id,
     required this.name,
     this.code,
     this.remoteId,
     required this.isActive,
+    required this.isSynced,
     required this.createdAt,
     required this.updatedAt,
+    this.lastSyncedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -969,8 +1024,12 @@ class Agency extends DataClass implements Insertable<Agency> {
       map['remote_id'] = Variable<String>(remoteId);
     }
     map['is_active'] = Variable<bool>(isActive);
+    map['is_synced'] = Variable<bool>(isSynced);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || lastSyncedAt != null) {
+      map['last_synced_at'] = Variable<DateTime>(lastSyncedAt);
+    }
     return map;
   }
 
@@ -983,8 +1042,12 @@ class Agency extends DataClass implements Insertable<Agency> {
           ? const Value.absent()
           : Value(remoteId),
       isActive: Value(isActive),
+      isSynced: Value(isSynced),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      lastSyncedAt: lastSyncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastSyncedAt),
     );
   }
 
@@ -999,8 +1062,10 @@ class Agency extends DataClass implements Insertable<Agency> {
       code: serializer.fromJson<String?>(json['code']),
       remoteId: serializer.fromJson<String?>(json['remoteId']),
       isActive: serializer.fromJson<bool>(json['isActive']),
+      isSynced: serializer.fromJson<bool>(json['isSynced']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      lastSyncedAt: serializer.fromJson<DateTime?>(json['lastSyncedAt']),
     );
   }
   @override
@@ -1012,8 +1077,10 @@ class Agency extends DataClass implements Insertable<Agency> {
       'code': serializer.toJson<String?>(code),
       'remoteId': serializer.toJson<String?>(remoteId),
       'isActive': serializer.toJson<bool>(isActive),
+      'isSynced': serializer.toJson<bool>(isSynced),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'lastSyncedAt': serializer.toJson<DateTime?>(lastSyncedAt),
     };
   }
 
@@ -1023,16 +1090,20 @@ class Agency extends DataClass implements Insertable<Agency> {
     Value<String?> code = const Value.absent(),
     Value<String?> remoteId = const Value.absent(),
     bool? isActive,
+    bool? isSynced,
     DateTime? createdAt,
     DateTime? updatedAt,
+    Value<DateTime?> lastSyncedAt = const Value.absent(),
   }) => Agency(
     id: id ?? this.id,
     name: name ?? this.name,
     code: code.present ? code.value : this.code,
     remoteId: remoteId.present ? remoteId.value : this.remoteId,
     isActive: isActive ?? this.isActive,
+    isSynced: isSynced ?? this.isSynced,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    lastSyncedAt: lastSyncedAt.present ? lastSyncedAt.value : this.lastSyncedAt,
   );
   Agency copyWithCompanion(AgenciesCompanion data) {
     return Agency(
@@ -1041,8 +1112,12 @@ class Agency extends DataClass implements Insertable<Agency> {
       code: data.code.present ? data.code.value : this.code,
       remoteId: data.remoteId.present ? data.remoteId.value : this.remoteId,
       isActive: data.isActive.present ? data.isActive.value : this.isActive,
+      isSynced: data.isSynced.present ? data.isSynced.value : this.isSynced,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      lastSyncedAt: data.lastSyncedAt.present
+          ? data.lastSyncedAt.value
+          : this.lastSyncedAt,
     );
   }
 
@@ -1054,15 +1129,26 @@ class Agency extends DataClass implements Insertable<Agency> {
           ..write('code: $code, ')
           ..write('remoteId: $remoteId, ')
           ..write('isActive: $isActive, ')
+          ..write('isSynced: $isSynced, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('lastSyncedAt: $lastSyncedAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, name, code, remoteId, isActive, createdAt, updatedAt);
+  int get hashCode => Object.hash(
+    id,
+    name,
+    code,
+    remoteId,
+    isActive,
+    isSynced,
+    createdAt,
+    updatedAt,
+    lastSyncedAt,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1072,8 +1158,10 @@ class Agency extends DataClass implements Insertable<Agency> {
           other.code == this.code &&
           other.remoteId == this.remoteId &&
           other.isActive == this.isActive &&
+          other.isSynced == this.isSynced &&
           other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt);
+          other.updatedAt == this.updatedAt &&
+          other.lastSyncedAt == this.lastSyncedAt);
 }
 
 class AgenciesCompanion extends UpdateCompanion<Agency> {
@@ -1082,16 +1170,20 @@ class AgenciesCompanion extends UpdateCompanion<Agency> {
   final Value<String?> code;
   final Value<String?> remoteId;
   final Value<bool> isActive;
+  final Value<bool> isSynced;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
+  final Value<DateTime?> lastSyncedAt;
   const AgenciesCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.code = const Value.absent(),
     this.remoteId = const Value.absent(),
     this.isActive = const Value.absent(),
+    this.isSynced = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.lastSyncedAt = const Value.absent(),
   });
   AgenciesCompanion.insert({
     this.id = const Value.absent(),
@@ -1099,8 +1191,10 @@ class AgenciesCompanion extends UpdateCompanion<Agency> {
     this.code = const Value.absent(),
     this.remoteId = const Value.absent(),
     this.isActive = const Value.absent(),
+    this.isSynced = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.lastSyncedAt = const Value.absent(),
   }) : name = Value(name);
   static Insertable<Agency> custom({
     Expression<int>? id,
@@ -1108,8 +1202,10 @@ class AgenciesCompanion extends UpdateCompanion<Agency> {
     Expression<String>? code,
     Expression<String>? remoteId,
     Expression<bool>? isActive,
+    Expression<bool>? isSynced,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<DateTime>? lastSyncedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1117,8 +1213,10 @@ class AgenciesCompanion extends UpdateCompanion<Agency> {
       if (code != null) 'code': code,
       if (remoteId != null) 'remote_id': remoteId,
       if (isActive != null) 'is_active': isActive,
+      if (isSynced != null) 'is_synced': isSynced,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (lastSyncedAt != null) 'last_synced_at': lastSyncedAt,
     });
   }
 
@@ -1128,8 +1226,10 @@ class AgenciesCompanion extends UpdateCompanion<Agency> {
     Value<String?>? code,
     Value<String?>? remoteId,
     Value<bool>? isActive,
+    Value<bool>? isSynced,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
+    Value<DateTime?>? lastSyncedAt,
   }) {
     return AgenciesCompanion(
       id: id ?? this.id,
@@ -1137,8 +1237,10 @@ class AgenciesCompanion extends UpdateCompanion<Agency> {
       code: code ?? this.code,
       remoteId: remoteId ?? this.remoteId,
       isActive: isActive ?? this.isActive,
+      isSynced: isSynced ?? this.isSynced,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      lastSyncedAt: lastSyncedAt ?? this.lastSyncedAt,
     );
   }
 
@@ -1160,11 +1262,17 @@ class AgenciesCompanion extends UpdateCompanion<Agency> {
     if (isActive.present) {
       map['is_active'] = Variable<bool>(isActive.value);
     }
+    if (isSynced.present) {
+      map['is_synced'] = Variable<bool>(isSynced.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (lastSyncedAt.present) {
+      map['last_synced_at'] = Variable<DateTime>(lastSyncedAt.value);
     }
     return map;
   }
@@ -1177,8 +1285,10 @@ class AgenciesCompanion extends UpdateCompanion<Agency> {
           ..write('code: $code, ')
           ..write('remoteId: $remoteId, ')
           ..write('isActive: $isActive, ')
+          ..write('isSynced: $isSynced, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('lastSyncedAt: $lastSyncedAt')
           ..write(')'))
         .toString();
   }
@@ -1252,7 +1362,7 @@ class $MinistriesTable extends Ministries
     type: DriftSqlType.int,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES agencies (id)',
+      'REFERENCES agencies (id) ON DELETE CASCADE',
     ),
   );
   static const VerificationMeta _isActiveMeta = const VerificationMeta(
@@ -1269,6 +1379,21 @@ class $MinistriesTable extends Ministries
       'CHECK ("is_active" IN (0, 1))',
     ),
     defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _isSyncedMeta = const VerificationMeta(
+    'isSynced',
+  );
+  @override
+  late final GeneratedColumn<bool> isSynced = GeneratedColumn<bool>(
+    'is_synced',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_synced" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
   );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
@@ -1294,6 +1419,17 @@ class $MinistriesTable extends Ministries
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _lastSyncedAtMeta = const VerificationMeta(
+    'lastSyncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> lastSyncedAt = GeneratedColumn<DateTime>(
+    'last_synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -1302,8 +1438,10 @@ class $MinistriesTable extends Ministries
     remoteId,
     agencyId,
     isActive,
+    isSynced,
     createdAt,
     updatedAt,
+    lastSyncedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1354,6 +1492,12 @@ class $MinistriesTable extends Ministries
         isActive.isAcceptableOrUnknown(data['is_active']!, _isActiveMeta),
       );
     }
+    if (data.containsKey('is_synced')) {
+      context.handle(
+        _isSyncedMeta,
+        isSynced.isAcceptableOrUnknown(data['is_synced']!, _isSyncedMeta),
+      );
+    }
     if (data.containsKey('created_at')) {
       context.handle(
         _createdAtMeta,
@@ -1364,6 +1508,15 @@ class $MinistriesTable extends Ministries
       context.handle(
         _updatedAtMeta,
         updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('last_synced_at')) {
+      context.handle(
+        _lastSyncedAtMeta,
+        lastSyncedAt.isAcceptableOrUnknown(
+          data['last_synced_at']!,
+          _lastSyncedAtMeta,
+        ),
       );
     }
     return context;
@@ -1399,6 +1552,10 @@ class $MinistriesTable extends Ministries
         DriftSqlType.bool,
         data['${effectivePrefix}is_active'],
       )!,
+      isSynced: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_synced'],
+      )!,
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -1407,6 +1564,10 @@ class $MinistriesTable extends Ministries
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
       )!,
+      lastSyncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_synced_at'],
+      ),
     );
   }
 
@@ -1423,8 +1584,10 @@ class Ministry extends DataClass implements Insertable<Ministry> {
   final String? remoteId;
   final int agencyId;
   final bool isActive;
+  final bool isSynced;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final DateTime? lastSyncedAt;
   const Ministry({
     required this.id,
     required this.name,
@@ -1432,8 +1595,10 @@ class Ministry extends DataClass implements Insertable<Ministry> {
     this.remoteId,
     required this.agencyId,
     required this.isActive,
+    required this.isSynced,
     required this.createdAt,
     required this.updatedAt,
+    this.lastSyncedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1448,8 +1613,12 @@ class Ministry extends DataClass implements Insertable<Ministry> {
     }
     map['agency_id'] = Variable<int>(agencyId);
     map['is_active'] = Variable<bool>(isActive);
+    map['is_synced'] = Variable<bool>(isSynced);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || lastSyncedAt != null) {
+      map['last_synced_at'] = Variable<DateTime>(lastSyncedAt);
+    }
     return map;
   }
 
@@ -1463,8 +1632,12 @@ class Ministry extends DataClass implements Insertable<Ministry> {
           : Value(remoteId),
       agencyId: Value(agencyId),
       isActive: Value(isActive),
+      isSynced: Value(isSynced),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      lastSyncedAt: lastSyncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastSyncedAt),
     );
   }
 
@@ -1480,8 +1653,10 @@ class Ministry extends DataClass implements Insertable<Ministry> {
       remoteId: serializer.fromJson<String?>(json['remoteId']),
       agencyId: serializer.fromJson<int>(json['agencyId']),
       isActive: serializer.fromJson<bool>(json['isActive']),
+      isSynced: serializer.fromJson<bool>(json['isSynced']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      lastSyncedAt: serializer.fromJson<DateTime?>(json['lastSyncedAt']),
     );
   }
   @override
@@ -1494,8 +1669,10 @@ class Ministry extends DataClass implements Insertable<Ministry> {
       'remoteId': serializer.toJson<String?>(remoteId),
       'agencyId': serializer.toJson<int>(agencyId),
       'isActive': serializer.toJson<bool>(isActive),
+      'isSynced': serializer.toJson<bool>(isSynced),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'lastSyncedAt': serializer.toJson<DateTime?>(lastSyncedAt),
     };
   }
 
@@ -1506,8 +1683,10 @@ class Ministry extends DataClass implements Insertable<Ministry> {
     Value<String?> remoteId = const Value.absent(),
     int? agencyId,
     bool? isActive,
+    bool? isSynced,
     DateTime? createdAt,
     DateTime? updatedAt,
+    Value<DateTime?> lastSyncedAt = const Value.absent(),
   }) => Ministry(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -1515,8 +1694,10 @@ class Ministry extends DataClass implements Insertable<Ministry> {
     remoteId: remoteId.present ? remoteId.value : this.remoteId,
     agencyId: agencyId ?? this.agencyId,
     isActive: isActive ?? this.isActive,
+    isSynced: isSynced ?? this.isSynced,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    lastSyncedAt: lastSyncedAt.present ? lastSyncedAt.value : this.lastSyncedAt,
   );
   Ministry copyWithCompanion(MinistriesCompanion data) {
     return Ministry(
@@ -1526,8 +1707,12 @@ class Ministry extends DataClass implements Insertable<Ministry> {
       remoteId: data.remoteId.present ? data.remoteId.value : this.remoteId,
       agencyId: data.agencyId.present ? data.agencyId.value : this.agencyId,
       isActive: data.isActive.present ? data.isActive.value : this.isActive,
+      isSynced: data.isSynced.present ? data.isSynced.value : this.isSynced,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      lastSyncedAt: data.lastSyncedAt.present
+          ? data.lastSyncedAt.value
+          : this.lastSyncedAt,
     );
   }
 
@@ -1540,8 +1725,10 @@ class Ministry extends DataClass implements Insertable<Ministry> {
           ..write('remoteId: $remoteId, ')
           ..write('agencyId: $agencyId, ')
           ..write('isActive: $isActive, ')
+          ..write('isSynced: $isSynced, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('lastSyncedAt: $lastSyncedAt')
           ..write(')'))
         .toString();
   }
@@ -1554,8 +1741,10 @@ class Ministry extends DataClass implements Insertable<Ministry> {
     remoteId,
     agencyId,
     isActive,
+    isSynced,
     createdAt,
     updatedAt,
+    lastSyncedAt,
   );
   @override
   bool operator ==(Object other) =>
@@ -1567,8 +1756,10 @@ class Ministry extends DataClass implements Insertable<Ministry> {
           other.remoteId == this.remoteId &&
           other.agencyId == this.agencyId &&
           other.isActive == this.isActive &&
+          other.isSynced == this.isSynced &&
           other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt);
+          other.updatedAt == this.updatedAt &&
+          other.lastSyncedAt == this.lastSyncedAt);
 }
 
 class MinistriesCompanion extends UpdateCompanion<Ministry> {
@@ -1578,8 +1769,10 @@ class MinistriesCompanion extends UpdateCompanion<Ministry> {
   final Value<String?> remoteId;
   final Value<int> agencyId;
   final Value<bool> isActive;
+  final Value<bool> isSynced;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
+  final Value<DateTime?> lastSyncedAt;
   const MinistriesCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -1587,8 +1780,10 @@ class MinistriesCompanion extends UpdateCompanion<Ministry> {
     this.remoteId = const Value.absent(),
     this.agencyId = const Value.absent(),
     this.isActive = const Value.absent(),
+    this.isSynced = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.lastSyncedAt = const Value.absent(),
   });
   MinistriesCompanion.insert({
     this.id = const Value.absent(),
@@ -1597,8 +1792,10 @@ class MinistriesCompanion extends UpdateCompanion<Ministry> {
     this.remoteId = const Value.absent(),
     required int agencyId,
     this.isActive = const Value.absent(),
+    this.isSynced = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.lastSyncedAt = const Value.absent(),
   }) : name = Value(name),
        agencyId = Value(agencyId);
   static Insertable<Ministry> custom({
@@ -1608,8 +1805,10 @@ class MinistriesCompanion extends UpdateCompanion<Ministry> {
     Expression<String>? remoteId,
     Expression<int>? agencyId,
     Expression<bool>? isActive,
+    Expression<bool>? isSynced,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<DateTime>? lastSyncedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1618,8 +1817,10 @@ class MinistriesCompanion extends UpdateCompanion<Ministry> {
       if (remoteId != null) 'remote_id': remoteId,
       if (agencyId != null) 'agency_id': agencyId,
       if (isActive != null) 'is_active': isActive,
+      if (isSynced != null) 'is_synced': isSynced,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (lastSyncedAt != null) 'last_synced_at': lastSyncedAt,
     });
   }
 
@@ -1630,8 +1831,10 @@ class MinistriesCompanion extends UpdateCompanion<Ministry> {
     Value<String?>? remoteId,
     Value<int>? agencyId,
     Value<bool>? isActive,
+    Value<bool>? isSynced,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
+    Value<DateTime?>? lastSyncedAt,
   }) {
     return MinistriesCompanion(
       id: id ?? this.id,
@@ -1640,8 +1843,10 @@ class MinistriesCompanion extends UpdateCompanion<Ministry> {
       remoteId: remoteId ?? this.remoteId,
       agencyId: agencyId ?? this.agencyId,
       isActive: isActive ?? this.isActive,
+      isSynced: isSynced ?? this.isSynced,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      lastSyncedAt: lastSyncedAt ?? this.lastSyncedAt,
     );
   }
 
@@ -1666,11 +1871,17 @@ class MinistriesCompanion extends UpdateCompanion<Ministry> {
     if (isActive.present) {
       map['is_active'] = Variable<bool>(isActive.value);
     }
+    if (isSynced.present) {
+      map['is_synced'] = Variable<bool>(isSynced.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (lastSyncedAt.present) {
+      map['last_synced_at'] = Variable<DateTime>(lastSyncedAt.value);
     }
     return map;
   }
@@ -1684,8 +1895,10 @@ class MinistriesCompanion extends UpdateCompanion<Ministry> {
           ..write('remoteId: $remoteId, ')
           ..write('agencyId: $agencyId, ')
           ..write('isActive: $isActive, ')
+          ..write('isSynced: $isSynced, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('lastSyncedAt: $lastSyncedAt')
           ..write(')'))
         .toString();
   }
@@ -4900,6 +5113,13 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
     WritePropagation(
       on: TableUpdateQuery.onTableName(
+        'agencies',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('ministries', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
         'projects',
         limitUpdateKind: UpdateKind.delete,
       ),
@@ -5719,8 +5939,10 @@ typedef $$AgenciesTableCreateCompanionBuilder =
       Value<String?> code,
       Value<String?> remoteId,
       Value<bool> isActive,
+      Value<bool> isSynced,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<DateTime?> lastSyncedAt,
     });
 typedef $$AgenciesTableUpdateCompanionBuilder =
     AgenciesCompanion Function({
@@ -5729,8 +5951,10 @@ typedef $$AgenciesTableUpdateCompanionBuilder =
       Value<String?> code,
       Value<String?> remoteId,
       Value<bool> isActive,
+      Value<bool> isSynced,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<DateTime?> lastSyncedAt,
     });
 
 final class $$AgenciesTableReferences
@@ -5809,6 +6033,11 @@ class $$AgenciesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<bool> get isSynced => $composableBuilder(
+    column: $table.isSynced,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnFilters(column),
@@ -5816,6 +6045,11 @@ class $$AgenciesTableFilterComposer
 
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get lastSyncedAt => $composableBuilder(
+    column: $table.lastSyncedAt,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -5904,6 +6138,11 @@ class $$AgenciesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<bool> get isSynced => $composableBuilder(
+    column: $table.isSynced,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -5911,6 +6150,11 @@ class $$AgenciesTableOrderingComposer
 
   ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get lastSyncedAt => $composableBuilder(
+    column: $table.lastSyncedAt,
     builder: (column) => ColumnOrderings(column),
   );
 }
@@ -5939,11 +6183,19 @@ class $$AgenciesTableAnnotationComposer
   GeneratedColumn<bool> get isActive =>
       $composableBuilder(column: $table.isActive, builder: (column) => column);
 
+  GeneratedColumn<bool> get isSynced =>
+      $composableBuilder(column: $table.isSynced, builder: (column) => column);
+
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get lastSyncedAt => $composableBuilder(
+    column: $table.lastSyncedAt,
+    builder: (column) => column,
+  );
 
   Expression<T> ministriesRefs<T extends Object>(
     Expression<T> Function($$MinistriesTableAnnotationComposer a) f,
@@ -6029,16 +6281,20 @@ class $$AgenciesTableTableManager
                 Value<String?> code = const Value.absent(),
                 Value<String?> remoteId = const Value.absent(),
                 Value<bool> isActive = const Value.absent(),
+                Value<bool> isSynced = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> lastSyncedAt = const Value.absent(),
               }) => AgenciesCompanion(
                 id: id,
                 name: name,
                 code: code,
                 remoteId: remoteId,
                 isActive: isActive,
+                isSynced: isSynced,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                lastSyncedAt: lastSyncedAt,
               ),
           createCompanionCallback:
               ({
@@ -6047,16 +6303,20 @@ class $$AgenciesTableTableManager
                 Value<String?> code = const Value.absent(),
                 Value<String?> remoteId = const Value.absent(),
                 Value<bool> isActive = const Value.absent(),
+                Value<bool> isSynced = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> lastSyncedAt = const Value.absent(),
               }) => AgenciesCompanion.insert(
                 id: id,
                 name: name,
                 code: code,
                 remoteId: remoteId,
                 isActive: isActive,
+                isSynced: isSynced,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                lastSyncedAt: lastSyncedAt,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -6149,8 +6409,10 @@ typedef $$MinistriesTableCreateCompanionBuilder =
       Value<String?> remoteId,
       required int agencyId,
       Value<bool> isActive,
+      Value<bool> isSynced,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<DateTime?> lastSyncedAt,
     });
 typedef $$MinistriesTableUpdateCompanionBuilder =
     MinistriesCompanion Function({
@@ -6160,8 +6422,10 @@ typedef $$MinistriesTableUpdateCompanionBuilder =
       Value<String?> remoteId,
       Value<int> agencyId,
       Value<bool> isActive,
+      Value<bool> isSynced,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<DateTime?> lastSyncedAt,
     });
 
 final class $$MinistriesTableReferences
@@ -6241,6 +6505,11 @@ class $$MinistriesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<bool> get isSynced => $composableBuilder(
+    column: $table.isSynced,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnFilters(column),
@@ -6248,6 +6517,11 @@ class $$MinistriesTableFilterComposer
 
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get lastSyncedAt => $composableBuilder(
+    column: $table.lastSyncedAt,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -6334,6 +6608,11 @@ class $$MinistriesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<bool> get isSynced => $composableBuilder(
+    column: $table.isSynced,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -6341,6 +6620,11 @@ class $$MinistriesTableOrderingComposer
 
   ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get lastSyncedAt => $composableBuilder(
+    column: $table.lastSyncedAt,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -6392,11 +6676,19 @@ class $$MinistriesTableAnnotationComposer
   GeneratedColumn<bool> get isActive =>
       $composableBuilder(column: $table.isActive, builder: (column) => column);
 
+  GeneratedColumn<bool> get isSynced =>
+      $composableBuilder(column: $table.isSynced, builder: (column) => column);
+
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get lastSyncedAt => $composableBuilder(
+    column: $table.lastSyncedAt,
+    builder: (column) => column,
+  );
 
   $$AgenciesTableAnnotationComposer get agencyId {
     final $$AgenciesTableAnnotationComposer composer = $composerBuilder(
@@ -6481,8 +6773,10 @@ class $$MinistriesTableTableManager
                 Value<String?> remoteId = const Value.absent(),
                 Value<int> agencyId = const Value.absent(),
                 Value<bool> isActive = const Value.absent(),
+                Value<bool> isSynced = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> lastSyncedAt = const Value.absent(),
               }) => MinistriesCompanion(
                 id: id,
                 name: name,
@@ -6490,8 +6784,10 @@ class $$MinistriesTableTableManager
                 remoteId: remoteId,
                 agencyId: agencyId,
                 isActive: isActive,
+                isSynced: isSynced,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                lastSyncedAt: lastSyncedAt,
               ),
           createCompanionCallback:
               ({
@@ -6501,8 +6797,10 @@ class $$MinistriesTableTableManager
                 Value<String?> remoteId = const Value.absent(),
                 required int agencyId,
                 Value<bool> isActive = const Value.absent(),
+                Value<bool> isSynced = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> lastSyncedAt = const Value.absent(),
               }) => MinistriesCompanion.insert(
                 id: id,
                 name: name,
@@ -6510,8 +6808,10 @@ class $$MinistriesTableTableManager
                 remoteId: remoteId,
                 agencyId: agencyId,
                 isActive: isActive,
+                isSynced: isSynced,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                lastSyncedAt: lastSyncedAt,
               ),
           withReferenceMapper: (p0) => p0
               .map(

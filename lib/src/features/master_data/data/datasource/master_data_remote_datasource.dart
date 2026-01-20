@@ -4,12 +4,13 @@ import 'package:injectable/injectable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract class MasterDataRemoteDatasource {
-  Future<void> addAgency(Agency agency);
-  Future<void> addMinistry(MinistryWithAgency ministryWithAgency);
+  Future<String> addAgency(Agency agency);
+  Future<String> addMinistry(MinistryWithAgency ministryWithAgency);
   Future<void> updateAgency(Agency agency);
   Future<void> updateMinistry(MinistryWithAgency ministryWithAgency);
   Future<void> deleteAgency(Agency agency);
   Future<void> deleteMinistry(Ministry ministry);
+  Future<String?> getAgencyRemoteIdByCode(String? code);
 }
 
 @LazySingleton(as: MasterDataRemoteDatasource)
@@ -19,18 +20,23 @@ class MasterDataRemoteDatasourceImpl implements MasterDataRemoteDatasource {
   MasterDataRemoteDatasourceImpl(this._supabase);
 
   @override
-  Future<void> addAgency(Agency agency) async {
+  Future<String> addAgency(Agency agency) async {
     final data = {
       if (agency.remoteId != null) 'id': agency.remoteId,
       'name': agency.name,
       'code': agency.code,
       'is_active': agency.isActive,
     };
-    await _supabase.from('agencies').insert(data);
+    final result = await _supabase
+        .from('agencies')
+        .insert(data)
+        .select('id')
+        .single();
+    return result['id'];
   }
 
   @override
-  Future<void> addMinistry(MinistryWithAgency ministryWithAgency) async {
+  Future<String> addMinistry(MinistryWithAgency ministryWithAgency) async {
     final ministry = ministryWithAgency.ministry;
     final agency = ministryWithAgency.agency;
     final agencyRemoteId = agency.remoteId;
@@ -46,7 +52,12 @@ class MasterDataRemoteDatasourceImpl implements MasterDataRemoteDatasource {
       'is_active': ministry.isActive,
       'agency_id': agencyRemoteId,
     };
-    await _supabase.from('ministries').insert(data);
+    final result = await _supabase
+        .from('ministries')
+        .insert(data)
+        .select('id')
+        .single();
+    return result['id'];
   }
 
   @override
@@ -94,5 +105,16 @@ class MasterDataRemoteDatasourceImpl implements MasterDataRemoteDatasource {
   Future<void> deleteMinistry(Ministry ministry) async {
     if (ministry.remoteId == null) return;
     await _supabase.from('ministries').delete().eq('id', ministry.remoteId!);
+  }
+
+  @override
+  Future<String?> getAgencyRemoteIdByCode(String? code) async {
+    if (code == null || code.isEmpty) return null;
+    final result = await _supabase
+        .from('agencies')
+        .select('id')
+        .eq('code', code)
+        .maybeSingle();
+    return result?['id'] as String?;
   }
 }

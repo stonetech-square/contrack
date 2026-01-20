@@ -2,6 +2,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:contrack/src/app/presentation/widgets/widgets.dart';
 import 'package:contrack/src/app/theme/app_colors.dart';
 import 'package:contrack/src/features/master_data/presentation/bloc/master_data_bloc.dart';
+import 'package:contrack/src/features/master_data/presentation/widgets/add_agency_dialog.dart';
+import 'package:contrack/src/features/master_data/presentation/widgets/add_ministry_dialog.dart';
 import 'package:contrack/src/features/master_data/presentation/widgets/agencies_table.dart';
 import 'package:contrack/src/features/master_data/presentation/widgets/master_data_search_field.dart';
 import 'package:contrack/src/features/master_data/presentation/widgets/master_data_section_header.dart';
@@ -65,10 +67,16 @@ class _MasterDataViewState extends State<MasterDataView> {
                     ? context.colors.onPrimary
                     : context.colors.onSurfaceVariant,
               ),
-              onPressed: () {
+              onPressed: () async {
                 setState(() {
                   _expandedIndex = 0;
                 });
+                final result = await AddAgencyDialog.show(context);
+                if (result != null && context.mounted) {
+                  context.read<MasterDataBloc>().add(
+                    AgencyAdded(name: result.name, code: result.code),
+                  );
+                }
               },
               icon: const Icon(Icons.add),
               label: const Text('Add Agency'),
@@ -92,10 +100,26 @@ class _MasterDataViewState extends State<MasterDataView> {
                     ? context.colors.onPrimary
                     : context.colors.onSurfaceVariant,
               ),
-              onPressed: () {
+              onPressed: () async {
                 setState(() {
                   _expandedIndex = 1;
                 });
+                final state = context.read<MasterDataBloc>().state;
+                final result = await AddMinistryDialog.show(
+                  context,
+                  agencies: state.agencies,
+                );
+
+                if (result != null && context.mounted) {
+                  context.read<MasterDataBloc>().add(
+                    MinistryAdded(
+                      name: result.name,
+                      code: result.code,
+                      agencyId: result.agencyId,
+                      agencyRemoteId: result.agencyRemoteId,
+                    ),
+                  );
+                }
               },
               icon: const Icon(Icons.add),
               label: const Text('Add Ministry'),
