@@ -52,6 +52,32 @@ import '../../features/dashboard/domain/usecase/watch_recent_projects_use_case.d
     as _i835;
 import '../../features/dashboard/presentation/bloc/dashboard_bloc.dart'
     as _i652;
+import '../../features/master_data/data/datasource/master_data_local_datasource.dart'
+    as _i669;
+import '../../features/master_data/data/datasource/master_data_remote_datasource.dart'
+    as _i744;
+import '../../features/master_data/data/repository/master_data_repository_impl.dart'
+    as _i706;
+import '../../features/master_data/domain/repository/master_data_repository.dart'
+    as _i939;
+import '../../features/master_data/domain/usecase/add_agency_use_case.dart'
+    as _i29;
+import '../../features/master_data/domain/usecase/add_ministry_use_case.dart'
+    as _i826;
+import '../../features/master_data/domain/usecase/delete_agency_use_case.dart'
+    as _i334;
+import '../../features/master_data/domain/usecase/delete_ministry_use_case.dart'
+    as _i599;
+import '../../features/master_data/domain/usecase/update_agency_use_case.dart'
+    as _i752;
+import '../../features/master_data/domain/usecase/update_ministry_use_case.dart'
+    as _i73;
+import '../../features/master_data/domain/usecase/watch_agencies_use_case.dart'
+    as _i1060;
+import '../../features/master_data/domain/usecase/watch_ministries_use_case.dart'
+    as _i689;
+import '../../features/master_data/presentation/bloc/master_data_bloc.dart'
+    as _i1070;
 import '../../features/projects/data/datasource/projects_local_datasource.dart'
     as _i465;
 import '../../features/projects/data/repository/projects_repository_impl.dart'
@@ -138,6 +164,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i445.ProjectExportService>(
       () => _i726.ProjectExportServiceImpl(),
     );
+    gh.lazySingleton<_i669.MasterDataLocalDatasource>(
+      () => _i669.MasterDataLocalDatasourceImpl(gh<_i339.AppDatabase>()),
+    );
     gh.lazySingleton<_i820.ProjectImportService>(
       () => _i978.ProjectImportServiceImpl(),
     );
@@ -148,6 +177,9 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i704.FilePickerServiceImpl(),
     );
     gh.lazySingleton<_i892.NetworkInfo>(() => _i892.NetworkInfoImpl());
+    gh.lazySingleton<_i744.MasterDataRemoteDatasource>(
+      () => _i744.MasterDataRemoteDatasourceImpl(gh<_i454.SupabaseClient>()),
+    );
     gh.lazySingleton<_i175.AuthRemoteDataSource>(
       () => _i175.AuthRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
     );
@@ -194,6 +226,13 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i26.UserSession>(),
         gh<_i445.ProjectExportService>(),
         gh<_i355.AuditService>(),
+      ),
+    );
+    gh.lazySingleton<_i939.MasterDataRepository>(
+      () => _i706.MasterDataRepositoryImpl(
+        gh<_i669.MasterDataLocalDatasource>(),
+        gh<_i744.MasterDataRemoteDatasource>(),
+        gh<_i26.UserSession>(),
       ),
     );
     gh.lazySingleton<_i103.SyncService>(
@@ -274,6 +313,30 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i135.SignInBloc>(
       () => _i135.SignInBloc(gh<_i277.SignInUseCase>()),
+    );
+    gh.lazySingleton<_i29.AddAgencyUseCase>(
+      () => _i29.AddAgencyUseCase(gh<_i939.MasterDataRepository>()),
+    );
+    gh.lazySingleton<_i826.AddMinistryUseCase>(
+      () => _i826.AddMinistryUseCase(gh<_i939.MasterDataRepository>()),
+    );
+    gh.lazySingleton<_i334.DeleteAgencyUseCase>(
+      () => _i334.DeleteAgencyUseCase(gh<_i939.MasterDataRepository>()),
+    );
+    gh.lazySingleton<_i599.DeleteMinistryUseCase>(
+      () => _i599.DeleteMinistryUseCase(gh<_i939.MasterDataRepository>()),
+    );
+    gh.lazySingleton<_i752.UpdateAgencyUseCase>(
+      () => _i752.UpdateAgencyUseCase(gh<_i939.MasterDataRepository>()),
+    );
+    gh.lazySingleton<_i73.UpdateMinistryUseCase>(
+      () => _i73.UpdateMinistryUseCase(gh<_i939.MasterDataRepository>()),
+    );
+    gh.lazySingleton<_i1060.WatchAgenciesUseCase>(
+      () => _i1060.WatchAgenciesUseCase(gh<_i939.MasterDataRepository>()),
+    );
+    gh.lazySingleton<_i689.WatchMinistriesUseCase>(
+      () => _i689.WatchMinistriesUseCase(gh<_i939.MasterDataRepository>()),
     );
     gh.factory<_i948.SyncNowUseCase>(
       () => _i948.SyncNowUseCase(gh<_i454.AppRepository>()),
@@ -365,6 +428,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i835.WatchRecentProjectsWithDetailsUseCase>(),
         gh<_i304.ImportProjectsUseCase>(),
         gh<_i1037.PickProjectFileUseCase>(),
+      ),
+    );
+    gh.factory<_i1070.MasterDataBloc>(
+      () => _i1070.MasterDataBloc(
+        gh<_i1060.WatchAgenciesUseCase>(),
+        gh<_i689.WatchMinistriesUseCase>(),
       ),
     );
     return this;
