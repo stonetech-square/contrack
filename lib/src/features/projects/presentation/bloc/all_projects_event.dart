@@ -50,3 +50,7 @@ class AllProjectsProjectDeleted extends AllProjectsEvent {
   @override
   List<Object?> get props => [code];
 }
+
+class AllProjectsImportRequested extends AllProjectsEvent {
+  const AllProjectsImportRequested();
+}

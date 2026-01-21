@@ -53,7 +53,6 @@ class DatabaseSeeder {
 
       final states = await Future.wait(
         (response as List).map((json) async {
-          // Resolve local zone ID from remote zone ID
           final remoteZoneId = json['zone_id'] as String;
           final localZone =
               await (database.geopoliticalZones.select()
@@ -123,7 +122,6 @@ class DatabaseSeeder {
 
       final agencies = await Future.wait(
         (response as List).map((json) async {
-          // Resolve local ministry ID from remote ministry ID
           final remoteMinistryId = json['ministry_id'] as String;
           final localMinistry =
               await (database.ministries.select()

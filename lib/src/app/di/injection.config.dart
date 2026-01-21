@@ -343,13 +343,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i689.WatchMinistriesUseCase>(
       () => _i689.WatchMinistriesUseCase(gh<_i939.MasterDataRepository>()),
     );
-    gh.factory<_i259.AllProjectsBloc>(
-      () => _i259.AllProjectsBloc(
-        gh<_i1001.WatchProjectsForUserUseCase>(),
-        gh<_i471.ExportAllProjectsUseCase>(),
-        gh<_i1.DeleteProjectUseCase>(),
-      ),
-    );
     gh.factory<_i948.SyncNowUseCase>(
       () => _i948.SyncNowUseCase(gh<_i454.AppRepository>()),
     );
@@ -421,6 +414,15 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i108.ChangeUserRoleUseCase>(),
       ),
     );
+    gh.factory<_i259.AllProjectsBloc>(
+      () => _i259.AllProjectsBloc(
+        gh<_i1001.WatchProjectsForUserUseCase>(),
+        gh<_i471.ExportAllProjectsUseCase>(),
+        gh<_i1.DeleteProjectUseCase>(),
+        gh<_i304.ImportProjectsUseCase>(),
+        gh<_i1037.PickProjectFileUseCase>(),
+      ),
+    );
     gh.factory<_i205.ProjectBloc>(
       () => _i205.ProjectBloc(
         gh<_i1039.GetProjectByCodeUseCase>(),
@@ -446,6 +448,7 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i835.WatchRecentProjectsWithDetailsUseCase>(),
         gh<_i304.ImportProjectsUseCase>(),
         gh<_i1037.PickProjectFileUseCase>(),
+        gh<_i471.ExportAllProjectsUseCase>(),
       ),
     );
     return this;

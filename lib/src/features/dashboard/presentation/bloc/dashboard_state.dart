@@ -1,5 +1,5 @@
-
 part of 'dashboard_bloc.dart';
+
 @freezed
 sealed class DashboardState with _$DashboardState {
   const factory DashboardState({
@@ -9,6 +9,8 @@ sealed class DashboardState with _$DashboardState {
     String? error,
     String? userId,
     List<Project>? importedProjects,
+    @Default(false) bool isExporting,
+    String? exportFilePath,
   }) = _DashboardState;
 
   factory DashboardState.empty() => DashboardState(
@@ -18,5 +20,7 @@ sealed class DashboardState with _$DashboardState {
     isLoading: false,
     userId: null,
     importedProjects: null,
+    isExporting: false,
+    exportFilePath: null,
   );
 }

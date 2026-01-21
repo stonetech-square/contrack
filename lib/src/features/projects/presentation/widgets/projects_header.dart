@@ -86,6 +86,22 @@ class ProjectsHeader extends StatelessWidget {
             ),
             const SizedBox(width: 16),
             FilledButton.icon(
+              icon: Icon(Icons.upload_rounded),
+              style: FilledButton.styleFrom(
+                minimumSize: const Size(130, 45),
+                maximumSize: const Size(180, 45),
+                backgroundColor: context.colors.neutralInverted,
+                foregroundColor: context.colors.neutral,
+              ),
+              onPressed: () {
+                context.read<AllProjectsBloc>().add(
+                  const AllProjectsImportRequested(),
+                );
+              },
+              label: const Text('Import Projects'),
+            ),
+            const SizedBox(width: 16),
+            FilledButton.icon(
               onPressed: () {
                 context.router.push(CreateNewProjectRoute());
               },

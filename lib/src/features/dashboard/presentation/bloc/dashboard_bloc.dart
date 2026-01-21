@@ -10,6 +10,9 @@ import 'package:contrack/src/features/dashboard/domain/usecase/watch_recent_proj
 import 'package:contrack/src/features/dashboard/domain/entities/dashboard_stats.dart';
 import 'package:contrack/src/features/dashboard/domain/entities/project.dart';
 import 'package:contrack/src/features/dashboard/domain/entities/project_with_details.dart';
+import 'package:contrack/src/core/database/tables/export_history.dart';
+import 'package:contrack/src/features/projects/domain/entities/export_type.dart';
+import 'package:contrack/src/features/projects/domain/usecase/export_all_projects_use_case.dart';
 import 'package:equatable/equatable.dart' show Equatable;
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,15 +30,18 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   _watchRecentProjectsWithDetailsUseCase;
   final ImportProjectsUseCase _importProjectsUseCase;
   final PickProjectFileUseCase _pickProjectFileUseCase;
+  final ExportAllProjectsUseCase _exportAllProjectsUseCase;
 
   DashboardBloc(
     this._watchDashboardStatsUseCase,
     this._watchRecentProjectsWithDetailsUseCase,
     this._importProjectsUseCase,
     this._pickProjectFileUseCase,
+    this._exportAllProjectsUseCase,
   ) : super(DashboardState.empty()) {
     on<DashboardStarted>(_onStarted);
     on<DashboardImportRequested>(_onImportRequested);
+    on<DashboardExportRequested>(_onExportRequested);
   }
 
   Future<void> _onStarted(
@@ -84,6 +90,31 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
           ? e
           : AppFailure.fromException(e, stackTrace);
       emit(state.copyWith(error: failure.message));
+    }
+  }
+
+  Future<void> _onExportRequested(
+    DashboardExportRequested event,
+    Emitter<DashboardState> emit,
+  ) async {
+    emit(state.copyWith(isExporting: true, error: null));
+    try {
+      final filePath = await _exportAllProjectsUseCase(
+        ExportAllProjectsParams(format: event.format, type: event.type),
+      );
+      emit(
+        state.copyWith(
+          isExporting: false,
+          exportFilePath: filePath,
+          error: null,
+        ),
+      );
+      emit(state.copyWith(exportFilePath: null));
+    } catch (e, stackTrace) {
+      final failure = e is Failure
+          ? e
+          : AppFailure.fromException(e, stackTrace);
+      emit(state.copyWith(isExporting: false, error: failure.message));
     }
   }
 }

@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:contrack/src/app/presentation/widgets/widgets.dart';
+import 'package:contrack/src/app/router/app_router.dart';
 import 'package:contrack/src/core/utils/toast_extension.dart';
 import 'package:contrack/src/features/projects/domain/entities/sort_field.dart';
 import 'package:contrack/src/features/projects/presentation/bloc/all_projects_bloc.dart';
@@ -34,7 +35,8 @@ class AllProjectsView extends StatelessWidget {
     return BlocListener<AllProjectsBloc, AllProjectsState>(
       listenWhen: (previous, current) =>
           previous.exportFilePath != current.exportFilePath ||
-          previous.exportError != current.exportError,
+          previous.exportError != current.exportError ||
+          previous.importedProjects != current.importedProjects,
       listener: (context, state) {
         if (state.exportFilePath != null) {
           context.toast.success(
@@ -43,6 +45,13 @@ class AllProjectsView extends StatelessWidget {
           );
         } else if (state.exportError != null) {
           context.toast.error(state.exportError!, title: 'Export Failed');
+        }
+
+        if (state.importedProjects != null &&
+            state.importedProjects!.isNotEmpty) {
+          context.router.push(
+            CreateNewProjectRoute(projects: state.importedProjects),
+          );
         }
       },
       child: Padding(

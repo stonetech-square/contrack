@@ -29,10 +29,11 @@ class DashboardView extends StatelessWidget {
     return BlocListener<DashboardBloc, DashboardState>(
       listenWhen: (previous, current) =>
           previous.importedProjects != current.importedProjects ||
-          previous.error != current.error,
+          previous.error != current.error ||
+          previous.exportFilePath != current.exportFilePath,
       listener: (context, state) {
-        if (state.error != null) {
-          context.toast.error(state.error!, title: 'Import Failed');
+        if (state.error != null && !state.isExporting) {
+          context.toast.error(state.error!, title: 'Action Failed');
         }
         if (state.importedProjects != null &&
             state.importedProjects!.isNotEmpty) {
@@ -42,6 +43,12 @@ class DashboardView extends StatelessWidget {
                 CreateNewProjectRoute(projects: state.importedProjects),
               ],
             ),
+          );
+        }
+        if (state.exportFilePath != null) {
+          context.toast.success(
+            'Projects exported to ${state.exportFilePath!.split('/').last}',
+            title: 'Export Success',
           );
         }
       },

@@ -13,6 +13,7 @@ sealed class AllProjectsState with _$AllProjectsState {
     @Default(false) bool isExporting,
     String? exportFilePath,
     String? exportError,
+    List<Project>? importedProjects,
   }) = _AllProjectsState;
 
   List<ProjectWithDetails> get paginatedProjects {

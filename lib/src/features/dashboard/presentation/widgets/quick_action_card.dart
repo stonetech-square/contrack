@@ -4,6 +4,9 @@ import 'package:contrack/src/app/presentation/widgets/app_card.dart';
 import 'package:contrack/src/app/router/app_router.dart';
 import 'package:contrack/src/app/theme/app_colors.dart';
 import 'package:contrack/src/app/theme/app_typography.dart';
+import 'package:contrack/src/core/database/tables/export_history.dart';
+import 'package:contrack/src/features/dashboard/presentation/bloc/dashboard_bloc.dart';
+import 'package:contrack/src/features/projects/presentation/widgets/export_type_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -37,7 +40,14 @@ class QuickActionCard extends StatelessWidget {
             icon: Icons.description_outlined,
             title: 'Generate Report',
             subtitle: 'Export comprehensive data',
-            onTap: () {},
+            onTap: () async {
+              final result = await ExportTypeDialog.show(context);
+              if (result != null && context.mounted) {
+                context.read<DashboardBloc>().add(
+                  DashboardExportRequested(ExportFormat.csv, type: result),
+                );
+              }
+            },
           ),
           SizedBox(height: 12),
           _ActionItem(
