@@ -39,6 +39,7 @@ abstract class ProjectsLocalDataSource {
     required String fileName,
     required int recordCount,
   });
+  Future<void> deleteProject(String code);
 }
 
 @LazySingleton(as: ProjectsLocalDataSource)
