@@ -29,7 +29,6 @@ class DashboardView extends StatelessWidget {
     return BlocListener<DashboardBloc, DashboardState>(
       listenWhen: (previous, current) =>
           previous.importedProjects != current.importedProjects ||
-          previous.error != current.error ||
           previous.exportFilePath != current.exportFilePath,
       listener: (context, state) {
         if (state.error != null && !state.isExporting) {

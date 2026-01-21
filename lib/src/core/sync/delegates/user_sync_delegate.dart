@@ -201,4 +201,39 @@ class UserSyncDelegate {
       updatedAt,
     );
   }
+
+  /// Deletes local users that no longer exist in the remote.
+  /// Excludes the current active user to prevent self-deletion.
+  Future<int> deleteLocalUsersNotInRemote(
+    Set<String> remoteUserIds,
+    String? currentUserId,
+  ) async {
+    // Get all local users with a remoteId
+    final localUsers = await (_database.select(_database.users)
+          ..where((t) => t.remoteId.isNotNull()))
+        .get();
+
+    int deletedCount = 0;
+    for (final user in localUsers) {
+      // Skip if user exists in remote
+      if (remoteUserIds.contains(user.remoteId)) continue;
+
+      // Skip if this is the current active user
+      if (currentUserId != null && user.uid == currentUserId) {
+        _logger.warning(
+          'Skipping deletion of current user ${user.username}',
+        );
+        continue;
+      }
+
+      // Delete the user locally
+      await (_database.delete(_database.users)
+            ..where((t) => t.uid.equals(user.uid)))
+          .go();
+      _logger.info('Deleted local user ${user.username} (not in remote)');
+      deletedCount++;
+    }
+
+    return deletedCount;
+  }
 }

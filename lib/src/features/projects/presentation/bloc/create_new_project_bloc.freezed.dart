@@ -14,7 +14,8 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ProjectEntryFormData {
 
- String get code; RequiredProjectStatus get status; RequiredId get supervisingMinistryId; RequiredId get implementingAgencyId; RequiredId get stateId; RequiredId get geopoliticalZoneId; RequiredText get constituency; RequiredText get title; String get sponsor; RequiredDouble get budget; RequiredDate get startDate; RequiredDate get endDate; List<ImplementingAgency> get agencies; List<NigerianState> get states;
+ String get code; RequiredProjectStatus get status; RequiredId get supervisingMinistryId; RequiredId get implementingAgencyId; RequiredId get stateId; RequiredId get geopoliticalZoneId; RequiredText get constituency; RequiredText get title; String get sponsor; RequiredDouble get budget; RequiredDate get startDate; RequiredDate get endDate; List<ImplementingAgency> get agencies; List<NigerianState> get states;// Preserved fields for editing existing projects
+ String? get remoteId; String? get createdBy; DateTime? get createdAt;
 /// Create a copy of ProjectEntryFormData
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +26,16 @@ $ProjectEntryFormDataCopyWith<ProjectEntryFormData> get copyWith => _$ProjectEnt
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProjectEntryFormData&&(identical(other.code, code) || other.code == code)&&(identical(other.status, status) || other.status == status)&&(identical(other.supervisingMinistryId, supervisingMinistryId) || other.supervisingMinistryId == supervisingMinistryId)&&(identical(other.implementingAgencyId, implementingAgencyId) || other.implementingAgencyId == implementingAgencyId)&&(identical(other.stateId, stateId) || other.stateId == stateId)&&(identical(other.geopoliticalZoneId, geopoliticalZoneId) || other.geopoliticalZoneId == geopoliticalZoneId)&&(identical(other.constituency, constituency) || other.constituency == constituency)&&(identical(other.title, title) || other.title == title)&&(identical(other.sponsor, sponsor) || other.sponsor == sponsor)&&(identical(other.budget, budget) || other.budget == budget)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&const DeepCollectionEquality().equals(other.agencies, agencies)&&const DeepCollectionEquality().equals(other.states, states));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProjectEntryFormData&&(identical(other.code, code) || other.code == code)&&(identical(other.status, status) || other.status == status)&&(identical(other.supervisingMinistryId, supervisingMinistryId) || other.supervisingMinistryId == supervisingMinistryId)&&(identical(other.implementingAgencyId, implementingAgencyId) || other.implementingAgencyId == implementingAgencyId)&&(identical(other.stateId, stateId) || other.stateId == stateId)&&(identical(other.geopoliticalZoneId, geopoliticalZoneId) || other.geopoliticalZoneId == geopoliticalZoneId)&&(identical(other.constituency, constituency) || other.constituency == constituency)&&(identical(other.title, title) || other.title == title)&&(identical(other.sponsor, sponsor) || other.sponsor == sponsor)&&(identical(other.budget, budget) || other.budget == budget)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&const DeepCollectionEquality().equals(other.agencies, agencies)&&const DeepCollectionEquality().equals(other.states, states)&&(identical(other.remoteId, remoteId) || other.remoteId == remoteId)&&(identical(other.createdBy, createdBy) || other.createdBy == createdBy)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,code,status,supervisingMinistryId,implementingAgencyId,stateId,geopoliticalZoneId,constituency,title,sponsor,budget,startDate,endDate,const DeepCollectionEquality().hash(agencies),const DeepCollectionEquality().hash(states));
+int get hashCode => Object.hash(runtimeType,code,status,supervisingMinistryId,implementingAgencyId,stateId,geopoliticalZoneId,constituency,title,sponsor,budget,startDate,endDate,const DeepCollectionEquality().hash(agencies),const DeepCollectionEquality().hash(states),remoteId,createdBy,createdAt);
 
 @override
 String toString() {
-  return 'ProjectEntryFormData(code: $code, status: $status, supervisingMinistryId: $supervisingMinistryId, implementingAgencyId: $implementingAgencyId, stateId: $stateId, geopoliticalZoneId: $geopoliticalZoneId, constituency: $constituency, title: $title, sponsor: $sponsor, budget: $budget, startDate: $startDate, endDate: $endDate, agencies: $agencies, states: $states)';
+  return 'ProjectEntryFormData(code: $code, status: $status, supervisingMinistryId: $supervisingMinistryId, implementingAgencyId: $implementingAgencyId, stateId: $stateId, geopoliticalZoneId: $geopoliticalZoneId, constituency: $constituency, title: $title, sponsor: $sponsor, budget: $budget, startDate: $startDate, endDate: $endDate, agencies: $agencies, states: $states, remoteId: $remoteId, createdBy: $createdBy, createdAt: $createdAt)';
 }
 
 
@@ -45,7 +46,7 @@ abstract mixin class $ProjectEntryFormDataCopyWith<$Res>  {
   factory $ProjectEntryFormDataCopyWith(ProjectEntryFormData value, $Res Function(ProjectEntryFormData) _then) = _$ProjectEntryFormDataCopyWithImpl;
 @useResult
 $Res call({
- String code, RequiredProjectStatus status, RequiredId supervisingMinistryId, RequiredId implementingAgencyId, RequiredId stateId, RequiredId geopoliticalZoneId, RequiredText constituency, RequiredText title, String sponsor, RequiredDouble budget, RequiredDate startDate, RequiredDate endDate, List<ImplementingAgency> agencies, List<NigerianState> states
+ String code, RequiredProjectStatus status, RequiredId supervisingMinistryId, RequiredId implementingAgencyId, RequiredId stateId, RequiredId geopoliticalZoneId, RequiredText constituency, RequiredText title, String sponsor, RequiredDouble budget, RequiredDate startDate, RequiredDate endDate, List<ImplementingAgency> agencies, List<NigerianState> states, String? remoteId, String? createdBy, DateTime? createdAt
 });
 
 
@@ -62,7 +63,7 @@ class _$ProjectEntryFormDataCopyWithImpl<$Res>
 
 /// Create a copy of ProjectEntryFormData
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? code = null,Object? status = null,Object? supervisingMinistryId = null,Object? implementingAgencyId = null,Object? stateId = null,Object? geopoliticalZoneId = null,Object? constituency = null,Object? title = null,Object? sponsor = null,Object? budget = null,Object? startDate = null,Object? endDate = null,Object? agencies = null,Object? states = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? code = null,Object? status = null,Object? supervisingMinistryId = null,Object? implementingAgencyId = null,Object? stateId = null,Object? geopoliticalZoneId = null,Object? constituency = null,Object? title = null,Object? sponsor = null,Object? budget = null,Object? startDate = null,Object? endDate = null,Object? agencies = null,Object? states = null,Object? remoteId = freezed,Object? createdBy = freezed,Object? createdAt = freezed,}) {
   return _then(_self.copyWith(
 code: null == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
 as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
@@ -78,7 +79,10 @@ as RequiredDouble,startDate: null == startDate ? _self.startDate : startDate // 
 as RequiredDate,endDate: null == endDate ? _self.endDate : endDate // ignore: cast_nullable_to_non_nullable
 as RequiredDate,agencies: null == agencies ? _self.agencies : agencies // ignore: cast_nullable_to_non_nullable
 as List<ImplementingAgency>,states: null == states ? _self.states : states // ignore: cast_nullable_to_non_nullable
-as List<NigerianState>,
+as List<NigerianState>,remoteId: freezed == remoteId ? _self.remoteId : remoteId // ignore: cast_nullable_to_non_nullable
+as String?,createdBy: freezed == createdBy ? _self.createdBy : createdBy // ignore: cast_nullable_to_non_nullable
+as String?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 
@@ -160,10 +164,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String code,  RequiredProjectStatus status,  RequiredId supervisingMinistryId,  RequiredId implementingAgencyId,  RequiredId stateId,  RequiredId geopoliticalZoneId,  RequiredText constituency,  RequiredText title,  String sponsor,  RequiredDouble budget,  RequiredDate startDate,  RequiredDate endDate,  List<ImplementingAgency> agencies,  List<NigerianState> states)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String code,  RequiredProjectStatus status,  RequiredId supervisingMinistryId,  RequiredId implementingAgencyId,  RequiredId stateId,  RequiredId geopoliticalZoneId,  RequiredText constituency,  RequiredText title,  String sponsor,  RequiredDouble budget,  RequiredDate startDate,  RequiredDate endDate,  List<ImplementingAgency> agencies,  List<NigerianState> states,  String? remoteId,  String? createdBy,  DateTime? createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ProjectEntryFormData() when $default != null:
-return $default(_that.code,_that.status,_that.supervisingMinistryId,_that.implementingAgencyId,_that.stateId,_that.geopoliticalZoneId,_that.constituency,_that.title,_that.sponsor,_that.budget,_that.startDate,_that.endDate,_that.agencies,_that.states);case _:
+return $default(_that.code,_that.status,_that.supervisingMinistryId,_that.implementingAgencyId,_that.stateId,_that.geopoliticalZoneId,_that.constituency,_that.title,_that.sponsor,_that.budget,_that.startDate,_that.endDate,_that.agencies,_that.states,_that.remoteId,_that.createdBy,_that.createdAt);case _:
   return orElse();
 
 }
@@ -181,10 +185,10 @@ return $default(_that.code,_that.status,_that.supervisingMinistryId,_that.implem
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String code,  RequiredProjectStatus status,  RequiredId supervisingMinistryId,  RequiredId implementingAgencyId,  RequiredId stateId,  RequiredId geopoliticalZoneId,  RequiredText constituency,  RequiredText title,  String sponsor,  RequiredDouble budget,  RequiredDate startDate,  RequiredDate endDate,  List<ImplementingAgency> agencies,  List<NigerianState> states)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String code,  RequiredProjectStatus status,  RequiredId supervisingMinistryId,  RequiredId implementingAgencyId,  RequiredId stateId,  RequiredId geopoliticalZoneId,  RequiredText constituency,  RequiredText title,  String sponsor,  RequiredDouble budget,  RequiredDate startDate,  RequiredDate endDate,  List<ImplementingAgency> agencies,  List<NigerianState> states,  String? remoteId,  String? createdBy,  DateTime? createdAt)  $default,) {final _that = this;
 switch (_that) {
 case _ProjectEntryFormData():
-return $default(_that.code,_that.status,_that.supervisingMinistryId,_that.implementingAgencyId,_that.stateId,_that.geopoliticalZoneId,_that.constituency,_that.title,_that.sponsor,_that.budget,_that.startDate,_that.endDate,_that.agencies,_that.states);}
+return $default(_that.code,_that.status,_that.supervisingMinistryId,_that.implementingAgencyId,_that.stateId,_that.geopoliticalZoneId,_that.constituency,_that.title,_that.sponsor,_that.budget,_that.startDate,_that.endDate,_that.agencies,_that.states,_that.remoteId,_that.createdBy,_that.createdAt);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -198,10 +202,10 @@ return $default(_that.code,_that.status,_that.supervisingMinistryId,_that.implem
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String code,  RequiredProjectStatus status,  RequiredId supervisingMinistryId,  RequiredId implementingAgencyId,  RequiredId stateId,  RequiredId geopoliticalZoneId,  RequiredText constituency,  RequiredText title,  String sponsor,  RequiredDouble budget,  RequiredDate startDate,  RequiredDate endDate,  List<ImplementingAgency> agencies,  List<NigerianState> states)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String code,  RequiredProjectStatus status,  RequiredId supervisingMinistryId,  RequiredId implementingAgencyId,  RequiredId stateId,  RequiredId geopoliticalZoneId,  RequiredText constituency,  RequiredText title,  String sponsor,  RequiredDouble budget,  RequiredDate startDate,  RequiredDate endDate,  List<ImplementingAgency> agencies,  List<NigerianState> states,  String? remoteId,  String? createdBy,  DateTime? createdAt)?  $default,) {final _that = this;
 switch (_that) {
 case _ProjectEntryFormData() when $default != null:
-return $default(_that.code,_that.status,_that.supervisingMinistryId,_that.implementingAgencyId,_that.stateId,_that.geopoliticalZoneId,_that.constituency,_that.title,_that.sponsor,_that.budget,_that.startDate,_that.endDate,_that.agencies,_that.states);case _:
+return $default(_that.code,_that.status,_that.supervisingMinistryId,_that.implementingAgencyId,_that.stateId,_that.geopoliticalZoneId,_that.constituency,_that.title,_that.sponsor,_that.budget,_that.startDate,_that.endDate,_that.agencies,_that.states,_that.remoteId,_that.createdBy,_that.createdAt);case _:
   return null;
 
 }
@@ -213,7 +217,7 @@ return $default(_that.code,_that.status,_that.supervisingMinistryId,_that.implem
 
 
 class _ProjectEntryFormData extends ProjectEntryFormData {
-  const _ProjectEntryFormData({required this.code, this.status = const RequiredProjectStatus.pure(), this.supervisingMinistryId = const RequiredId.pure(), this.implementingAgencyId = const RequiredId.pure(), this.stateId = const RequiredId.pure(), this.geopoliticalZoneId = const RequiredId.pure(), this.constituency = const RequiredText.pure(), this.title = const RequiredText.pure(), this.sponsor = '', this.budget = const RequiredDouble.pure(), this.startDate = const RequiredDate.pure(), this.endDate = const RequiredDate.pure(), final  List<ImplementingAgency> agencies = const [], final  List<NigerianState> states = const []}): _agencies = agencies,_states = states,super._();
+  const _ProjectEntryFormData({required this.code, this.status = const RequiredProjectStatus.pure(), this.supervisingMinistryId = const RequiredId.pure(), this.implementingAgencyId = const RequiredId.pure(), this.stateId = const RequiredId.pure(), this.geopoliticalZoneId = const RequiredId.pure(), this.constituency = const RequiredText.pure(), this.title = const RequiredText.pure(), this.sponsor = '', this.budget = const RequiredDouble.pure(), this.startDate = const RequiredDate.pure(), this.endDate = const RequiredDate.pure(), final  List<ImplementingAgency> agencies = const [], final  List<NigerianState> states = const [], this.remoteId, this.createdBy, this.createdAt}): _agencies = agencies,_states = states,super._();
   
 
 @override final  String code;
@@ -242,6 +246,10 @@ class _ProjectEntryFormData extends ProjectEntryFormData {
   return EqualUnmodifiableListView(_states);
 }
 
+// Preserved fields for editing existing projects
+@override final  String? remoteId;
+@override final  String? createdBy;
+@override final  DateTime? createdAt;
 
 /// Create a copy of ProjectEntryFormData
 /// with the given fields replaced by the non-null parameter values.
@@ -253,16 +261,16 @@ _$ProjectEntryFormDataCopyWith<_ProjectEntryFormData> get copyWith => __$Project
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProjectEntryFormData&&(identical(other.code, code) || other.code == code)&&(identical(other.status, status) || other.status == status)&&(identical(other.supervisingMinistryId, supervisingMinistryId) || other.supervisingMinistryId == supervisingMinistryId)&&(identical(other.implementingAgencyId, implementingAgencyId) || other.implementingAgencyId == implementingAgencyId)&&(identical(other.stateId, stateId) || other.stateId == stateId)&&(identical(other.geopoliticalZoneId, geopoliticalZoneId) || other.geopoliticalZoneId == geopoliticalZoneId)&&(identical(other.constituency, constituency) || other.constituency == constituency)&&(identical(other.title, title) || other.title == title)&&(identical(other.sponsor, sponsor) || other.sponsor == sponsor)&&(identical(other.budget, budget) || other.budget == budget)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&const DeepCollectionEquality().equals(other._agencies, _agencies)&&const DeepCollectionEquality().equals(other._states, _states));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProjectEntryFormData&&(identical(other.code, code) || other.code == code)&&(identical(other.status, status) || other.status == status)&&(identical(other.supervisingMinistryId, supervisingMinistryId) || other.supervisingMinistryId == supervisingMinistryId)&&(identical(other.implementingAgencyId, implementingAgencyId) || other.implementingAgencyId == implementingAgencyId)&&(identical(other.stateId, stateId) || other.stateId == stateId)&&(identical(other.geopoliticalZoneId, geopoliticalZoneId) || other.geopoliticalZoneId == geopoliticalZoneId)&&(identical(other.constituency, constituency) || other.constituency == constituency)&&(identical(other.title, title) || other.title == title)&&(identical(other.sponsor, sponsor) || other.sponsor == sponsor)&&(identical(other.budget, budget) || other.budget == budget)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&const DeepCollectionEquality().equals(other._agencies, _agencies)&&const DeepCollectionEquality().equals(other._states, _states)&&(identical(other.remoteId, remoteId) || other.remoteId == remoteId)&&(identical(other.createdBy, createdBy) || other.createdBy == createdBy)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,code,status,supervisingMinistryId,implementingAgencyId,stateId,geopoliticalZoneId,constituency,title,sponsor,budget,startDate,endDate,const DeepCollectionEquality().hash(_agencies),const DeepCollectionEquality().hash(_states));
+int get hashCode => Object.hash(runtimeType,code,status,supervisingMinistryId,implementingAgencyId,stateId,geopoliticalZoneId,constituency,title,sponsor,budget,startDate,endDate,const DeepCollectionEquality().hash(_agencies),const DeepCollectionEquality().hash(_states),remoteId,createdBy,createdAt);
 
 @override
 String toString() {
-  return 'ProjectEntryFormData(code: $code, status: $status, supervisingMinistryId: $supervisingMinistryId, implementingAgencyId: $implementingAgencyId, stateId: $stateId, geopoliticalZoneId: $geopoliticalZoneId, constituency: $constituency, title: $title, sponsor: $sponsor, budget: $budget, startDate: $startDate, endDate: $endDate, agencies: $agencies, states: $states)';
+  return 'ProjectEntryFormData(code: $code, status: $status, supervisingMinistryId: $supervisingMinistryId, implementingAgencyId: $implementingAgencyId, stateId: $stateId, geopoliticalZoneId: $geopoliticalZoneId, constituency: $constituency, title: $title, sponsor: $sponsor, budget: $budget, startDate: $startDate, endDate: $endDate, agencies: $agencies, states: $states, remoteId: $remoteId, createdBy: $createdBy, createdAt: $createdAt)';
 }
 
 
@@ -273,7 +281,7 @@ abstract mixin class _$ProjectEntryFormDataCopyWith<$Res> implements $ProjectEnt
   factory _$ProjectEntryFormDataCopyWith(_ProjectEntryFormData value, $Res Function(_ProjectEntryFormData) _then) = __$ProjectEntryFormDataCopyWithImpl;
 @override @useResult
 $Res call({
- String code, RequiredProjectStatus status, RequiredId supervisingMinistryId, RequiredId implementingAgencyId, RequiredId stateId, RequiredId geopoliticalZoneId, RequiredText constituency, RequiredText title, String sponsor, RequiredDouble budget, RequiredDate startDate, RequiredDate endDate, List<ImplementingAgency> agencies, List<NigerianState> states
+ String code, RequiredProjectStatus status, RequiredId supervisingMinistryId, RequiredId implementingAgencyId, RequiredId stateId, RequiredId geopoliticalZoneId, RequiredText constituency, RequiredText title, String sponsor, RequiredDouble budget, RequiredDate startDate, RequiredDate endDate, List<ImplementingAgency> agencies, List<NigerianState> states, String? remoteId, String? createdBy, DateTime? createdAt
 });
 
 
@@ -290,7 +298,7 @@ class __$ProjectEntryFormDataCopyWithImpl<$Res>
 
 /// Create a copy of ProjectEntryFormData
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? code = null,Object? status = null,Object? supervisingMinistryId = null,Object? implementingAgencyId = null,Object? stateId = null,Object? geopoliticalZoneId = null,Object? constituency = null,Object? title = null,Object? sponsor = null,Object? budget = null,Object? startDate = null,Object? endDate = null,Object? agencies = null,Object? states = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? code = null,Object? status = null,Object? supervisingMinistryId = null,Object? implementingAgencyId = null,Object? stateId = null,Object? geopoliticalZoneId = null,Object? constituency = null,Object? title = null,Object? sponsor = null,Object? budget = null,Object? startDate = null,Object? endDate = null,Object? agencies = null,Object? states = null,Object? remoteId = freezed,Object? createdBy = freezed,Object? createdAt = freezed,}) {
   return _then(_ProjectEntryFormData(
 code: null == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
 as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
@@ -306,7 +314,10 @@ as RequiredDouble,startDate: null == startDate ? _self.startDate : startDate // 
 as RequiredDate,endDate: null == endDate ? _self.endDate : endDate // ignore: cast_nullable_to_non_nullable
 as RequiredDate,agencies: null == agencies ? _self._agencies : agencies // ignore: cast_nullable_to_non_nullable
 as List<ImplementingAgency>,states: null == states ? _self._states : states // ignore: cast_nullable_to_non_nullable
-as List<NigerianState>,
+as List<NigerianState>,remoteId: freezed == remoteId ? _self.remoteId : remoteId // ignore: cast_nullable_to_non_nullable
+as String?,createdBy: freezed == createdBy ? _self.createdBy : createdBy // ignore: cast_nullable_to_non_nullable
+as String?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 

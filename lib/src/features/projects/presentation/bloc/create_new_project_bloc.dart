@@ -115,6 +115,10 @@ class CreateNewProjectBloc
               : const RequiredDate.pure(),
           agencies: agencies,
           states: states,
+          // Preserve fields for editing existing projects
+          remoteId: project.remoteId,
+          createdBy: project.createdBy,
+          createdAt: project.createdAt,
         ),
       );
     }

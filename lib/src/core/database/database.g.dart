@@ -2890,6 +2890,32 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
     type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _isDeletedMeta = const VerificationMeta(
+    'isDeleted',
+  );
+  @override
+  late final GeneratedColumn<bool> isDeleted = GeneratedColumn<bool>(
+    'is_deleted',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_deleted" IN (0, 1))',
+    ),
+    defaultValue: Constant(false),
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     code,
@@ -2911,6 +2937,8 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
     remoteId,
     startDate,
     endDate,
+    isDeleted,
+    deletedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3056,6 +3084,18 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
         endDate.isAcceptableOrUnknown(data['end_date']!, _endDateMeta),
       );
     }
+    if (data.containsKey('is_deleted')) {
+      context.handle(
+        _isDeletedMeta,
+        isDeleted.isAcceptableOrUnknown(data['is_deleted']!, _isDeletedMeta),
+      );
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
     return context;
   }
 
@@ -3143,6 +3183,14 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}end_date'],
       ),
+      isDeleted: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_deleted'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
     );
   }
 
@@ -3175,6 +3223,8 @@ class Project extends DataClass implements Insertable<Project> {
   final String? remoteId;
   final DateTime? startDate;
   final DateTime? endDate;
+  final bool isDeleted;
+  final DateTime? deletedAt;
   const Project({
     required this.code,
     required this.status,
@@ -3195,6 +3245,8 @@ class Project extends DataClass implements Insertable<Project> {
     this.remoteId,
     this.startDate,
     this.endDate,
+    required this.isDeleted,
+    this.deletedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -3234,6 +3286,10 @@ class Project extends DataClass implements Insertable<Project> {
     if (!nullToAbsent || endDate != null) {
       map['end_date'] = Variable<DateTime>(endDate);
     }
+    map['is_deleted'] = Variable<bool>(isDeleted);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
     return map;
   }
 
@@ -3270,6 +3326,10 @@ class Project extends DataClass implements Insertable<Project> {
       endDate: endDate == null && nullToAbsent
           ? const Value.absent()
           : Value(endDate),
+      isDeleted: Value(isDeleted),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
     );
   }
 
@@ -3300,6 +3360,8 @@ class Project extends DataClass implements Insertable<Project> {
       remoteId: serializer.fromJson<String?>(json['remoteId']),
       startDate: serializer.fromJson<DateTime?>(json['startDate']),
       endDate: serializer.fromJson<DateTime?>(json['endDate']),
+      isDeleted: serializer.fromJson<bool>(json['isDeleted']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
     );
   }
   @override
@@ -3327,6 +3389,8 @@ class Project extends DataClass implements Insertable<Project> {
       'remoteId': serializer.toJson<String?>(remoteId),
       'startDate': serializer.toJson<DateTime?>(startDate),
       'endDate': serializer.toJson<DateTime?>(endDate),
+      'isDeleted': serializer.toJson<bool>(isDeleted),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
     };
   }
 
@@ -3350,6 +3414,8 @@ class Project extends DataClass implements Insertable<Project> {
     Value<String?> remoteId = const Value.absent(),
     Value<DateTime?> startDate = const Value.absent(),
     Value<DateTime?> endDate = const Value.absent(),
+    bool? isDeleted,
+    Value<DateTime?> deletedAt = const Value.absent(),
   }) => Project(
     code: code ?? this.code,
     status: status ?? this.status,
@@ -3370,6 +3436,8 @@ class Project extends DataClass implements Insertable<Project> {
     remoteId: remoteId.present ? remoteId.value : this.remoteId,
     startDate: startDate.present ? startDate.value : this.startDate,
     endDate: endDate.present ? endDate.value : this.endDate,
+    isDeleted: isDeleted ?? this.isDeleted,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
   );
   Project copyWithCompanion(ProjectsCompanion data) {
     return Project(
@@ -3400,6 +3468,8 @@ class Project extends DataClass implements Insertable<Project> {
       remoteId: data.remoteId.present ? data.remoteId.value : this.remoteId,
       startDate: data.startDate.present ? data.startDate.value : this.startDate,
       endDate: data.endDate.present ? data.endDate.value : this.endDate,
+      isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
     );
   }
 
@@ -3424,13 +3494,15 @@ class Project extends DataClass implements Insertable<Project> {
           ..write('sponsor: $sponsor, ')
           ..write('remoteId: $remoteId, ')
           ..write('startDate: $startDate, ')
-          ..write('endDate: $endDate')
+          ..write('endDate: $endDate, ')
+          ..write('isDeleted: $isDeleted, ')
+          ..write('deletedAt: $deletedAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     code,
     status,
     agencyId,
@@ -3450,7 +3522,9 @@ class Project extends DataClass implements Insertable<Project> {
     remoteId,
     startDate,
     endDate,
-  );
+    isDeleted,
+    deletedAt,
+  ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -3473,7 +3547,9 @@ class Project extends DataClass implements Insertable<Project> {
           other.sponsor == this.sponsor &&
           other.remoteId == this.remoteId &&
           other.startDate == this.startDate &&
-          other.endDate == this.endDate);
+          other.endDate == this.endDate &&
+          other.isDeleted == this.isDeleted &&
+          other.deletedAt == this.deletedAt);
 }
 
 class ProjectsCompanion extends UpdateCompanion<Project> {
@@ -3496,6 +3572,8 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
   final Value<String?> remoteId;
   final Value<DateTime?> startDate;
   final Value<DateTime?> endDate;
+  final Value<bool> isDeleted;
+  final Value<DateTime?> deletedAt;
   final Value<int> rowid;
   const ProjectsCompanion({
     this.code = const Value.absent(),
@@ -3517,6 +3595,8 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
     this.remoteId = const Value.absent(),
     this.startDate = const Value.absent(),
     this.endDate = const Value.absent(),
+    this.isDeleted = const Value.absent(),
+    this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ProjectsCompanion.insert({
@@ -3539,6 +3619,8 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
     this.remoteId = const Value.absent(),
     this.startDate = const Value.absent(),
     this.endDate = const Value.absent(),
+    this.isDeleted = const Value.absent(),
+    this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : code = Value(code),
        status = Value(status),
@@ -3570,6 +3652,8 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
     Expression<String>? remoteId,
     Expression<DateTime>? startDate,
     Expression<DateTime>? endDate,
+    Expression<bool>? isDeleted,
+    Expression<DateTime>? deletedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -3592,6 +3676,8 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
       if (remoteId != null) 'remote_id': remoteId,
       if (startDate != null) 'start_date': startDate,
       if (endDate != null) 'end_date': endDate,
+      if (isDeleted != null) 'is_deleted': isDeleted,
+      if (deletedAt != null) 'deleted_at': deletedAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -3616,6 +3702,8 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
     Value<String?>? remoteId,
     Value<DateTime?>? startDate,
     Value<DateTime?>? endDate,
+    Value<bool>? isDeleted,
+    Value<DateTime?>? deletedAt,
     Value<int>? rowid,
   }) {
     return ProjectsCompanion(
@@ -3638,6 +3726,8 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
       remoteId: remoteId ?? this.remoteId,
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
+      isDeleted: isDeleted ?? this.isDeleted,
+      deletedAt: deletedAt ?? this.deletedAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -3704,6 +3794,12 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
     if (endDate.present) {
       map['end_date'] = Variable<DateTime>(endDate.value);
     }
+    if (isDeleted.present) {
+      map['is_deleted'] = Variable<bool>(isDeleted.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -3732,6 +3828,8 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
           ..write('remoteId: $remoteId, ')
           ..write('startDate: $startDate, ')
           ..write('endDate: $endDate, ')
+          ..write('isDeleted: $isDeleted, ')
+          ..write('deletedAt: $deletedAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -7732,6 +7830,8 @@ typedef $$ProjectsTableCreateCompanionBuilder =
       Value<String?> remoteId,
       Value<DateTime?> startDate,
       Value<DateTime?> endDate,
+      Value<bool> isDeleted,
+      Value<DateTime?> deletedAt,
       Value<int> rowid,
     });
 typedef $$ProjectsTableUpdateCompanionBuilder =
@@ -7755,6 +7855,8 @@ typedef $$ProjectsTableUpdateCompanionBuilder =
       Value<String?> remoteId,
       Value<DateTime?> startDate,
       Value<DateTime?> endDate,
+      Value<bool> isDeleted,
+      Value<DateTime?> deletedAt,
       Value<int> rowid,
     });
 
@@ -7965,6 +8067,16 @@ class $$ProjectsTableFilterComposer
 
   ColumnFilters<DateTime> get endDate => $composableBuilder(
     column: $table.endDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isDeleted => $composableBuilder(
+    column: $table.isDeleted,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -8206,6 +8318,16 @@ class $$ProjectsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<bool> get isDeleted => $composableBuilder(
+    column: $table.isDeleted,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$AgenciesTableOrderingComposer get agencyId {
     final $$AgenciesTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -8396,6 +8518,12 @@ class $$ProjectsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get endDate =>
       $composableBuilder(column: $table.endDate, builder: (column) => column);
+
+  GeneratedColumn<bool> get isDeleted =>
+      $composableBuilder(column: $table.isDeleted, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
 
   $$AgenciesTableAnnotationComposer get agencyId {
     final $$AgenciesTableAnnotationComposer composer = $composerBuilder(
@@ -8617,6 +8745,8 @@ class $$ProjectsTableTableManager
                 Value<String?> remoteId = const Value.absent(),
                 Value<DateTime?> startDate = const Value.absent(),
                 Value<DateTime?> endDate = const Value.absent(),
+                Value<bool> isDeleted = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ProjectsCompanion(
                 code: code,
@@ -8638,6 +8768,8 @@ class $$ProjectsTableTableManager
                 remoteId: remoteId,
                 startDate: startDate,
                 endDate: endDate,
+                isDeleted: isDeleted,
+                deletedAt: deletedAt,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -8661,6 +8793,8 @@ class $$ProjectsTableTableManager
                 Value<String?> remoteId = const Value.absent(),
                 Value<DateTime?> startDate = const Value.absent(),
                 Value<DateTime?> endDate = const Value.absent(),
+                Value<bool> isDeleted = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ProjectsCompanion.insert(
                 code: code,
@@ -8682,6 +8816,8 @@ class $$ProjectsTableTableManager
                 remoteId: remoteId,
                 startDate: startDate,
                 endDate: endDate,
+                isDeleted: isDeleted,
+                deletedAt: deletedAt,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

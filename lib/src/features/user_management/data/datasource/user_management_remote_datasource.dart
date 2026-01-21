@@ -39,7 +39,7 @@ class UserManagementRemoteDataSourceImpl
       body: {
         'full_name': fullName,
         'email': email,
-        'username': username,
+        'user_name': username,
         'role': role.name,
       },
     );
@@ -58,7 +58,7 @@ class UserManagementRemoteDataSourceImpl
         .update({
           if (fullName != null) 'full_name': fullName,
           if (email != null) 'email': email,
-          if (username != null) 'username': username,
+          if (username != null) 'user_name': username,
           'updated_at': DateTime.now().toIso8601String(),
         })
         .eq('id', userId)

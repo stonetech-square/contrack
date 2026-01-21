@@ -137,7 +137,6 @@ class SyncServiceImpl implements SyncService {
   }
 
   Future<void> _performPushSync() async {
-    // Push agencies first (ministries depend on agencies having remoteId)
     final agenciesSynced = await _performAgencySync();
     final ministriesSynced = await _performMinistrySync();
     final projectsSynced = await _performProjectSync();
@@ -158,7 +157,7 @@ class SyncServiceImpl implements SyncService {
 
     final user = await _syncAction.getActiveSessionUser();
     if (user != null) {
-      await _pullAndSyncProfiles();
+      await _pullAndSyncProfiles(currentUserId: user.uid);
       await _pullAndSyncProjects(currentUserId: user.uid);
     }
   }
@@ -207,10 +206,25 @@ class SyncServiceImpl implements SyncService {
     }
   }
 
-  Future<void> _pullAndSyncProfiles() async {
+  Future<void> _pullAndSyncProfiles({String? currentUserId}) async {
     final response = await _syncAction.fetchRemoteProfiles();
+
+    final remoteUserIds = <String>{};
+
     for (final profile in response) {
+      if (_isDisposed) break;
+      remoteUserIds.add(profile.id);
       await _syncAction.upsertRemoteProfile(profile);
+    }
+
+    if (!_isDisposed && remoteUserIds.isNotEmpty) {
+      final deletedCount = await _syncAction.deleteLocalUsersNotInRemote(
+        remoteUserIds,
+        currentUserId,
+      );
+      if (deletedCount > 0) {
+        _logger.info('Deleted $deletedCount local users not in remote');
+      }
     }
   }
 
@@ -229,11 +243,7 @@ class SyncServiceImpl implements SyncService {
           await _syncAction.pushAgency(agency);
           synced++;
         } catch (e, stackTrace) {
-          _logger.severe(
-            'Failed to sync agency ${agency.name}',
-            e,
-            stackTrace,
-          );
+          _logger.severe('Failed to sync agency ${agency.name}', e, stackTrace);
         }
       }
 
@@ -247,7 +257,9 @@ class SyncServiceImpl implements SyncService {
     int synced = 0;
 
     while (!_isDisposed) {
-      final results = await _syncAction.getUnsyncedMinistries(limit: _batchSize);
+      final results = await _syncAction.getUnsyncedMinistries(
+        limit: _batchSize,
+      );
 
       if (results.isEmpty) break;
 

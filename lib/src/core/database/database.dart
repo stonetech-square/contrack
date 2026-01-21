@@ -29,7 +29,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 1;
 
   static QueryExecutor _openConnection() {
     return LazyDatabase(() async {
@@ -60,63 +60,7 @@ class AppDatabase extends _$AppDatabase {
     onCreate: (Migrator m) async {
       await _createWithIndexes(m);
     },
-    onUpgrade: (Migrator m, int from, int to) async {
-      if (from < 2) {
-        await customStatement(
-          'ALTER TABLE agencies ADD COLUMN is_synced INTEGER NOT NULL DEFAULT 0',
-        );
-        await customStatement(
-          'ALTER TABLE agencies ADD COLUMN last_synced_at INTEGER',
-        );
-        await customStatement(
-          'ALTER TABLE ministries ADD COLUMN is_synced INTEGER NOT NULL DEFAULT 0',
-        );
-        await customStatement(
-          'ALTER TABLE ministries ADD COLUMN last_synced_at INTEGER',
-        );
-
-        await customStatement(
-          'UPDATE agencies SET is_synced = 1 WHERE remote_id IS NOT NULL',
-        );
-        await customStatement(
-          'UPDATE ministries SET is_synced = 1 WHERE remote_id IS NOT NULL',
-        );
-      }
-      if (from < 4) {
-        await customStatement('PRAGMA foreign_keys = OFF');
-        await customStatement('DROP TABLE IF EXISTS ministries');
-        await customStatement('DROP TABLE IF EXISTS agencies');
-        await customStatement('''
-          CREATE TABLE ministries (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL UNIQUE,
-            code TEXT,
-            remote_id TEXT,
-            is_active INTEGER NOT NULL DEFAULT 1,
-            is_synced INTEGER NOT NULL DEFAULT 0,
-            created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
-            updated_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
-            last_synced_at INTEGER
-          )
-        ''');
-
-        await customStatement('''
-          CREATE TABLE agencies (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL UNIQUE,
-            code TEXT,
-            remote_id TEXT,
-            ministry_id INTEGER NOT NULL REFERENCES ministries(id) ON DELETE CASCADE,
-            is_active INTEGER NOT NULL DEFAULT 1,
-            is_synced INTEGER NOT NULL DEFAULT 0,
-            created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
-            updated_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
-            last_synced_at INTEGER
-          )
-        ''');
-        await customStatement('PRAGMA foreign_keys = ON');
-      }
-    },
+    onUpgrade: (Migrator m, int from, int to) async {},
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
       if (details.wasCreated) {

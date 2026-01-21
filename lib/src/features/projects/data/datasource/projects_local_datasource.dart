@@ -156,7 +156,8 @@ class ProjectsLocalDataSourceImpl implements ProjectsLocalDataSource {
               modifiers.uid.equalsExp(_database.projects.modifiedBy),
             ),
           ])
-          ..where(_database.projects.code.equals(code))
+          ..where(_database.projects.code.equals(code) &
+              _database.projects.isDeleted.equals(false))
           ..orderBy([
             OrderingTerm(
               expression: _database.projects.createdAt,
@@ -237,6 +238,9 @@ class ProjectsLocalDataSourceImpl implements ProjectsLocalDataSource {
         _database.users.uid.equalsExp(_database.projects.createdBy),
       ),
     ]);
+
+    // Filter out deleted projects
+    baseQuery.where(_database.projects.isDeleted.equals(false));
 
     if (role == UserRole.regular) {
       baseQuery.where(_database.projects.createdBy.equals(userId));
@@ -394,6 +398,9 @@ class ProjectsLocalDataSourceImpl implements ProjectsLocalDataSource {
       ),
     ]);
 
+    // Filter out deleted projects
+    baseQuery.where(_database.projects.isDeleted.equals(false));
+
     if (role == UserRole.regular) {
       baseQuery.where(_database.projects.createdBy.equals(userId));
     }
@@ -541,8 +548,15 @@ class ProjectsLocalDataSourceImpl implements ProjectsLocalDataSource {
 
   @override
   Future<void> deleteProject(String code) async {
-    await (_database.delete(
+    await (_database.update(
       _database.projects,
-    )..where((t) => t.code.equals(code))).go();
+    )..where((t) => t.code.equals(code))).write(
+      ProjectsCompanion(
+        isDeleted: Value(true),
+        deletedAt: Value(DateTime.now()),
+        isSynced: Value(false),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
   }
 }

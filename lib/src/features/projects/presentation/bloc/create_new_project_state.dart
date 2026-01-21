@@ -26,6 +26,10 @@ sealed class ProjectEntryFormData with _$ProjectEntryFormData {
     @Default(RequiredDate.pure()) RequiredDate endDate,
     @Default([]) List<ImplementingAgency> agencies,
     @Default([]) List<NigerianState> states,
+    // Preserved fields for editing existing projects
+    String? remoteId,
+    String? createdBy,
+    DateTime? createdAt,
   }) = _ProjectEntryFormData;
 
   const ProjectEntryFormData._();
@@ -54,12 +58,13 @@ sealed class ProjectEntryFormData with _$ProjectEntryFormData {
     amount: budget.value,
     sponsor: sponsor.isEmpty ? null : sponsor,
     title: title.value,
-    createdBy: '',
-    createdAt: DateTime.now(),
+    createdBy: createdBy ?? '',
+    createdAt: createdAt ?? DateTime.now(),
     updatedAt: DateTime.now(),
     isSynced: false,
     startDate: startDate.value,
     endDate: endDate.value,
+    remoteId: remoteId,
   );
 }
 

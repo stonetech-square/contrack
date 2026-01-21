@@ -27,4 +27,6 @@ class Projects extends Table {
   TextColumn get remoteId => text().nullable()();
   DateTimeColumn get startDate => dateTime().nullable()();
   DateTimeColumn get endDate => dateTime().nullable()();
+  BoolColumn get isDeleted => boolean().withDefault(Constant(false))();
+  DateTimeColumn get deletedAt => dateTime().nullable()();
 }

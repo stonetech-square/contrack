@@ -51,6 +51,10 @@ abstract class SyncAction {
   Future<List<db.Agency>> getUnsyncedAgencies({required int limit});
   Future<List<db.Ministry>> getUnsyncedMinistries({required int limit});
   Future<db.User?> getActiveSessionUser();
+  Future<int> deleteLocalUsersNotInRemote(
+    Set<String> remoteUserIds,
+    String? currentUserId,
+  );
 }
 
 @LazySingleton(as: SyncAction)
@@ -190,5 +194,16 @@ class SyncActionImpl implements SyncAction {
   @override
   Future<db.User?> getActiveSessionUser() {
     return _userDelegate.getActiveSessionUser();
+  }
+
+  @override
+  Future<int> deleteLocalUsersNotInRemote(
+    Set<String> remoteUserIds,
+    String? currentUserId,
+  ) {
+    return _userDelegate.deleteLocalUsersNotInRemote(
+      remoteUserIds,
+      currentUserId,
+    );
   }
 }

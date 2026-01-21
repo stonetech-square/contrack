@@ -102,6 +102,11 @@ class ProjectSyncDelegate {
     String? modifiedByRemoteId,
   ) async {
     try {
+      if (project.isDeleted) {
+        await _deleteProject(project);
+        return;
+      }
+
       if (project.remoteId == null || project.remoteId!.isEmpty) {
         await _insertProject(
           project,
@@ -127,6 +132,18 @@ class ProjectSyncDelegate {
       _logger.severe('Failed to sync project ${project.code}', e, stackTrace);
       rethrow;
     }
+  }
+
+  Future<void> _deleteProject(db.Project project) async {
+    if (project.remoteId != null && project.remoteId!.isNotEmpty) {
+      await _supabase.from('projects').delete().eq('id', project.remoteId!);
+      _logger.info('Deleted project ${project.code} from remote');
+    }
+
+    await (_database.delete(
+      _database.projects,
+    )..where((t) => t.code.equals(project.code))).go();
+    _logger.info('Hard deleted project ${project.code} from local database');
   }
 
   Future<void> upsertRemoteProject(
@@ -231,9 +248,16 @@ class ProjectSyncDelegate {
     )..where((t) => t.remoteId.equals(remoteId))).getSingleOrNull();
 
     if (localProject != null) {
-      if (currentUserId != null && localProject.createdBy == currentUserId) {
+      if (localProject.isDeleted) {
         _logger.info(
-          'Skipping update for project $code as it is owned by current user',
+          'Skipping update for project $code as it is marked for deletion locally',
+        );
+        return;
+      }
+
+      if (!localProject.isSynced && localProject.updatedAt.isAfter(updatedAt)) {
+        _logger.info(
+          'Skipping update for project $code as it has unsynced local changes',
         );
         return;
       }
