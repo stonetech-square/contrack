@@ -10,8 +10,6 @@ class EditMinistryDialog extends StatefulWidget {
 
   const EditMinistryDialog({super.key, required this.ministry});
 
-  /// Shows the dialog and returns the updated Ministry if changes were made,
-  /// or null if cancelled or no changes were made.
   static Future<Ministry?> show(
     BuildContext context, {
     required Ministry ministry,
@@ -50,13 +48,11 @@ class _EditMinistryDialogState extends State<EditMinistryDialog> {
       final newName = _nameController.text.trim();
       final newCode = _codeController.text.trim();
 
-      // Check if anything changed
-      if (newName == widget.ministry.name && newCode == widget.ministry.code) {
+      if (_nameController.text == widget.ministry.name &&
+          _codeController.text == (widget.ministry.code ?? '')) {
         Navigator.of(context).pop();
         return;
       }
-
-      // Return updated ministry
       final updatedMinistry = widget.ministry.copyWith(
         name: newName,
         code: Value(newCode),

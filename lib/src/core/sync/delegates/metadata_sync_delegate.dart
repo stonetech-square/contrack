@@ -291,7 +291,8 @@ class MetadataSyncDelegate {
     return (_database.select(_database.agencies)
           ..where((t) => t.isSynced.equals(false))
           ..orderBy([
-            (t) => OrderingTerm(expression: t.createdAt, mode: OrderingMode.asc),
+            (t) =>
+                OrderingTerm(expression: t.createdAt, mode: OrderingMode.asc),
           ])
           ..limit(limit))
         .get();
@@ -301,17 +302,17 @@ class MetadataSyncDelegate {
     return (_database.select(_database.ministries)
           ..where((t) => t.isSynced.equals(false))
           ..orderBy([
-            (t) => OrderingTerm(expression: t.createdAt, mode: OrderingMode.asc),
+            (t) =>
+                OrderingTerm(expression: t.createdAt, mode: OrderingMode.asc),
           ])
           ..limit(limit))
         .get();
   }
 
   Future<void> pushAgency(db.Agency agency) async {
-    // Get the ministry's remoteId for the foreign key reference
-    final ministry = await (_database.select(_database.ministries)
-          ..where((t) => t.id.equals(agency.ministryId)))
-        .getSingleOrNull();
+    final ministry = await (_database.select(
+      _database.ministries,
+    )..where((t) => t.id.equals(agency.ministryId))).getSingleOrNull();
 
     if (ministry == null || ministry.remoteId == null) {
       _logger.warning(
@@ -343,13 +344,15 @@ class MetadataSyncDelegate {
 
     final remoteId = response['id'] as String;
 
-    await (_database.update(_database.agencies)
-          ..where((t) => t.id.equals(agency.id)))
-        .write(db.AgenciesCompanion(
-          remoteId: Value(remoteId),
-          isSynced: const Value(true),
-          lastSyncedAt: Value(DateTime.now()),
-        ));
+    await (_database.update(
+      _database.agencies,
+    )..where((t) => t.id.equals(agency.id))).write(
+      db.AgenciesCompanion(
+        remoteId: Value(remoteId),
+        isSynced: const Value(true),
+        lastSyncedAt: Value(DateTime.now()),
+      ),
+    );
 
     _logger.info('Inserted agency ${agency.name} with remoteId $remoteId');
   }
@@ -366,12 +369,14 @@ class MetadataSyncDelegate {
         })
         .eq('id', agency.remoteId!);
 
-    await (_database.update(_database.agencies)
-          ..where((t) => t.id.equals(agency.id)))
-        .write(db.AgenciesCompanion(
-          isSynced: const Value(true),
-          lastSyncedAt: Value(DateTime.now()),
-        ));
+    await (_database.update(
+      _database.agencies,
+    )..where((t) => t.id.equals(agency.id))).write(
+      db.AgenciesCompanion(
+        isSynced: const Value(true),
+        lastSyncedAt: Value(DateTime.now()),
+      ),
+    );
 
     _logger.info('Updated agency ${agency.name}');
   }
@@ -399,13 +404,15 @@ class MetadataSyncDelegate {
 
     final remoteId = response['id'] as String;
 
-    await (_database.update(_database.ministries)
-          ..where((t) => t.id.equals(ministry.id)))
-        .write(db.MinistriesCompanion(
-          remoteId: Value(remoteId),
-          isSynced: const Value(true),
-          lastSyncedAt: Value(DateTime.now()),
-        ));
+    await (_database.update(
+      _database.ministries,
+    )..where((t) => t.id.equals(ministry.id))).write(
+      db.MinistriesCompanion(
+        remoteId: Value(remoteId),
+        isSynced: const Value(true),
+        lastSyncedAt: Value(DateTime.now()),
+      ),
+    );
 
     _logger.info('Inserted ministry ${ministry.name} with remoteId $remoteId');
   }
@@ -421,12 +428,14 @@ class MetadataSyncDelegate {
         })
         .eq('id', ministry.remoteId!);
 
-    await (_database.update(_database.ministries)
-          ..where((t) => t.id.equals(ministry.id)))
-        .write(db.MinistriesCompanion(
-          isSynced: const Value(true),
-          lastSyncedAt: Value(DateTime.now()),
-        ));
+    await (_database.update(
+      _database.ministries,
+    )..where((t) => t.id.equals(ministry.id))).write(
+      db.MinistriesCompanion(
+        isSynced: const Value(true),
+        lastSyncedAt: Value(DateTime.now()),
+      ),
+    );
 
     _logger.info('Updated ministry ${ministry.name}');
   }

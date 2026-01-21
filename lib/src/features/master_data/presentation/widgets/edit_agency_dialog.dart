@@ -65,7 +65,6 @@ class _EditAgencyDialogState extends State<EditAgencyDialog> {
       final originalAgency = widget.agencyWithMinistry.agency;
       final originalMinistry = widget.agencyWithMinistry.ministry;
 
-      // Check if anything changed
       final nameChanged = newName != originalAgency.name;
       final codeChanged = newCode != (originalAgency.code ?? '');
       final ministryChanged = _selectedMinistry?.id != originalMinistry.id;
@@ -75,7 +74,6 @@ class _EditAgencyDialogState extends State<EditAgencyDialog> {
         return;
       }
 
-      // Return updated agency with ministry
       final updatedAgency = originalAgency.copyWith(
         name: newName,
         code: Value(newCode.isEmpty ? null : newCode),
