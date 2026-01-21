@@ -6,7 +6,7 @@ import 'package:contrack/src/core/database/tables/tables.dart';
 import 'package:contrack/src/core/utils/constants.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
-import 'package:flutter/foundation.dart' show debugPrint;
+import 'package:flutter/foundation.dart' show debugPrint, kDebugMode;
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
@@ -34,7 +34,9 @@ class AppDatabase extends _$AppDatabase {
   static QueryExecutor _openConnection() {
     return LazyDatabase(() async {
       final dbFolder = await getApplicationSupportDirectory();
-      final file = File(p.join(dbFolder.path, 'contrack_dev.sqlite'));
+      final file = File(
+        p.join(dbFolder.path, 'contrack_${kDebugMode ? 'dev' : 'prod'}.sqlite'),
+      );
 
       return NativeDatabase.createInBackground(
         file,
