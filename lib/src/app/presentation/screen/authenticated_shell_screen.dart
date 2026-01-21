@@ -39,7 +39,7 @@ class _AuthenticatedShellScreenState extends State<AuthenticatedShellScreen> {
             const DashboardRoute(),
             const ShellProjectRoute(),
             if (state.user?.role.isAnyAdmin ?? false) ...const [
-              ReportRoute(),
+              // ReportRoute(),
               UserManagementRoute(),
               MasterDataRoute(),
             ],
@@ -67,7 +67,7 @@ class _AuthenticatedShellScreenState extends State<AuthenticatedShellScreen> {
                       AppSidebarDestination.dashboard,
                       AppSidebarDestination.projects,
                       if (state.user?.role.isAnyAdmin ?? false) ...[
-                        AppSidebarDestination.reports,
+                        // AppSidebarDestination.reports,
                         AppSidebarDestination.userManagement,
                         AppSidebarDestination.masterData,
                       ],

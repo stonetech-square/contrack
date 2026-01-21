@@ -27,6 +27,12 @@ _ProjectWithDetailsModel _$ProjectWithDetailsModelFromJson(
   createdByName: json['created_by_name'] as String?,
   modifiedBy: json['modified_by'] as String?,
   modifiedByName: json['modified_by_name'] as String?,
+  startDate: json['start_date'] == null
+      ? null
+      : DateTime.parse(json['start_date'] as String),
+  endDate: json['end_date'] == null
+      ? null
+      : DateTime.parse(json['end_date'] as String),
   createdAt: DateTime.parse(json['created_at'] as String),
   updatedAt: DateTime.parse(json['updated_at'] as String),
   isSynced: json['is_synced'] as bool? ?? false,
@@ -57,6 +63,8 @@ Map<String, dynamic> _$ProjectWithDetailsModelToJson(
   'created_by_name': instance.createdByName,
   'modified_by': instance.modifiedBy,
   'modified_by_name': instance.modifiedByName,
+  'start_date': instance.startDate?.toIso8601String(),
+  'end_date': instance.endDate?.toIso8601String(),
   'created_at': instance.createdAt.toIso8601String(),
   'updated_at': instance.updatedAt.toIso8601String(),
   'is_synced': instance.isSynced,

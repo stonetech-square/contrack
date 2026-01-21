@@ -58,6 +58,8 @@ sealed class ProjectEntryFormData with _$ProjectEntryFormData {
     createdAt: DateTime.now(),
     updatedAt: DateTime.now(),
     isSynced: false,
+    startDate: startDate.value,
+    endDate: endDate.value,
   );
 }
 

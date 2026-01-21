@@ -1,4 +1,5 @@
 import 'package:contrack/src/core/common/enums/project_status.dart';
+import 'package:contrack/src/features/dashboard/domain/entities/project.dart';
 import 'package:equatable/equatable.dart';
 
 /// Project entity enriched with related entity names from JOINs
@@ -21,6 +22,8 @@ class ProjectWithDetails extends Equatable {
   final String? createdByName;
   final String? modifiedBy;
   final String? modifiedByName;
+  final DateTime? startDate;
+  final DateTime? endDate;
   final DateTime createdAt;
   final DateTime updatedAt;
   final bool isSynced;
@@ -46,12 +49,38 @@ class ProjectWithDetails extends Equatable {
     this.createdByName,
     this.modifiedBy,
     this.modifiedByName,
+    this.startDate,
+    this.endDate,
     required this.createdAt,
     required this.updatedAt,
     required this.isSynced,
     this.lastSyncedAt,
     this.remoteId,
   });
+
+  Project toProject() {
+    return Project(
+      code: code,
+      status: status,
+      agencyId: agencyId,
+      ministryId: ministryId,
+      stateId: stateId,
+      zoneId: zoneId,
+      constituency: constituency,
+      amount: amount,
+      sponsor: sponsor,
+      title: title,
+      createdBy: createdBy,
+      modifiedBy: modifiedBy,
+      startDate: startDate,
+      endDate: endDate,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+      isSynced: isSynced,
+      lastSyncedAt: lastSyncedAt,
+      remoteId: remoteId,
+    );
+  }
 
   @override
   List<Object?> get props => [
@@ -73,6 +102,8 @@ class ProjectWithDetails extends Equatable {
     createdByName,
     modifiedBy,
     modifiedByName,
+    startDate,
+    endDate,
     createdAt,
     updatedAt,
     isSynced,

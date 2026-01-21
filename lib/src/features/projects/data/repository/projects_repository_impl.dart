@@ -44,11 +44,17 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
     if (user == null) {
       throw Exception('User not logged in');
     }
-    final projectsWithCreatedBy = projects
-        .map((project) => project.copyWith(createdBy: user.uid))
+    final projectsToSave = projects
+        .map(
+          (project) => project.copyWith(
+            createdBy: project.createdBy.isEmpty ? user.uid : project.createdBy,
+            modifiedBy: user.uid,
+            updatedAt: DateTime.now(),
+          ),
+        )
         .toList();
 
-    final projectModels = projectsWithCreatedBy
+    final projectModels = projectsToSave
         .map((project) => ProjectModel.fromEntity(project))
         .toList();
     await _localDataSource.createProject(projectModels);
@@ -88,20 +94,24 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
         .getAllImplementingAgenciesBySupervisingMinistryId(ministryId);
     return agencies
         .map(
-          (e) =>
-              ImplementingAgency(id: e.id, name: e.name, ministryId: ministryId),
+          (e) => ImplementingAgency(
+            id: e.id,
+            name: e.name,
+            ministryId: ministryId,
+          ),
         )
         .toList();
   }
 
   @override
-  Future<ProjectWithDetails?> getProjectByCode(String code) async {
-    final projectModel = await _localDataSource.getProjectByCode(code);
-    return projectModel?.toEntity();
+  Stream<ProjectWithDetails?> watchProjectByCode(String code) {
+    return _localDataSource.watchProjectByCode(code).map((model) {
+      return model?.toEntity();
+    });
   }
 
   @override
-  Stream<List<Project>> watchProjectsForUser({
+  Stream<List<ProjectWithDetails>> watchProjectsForUser({
     String? query,
     ProjectFilter filter = const ProjectFilter(),
   }) {

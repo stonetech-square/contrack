@@ -62,21 +62,19 @@ class AppDatabase extends _$AppDatabase {
     },
     onUpgrade: (Migrator m, int from, int to) async {
       if (from < 2) {
-        // Add isSynced and lastSyncedAt columns to agencies table
         await customStatement(
           'ALTER TABLE agencies ADD COLUMN is_synced INTEGER NOT NULL DEFAULT 0',
         );
         await customStatement(
           'ALTER TABLE agencies ADD COLUMN last_synced_at INTEGER',
         );
-        // Add isSynced and lastSyncedAt columns to ministries table
         await customStatement(
           'ALTER TABLE ministries ADD COLUMN is_synced INTEGER NOT NULL DEFAULT 0',
         );
         await customStatement(
           'ALTER TABLE ministries ADD COLUMN last_synced_at INTEGER',
         );
-        // Mark existing records with remoteId as synced
+
         await customStatement(
           'UPDATE agencies SET is_synced = 1 WHERE remote_id IS NOT NULL',
         );
@@ -85,13 +83,9 @@ class AppDatabase extends _$AppDatabase {
         );
       }
       if (from < 4) {
-        // Major refactor: Ministry now comes before Agency (Ministry has many Agencies)
-        // Drop old tables and recreate with correct relationship
         await customStatement('PRAGMA foreign_keys = OFF');
         await customStatement('DROP TABLE IF EXISTS ministries');
         await customStatement('DROP TABLE IF EXISTS agencies');
-
-        // Create ministries table first (parent table)
         await customStatement('''
           CREATE TABLE ministries (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -106,7 +100,6 @@ class AppDatabase extends _$AppDatabase {
           )
         ''');
 
-        // Create agencies table with ministry_id foreign key
         await customStatement('''
           CREATE TABLE agencies (
             id INTEGER PRIMARY KEY AUTOINCREMENT,

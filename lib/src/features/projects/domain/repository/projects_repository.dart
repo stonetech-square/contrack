@@ -15,8 +15,8 @@ abstract class ProjectsRepository {
   Future<List<NigerianState>> getStates(int zoneId);
   Future<List<SupervisingMinistry>> getSupervisingMinistries();
   Future<List<ImplementingAgency>> getImplementingAgencies(int ministryId);
-  Future<ProjectWithDetails?> getProjectByCode(String code);
-  Stream<List<Project>> watchProjectsForUser({
+  Stream<ProjectWithDetails?> watchProjectByCode(String code);
+  Stream<List<ProjectWithDetails>> watchProjectsForUser({
     String? query,
     ProjectFilter filter = const ProjectFilter(),
   });

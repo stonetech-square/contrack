@@ -11,7 +11,7 @@ class CreatNewProjectHeader extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Create New Project',
+          'Create/Edit Project',
           style: context.textStyles.titleLarge.copyWith(
             color: context.colors.textHeading,
             fontSize: 20,

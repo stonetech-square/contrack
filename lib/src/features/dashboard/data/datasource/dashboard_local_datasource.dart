@@ -143,6 +143,8 @@ class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
               : modifiedUser?.username,
           createdAt: project.createdAt,
           updatedAt: project.updatedAt,
+          startDate: project.startDate,
+          endDate: project.endDate,
           isSynced: project.isSynced,
           lastSyncedAt: project.lastSyncedAt,
           remoteId: project.remoteId,

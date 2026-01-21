@@ -6,14 +6,14 @@ import 'package:injectable/injectable.dart';
 
 @lazySingleton
 class GetProjectByCodeUseCase
-    implements UseCase<Future<ProjectWithDetails?>, GetProjectByCodeParams> {
+    implements UseCase<Stream<ProjectWithDetails?>, GetProjectByCodeParams> {
   final ProjectsRepository _repository;
 
   GetProjectByCodeUseCase(this._repository);
 
   @override
-  Future<ProjectWithDetails?> call(GetProjectByCodeParams params) async {
-    return await _repository.getProjectByCode(params.code);
+  Stream<ProjectWithDetails?> call(GetProjectByCodeParams params) {
+    return _repository.watchProjectByCode(params.code);
   }
 }
 

@@ -46,7 +46,7 @@ class AppRouter extends RootStackRouter {
                 AutoRoute(page: CreateNewProjectRoute.page),
               ],
             ),
-            AutoRoute(page: ReportRoute.page),
+            // AutoRoute(page: ReportRoute.page),
             AutoRoute(
               page: UserManagementRoute.page,
               children: [

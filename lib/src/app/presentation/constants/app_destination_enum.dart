@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 enum AppSidebarDestination {
   dashboard,
   projects,
-  reports,
+  // reports,
   userManagement,
   masterData;
 
@@ -13,8 +13,8 @@ enum AppSidebarDestination {
         return 'Dashboard';
       case AppSidebarDestination.projects:
         return 'Projects';
-      case AppSidebarDestination.reports:
-        return 'Reports';
+      // case AppSidebarDestination.reports:
+      //   return 'Reports';
       case AppSidebarDestination.userManagement:
         return 'User Management';
       case AppSidebarDestination.masterData:
@@ -28,8 +28,8 @@ enum AppSidebarDestination {
         return Icons.dashboard;
       case AppSidebarDestination.projects:
         return Icons.folder;
-      case AppSidebarDestination.reports:
-        return Icons.receipt;
+      // case AppSidebarDestination.reports:
+      //   return Icons.receipt;
       case AppSidebarDestination.userManagement:
         return Icons.people;
       case AppSidebarDestination.masterData:

@@ -83,8 +83,8 @@ class CreateNewProjectAction extends StatelessWidget {
                     )
                   : Text(
                       state.entries.length > 1
-                          ? 'Create (${state.entries.length})'
-                          : 'Create',
+                          ? 'Save (${state.entries.length})'
+                          : 'Save',
                     ),
               icon: isSubmitting
                   ? const SizedBox.shrink()

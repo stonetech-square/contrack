@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AllProjectsState {
 
- List<Project> get projects; bool get isLoading; String? get errorMessage; bool get isExporting; String? get exportFilePath; String? get exportError;
+ List<ProjectWithDetails> get projects; int get page; int get pageSize; bool get isLoading; String? get errorMessage; bool get isExporting; String? get exportFilePath; String? get exportError;
 /// Create a copy of AllProjectsState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $AllProjectsStateCopyWith<AllProjectsState> get copyWith => _$AllProjectsStateCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AllProjectsState&&const DeepCollectionEquality().equals(other.projects, projects)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.isExporting, isExporting) || other.isExporting == isExporting)&&(identical(other.exportFilePath, exportFilePath) || other.exportFilePath == exportFilePath)&&(identical(other.exportError, exportError) || other.exportError == exportError));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AllProjectsState&&const DeepCollectionEquality().equals(other.projects, projects)&&(identical(other.page, page) || other.page == page)&&(identical(other.pageSize, pageSize) || other.pageSize == pageSize)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.isExporting, isExporting) || other.isExporting == isExporting)&&(identical(other.exportFilePath, exportFilePath) || other.exportFilePath == exportFilePath)&&(identical(other.exportError, exportError) || other.exportError == exportError));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(projects),isLoading,errorMessage,isExporting,exportFilePath,exportError);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(projects),page,pageSize,isLoading,errorMessage,isExporting,exportFilePath,exportError);
 
 @override
 String toString() {
-  return 'AllProjectsState(projects: $projects, isLoading: $isLoading, errorMessage: $errorMessage, isExporting: $isExporting, exportFilePath: $exportFilePath, exportError: $exportError)';
+  return 'AllProjectsState(projects: $projects, page: $page, pageSize: $pageSize, isLoading: $isLoading, errorMessage: $errorMessage, isExporting: $isExporting, exportFilePath: $exportFilePath, exportError: $exportError)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $AllProjectsStateCopyWith<$Res>  {
   factory $AllProjectsStateCopyWith(AllProjectsState value, $Res Function(AllProjectsState) _then) = _$AllProjectsStateCopyWithImpl;
 @useResult
 $Res call({
- List<Project> projects, bool isLoading, String? errorMessage, bool isExporting, String? exportFilePath, String? exportError
+ List<ProjectWithDetails> projects, int page, int pageSize, bool isLoading, String? errorMessage, bool isExporting, String? exportFilePath, String? exportError
 });
 
 
@@ -62,10 +62,12 @@ class _$AllProjectsStateCopyWithImpl<$Res>
 
 /// Create a copy of AllProjectsState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? projects = null,Object? isLoading = null,Object? errorMessage = freezed,Object? isExporting = null,Object? exportFilePath = freezed,Object? exportError = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? projects = null,Object? page = null,Object? pageSize = null,Object? isLoading = null,Object? errorMessage = freezed,Object? isExporting = null,Object? exportFilePath = freezed,Object? exportError = freezed,}) {
   return _then(_self.copyWith(
 projects: null == projects ? _self.projects : projects // ignore: cast_nullable_to_non_nullable
-as List<Project>,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as List<ProjectWithDetails>,page: null == page ? _self.page : page // ignore: cast_nullable_to_non_nullable
+as int,pageSize: null == pageSize ? _self.pageSize : pageSize // ignore: cast_nullable_to_non_nullable
+as int,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
 as String?,isExporting: null == isExporting ? _self.isExporting : isExporting // ignore: cast_nullable_to_non_nullable
 as bool,exportFilePath: freezed == exportFilePath ? _self.exportFilePath : exportFilePath // ignore: cast_nullable_to_non_nullable
@@ -152,10 +154,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<Project> projects,  bool isLoading,  String? errorMessage,  bool isExporting,  String? exportFilePath,  String? exportError)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<ProjectWithDetails> projects,  int page,  int pageSize,  bool isLoading,  String? errorMessage,  bool isExporting,  String? exportFilePath,  String? exportError)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AllProjectsState() when $default != null:
-return $default(_that.projects,_that.isLoading,_that.errorMessage,_that.isExporting,_that.exportFilePath,_that.exportError);case _:
+return $default(_that.projects,_that.page,_that.pageSize,_that.isLoading,_that.errorMessage,_that.isExporting,_that.exportFilePath,_that.exportError);case _:
   return orElse();
 
 }
@@ -173,10 +175,10 @@ return $default(_that.projects,_that.isLoading,_that.errorMessage,_that.isExport
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<Project> projects,  bool isLoading,  String? errorMessage,  bool isExporting,  String? exportFilePath,  String? exportError)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<ProjectWithDetails> projects,  int page,  int pageSize,  bool isLoading,  String? errorMessage,  bool isExporting,  String? exportFilePath,  String? exportError)  $default,) {final _that = this;
 switch (_that) {
 case _AllProjectsState():
-return $default(_that.projects,_that.isLoading,_that.errorMessage,_that.isExporting,_that.exportFilePath,_that.exportError);}
+return $default(_that.projects,_that.page,_that.pageSize,_that.isLoading,_that.errorMessage,_that.isExporting,_that.exportFilePath,_that.exportError);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -190,10 +192,10 @@ return $default(_that.projects,_that.isLoading,_that.errorMessage,_that.isExport
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<Project> projects,  bool isLoading,  String? errorMessage,  bool isExporting,  String? exportFilePath,  String? exportError)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<ProjectWithDetails> projects,  int page,  int pageSize,  bool isLoading,  String? errorMessage,  bool isExporting,  String? exportFilePath,  String? exportError)?  $default,) {final _that = this;
 switch (_that) {
 case _AllProjectsState() when $default != null:
-return $default(_that.projects,_that.isLoading,_that.errorMessage,_that.isExporting,_that.exportFilePath,_that.exportError);case _:
+return $default(_that.projects,_that.page,_that.pageSize,_that.isLoading,_that.errorMessage,_that.isExporting,_that.exportFilePath,_that.exportError);case _:
   return null;
 
 }
@@ -204,17 +206,19 @@ return $default(_that.projects,_that.isLoading,_that.errorMessage,_that.isExport
 /// @nodoc
 
 
-class _AllProjectsState implements AllProjectsState {
-  const _AllProjectsState({final  List<Project> projects = const [], this.isLoading = false, this.errorMessage, this.isExporting = false, this.exportFilePath, this.exportError}): _projects = projects;
+class _AllProjectsState extends AllProjectsState {
+  const _AllProjectsState({final  List<ProjectWithDetails> projects = const [], this.page = 1, this.pageSize = 10, this.isLoading = false, this.errorMessage, this.isExporting = false, this.exportFilePath, this.exportError}): _projects = projects,super._();
   
 
- final  List<Project> _projects;
-@override@JsonKey() List<Project> get projects {
+ final  List<ProjectWithDetails> _projects;
+@override@JsonKey() List<ProjectWithDetails> get projects {
   if (_projects is EqualUnmodifiableListView) return _projects;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_projects);
 }
 
+@override@JsonKey() final  int page;
+@override@JsonKey() final  int pageSize;
 @override@JsonKey() final  bool isLoading;
 @override final  String? errorMessage;
 @override@JsonKey() final  bool isExporting;
@@ -231,16 +235,16 @@ _$AllProjectsStateCopyWith<_AllProjectsState> get copyWith => __$AllProjectsStat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AllProjectsState&&const DeepCollectionEquality().equals(other._projects, _projects)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.isExporting, isExporting) || other.isExporting == isExporting)&&(identical(other.exportFilePath, exportFilePath) || other.exportFilePath == exportFilePath)&&(identical(other.exportError, exportError) || other.exportError == exportError));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AllProjectsState&&const DeepCollectionEquality().equals(other._projects, _projects)&&(identical(other.page, page) || other.page == page)&&(identical(other.pageSize, pageSize) || other.pageSize == pageSize)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.isExporting, isExporting) || other.isExporting == isExporting)&&(identical(other.exportFilePath, exportFilePath) || other.exportFilePath == exportFilePath)&&(identical(other.exportError, exportError) || other.exportError == exportError));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_projects),isLoading,errorMessage,isExporting,exportFilePath,exportError);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_projects),page,pageSize,isLoading,errorMessage,isExporting,exportFilePath,exportError);
 
 @override
 String toString() {
-  return 'AllProjectsState(projects: $projects, isLoading: $isLoading, errorMessage: $errorMessage, isExporting: $isExporting, exportFilePath: $exportFilePath, exportError: $exportError)';
+  return 'AllProjectsState(projects: $projects, page: $page, pageSize: $pageSize, isLoading: $isLoading, errorMessage: $errorMessage, isExporting: $isExporting, exportFilePath: $exportFilePath, exportError: $exportError)';
 }
 
 
@@ -251,7 +255,7 @@ abstract mixin class _$AllProjectsStateCopyWith<$Res> implements $AllProjectsSta
   factory _$AllProjectsStateCopyWith(_AllProjectsState value, $Res Function(_AllProjectsState) _then) = __$AllProjectsStateCopyWithImpl;
 @override @useResult
 $Res call({
- List<Project> projects, bool isLoading, String? errorMessage, bool isExporting, String? exportFilePath, String? exportError
+ List<ProjectWithDetails> projects, int page, int pageSize, bool isLoading, String? errorMessage, bool isExporting, String? exportFilePath, String? exportError
 });
 
 
@@ -268,10 +272,12 @@ class __$AllProjectsStateCopyWithImpl<$Res>
 
 /// Create a copy of AllProjectsState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? projects = null,Object? isLoading = null,Object? errorMessage = freezed,Object? isExporting = null,Object? exportFilePath = freezed,Object? exportError = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? projects = null,Object? page = null,Object? pageSize = null,Object? isLoading = null,Object? errorMessage = freezed,Object? isExporting = null,Object? exportFilePath = freezed,Object? exportError = freezed,}) {
   return _then(_AllProjectsState(
 projects: null == projects ? _self._projects : projects // ignore: cast_nullable_to_non_nullable
-as List<Project>,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as List<ProjectWithDetails>,page: null == page ? _self.page : page // ignore: cast_nullable_to_non_nullable
+as int,pageSize: null == pageSize ? _self.pageSize : pageSize // ignore: cast_nullable_to_non_nullable
+as int,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
 as String?,isExporting: null == isExporting ? _self.isExporting : isExporting // ignore: cast_nullable_to_non_nullable
 as bool,exportFilePath: freezed == exportFilePath ? _self.exportFilePath : exportFilePath // ignore: cast_nullable_to_non_nullable

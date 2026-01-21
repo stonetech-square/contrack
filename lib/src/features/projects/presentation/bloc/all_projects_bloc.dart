@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:contrack/src/core/errors/failures.dart';
 
 import 'package:contrack/src/core/database/tables/export_history.dart';
-import 'package:contrack/src/features/dashboard/domain/entities/project.dart';
+import 'package:contrack/src/features/dashboard/domain/entities/project_with_details.dart';
 import 'package:contrack/src/features/projects/domain/entities/sort_field.dart';
 import 'package:contrack/src/features/projects/domain/usecase/export_all_projects_use_case.dart';
 import 'package:contrack/src/features/projects/domain/usecase/watch_projects_for_user_use_case.dart';
@@ -27,16 +27,17 @@ class AllProjectsBloc extends Bloc<AllProjectsEvent, AllProjectsState> {
   ) : super(const AllProjectsState()) {
     on<AllProjectsWatchStarted>(_onWatchStarted);
     on<AllProjectsExportRequested>(_onExportRequested);
+    on<AllProjectsPageChanged>(_onPageChanged);
   }
 
   Future<void> _onWatchStarted(
     AllProjectsWatchStarted event,
     Emitter<AllProjectsState> emit,
   ) async {
-    emit(state.copyWith(isLoading: true, errorMessage: null));
+    emit(state.copyWith(isLoading: true, errorMessage: null, page: 1));
 
     try {
-      await emit.forEach<List<Project>>(
+      await emit.forEach<List<ProjectWithDetails>>(
         _watchProjectsForUserUseCase(
           WatchProjectsForUserParams(query: event.query, filter: event.filter),
         ),
@@ -54,6 +55,13 @@ class AllProjectsBloc extends Bloc<AllProjectsEvent, AllProjectsState> {
           : AppFailure.fromException(e, stackTrace);
       emit(state.copyWith(isLoading: false, errorMessage: failure.message));
     }
+  }
+
+  void _onPageChanged(
+    AllProjectsPageChanged event,
+    Emitter<AllProjectsState> emit,
+  ) {
+    emit(state.copyWith(page: event.page));
   }
 
   Future<void> _onExportRequested(

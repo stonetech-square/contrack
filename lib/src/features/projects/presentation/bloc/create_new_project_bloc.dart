@@ -107,8 +107,12 @@ class CreateNewProjectBloc
           title: RequiredText.dirty(project.title),
           sponsor: project.sponsor ?? '',
           budget: RequiredDouble.dirty(project.amount),
-          startDate: const RequiredDate.pure(),
-          endDate: const RequiredDate.pure(),
+          startDate: project.startDate != null
+              ? RequiredDate.dirty(project.startDate!)
+              : const RequiredDate.pure(),
+          endDate: project.endDate != null
+              ? RequiredDate.dirty(project.endDate!)
+              : const RequiredDate.pure(),
           agencies: agencies,
           states: states,
         ),

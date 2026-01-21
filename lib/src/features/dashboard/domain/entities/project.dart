@@ -14,6 +14,8 @@ class Project extends Equatable {
   final String title;
   final String createdBy;
   final String? modifiedBy;
+  final DateTime? startDate;
+  final DateTime? endDate;
   final DateTime createdAt;
   final DateTime updatedAt;
   final bool isSynced;
@@ -33,6 +35,8 @@ class Project extends Equatable {
     required this.title,
     required this.createdBy,
     this.modifiedBy,
+    this.startDate,
+    this.endDate,
     required this.createdAt,
     required this.updatedAt,
     required this.isSynced,
@@ -52,6 +56,8 @@ class Project extends Equatable {
       amount: 0,
       title: '',
       createdBy: '',
+      startDate: null,
+      endDate: null,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
       isSynced: false,
@@ -71,6 +77,8 @@ class Project extends Equatable {
     String? title,
     String? createdBy,
     String? modifiedBy,
+    DateTime? startDate,
+    DateTime? endDate,
     DateTime? createdAt,
     DateTime? updatedAt,
     bool? isSynced,
@@ -90,6 +98,8 @@ class Project extends Equatable {
       title: title ?? this.title,
       createdBy: createdBy ?? this.createdBy,
       modifiedBy: modifiedBy ?? this.modifiedBy,
+      startDate: startDate ?? this.startDate,
+      endDate: endDate ?? this.endDate,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       isSynced: isSynced ?? this.isSynced,
@@ -112,6 +122,8 @@ class Project extends Equatable {
     title,
     createdBy,
     modifiedBy,
+    startDate,
+    endDate,
     createdAt,
     updatedAt,
     isSynced,
@@ -121,6 +133,6 @@ class Project extends Equatable {
 
   @override
   String toString() {
-    return 'Project(code: $code, status: $status, agencyId: $agencyId, ministryId: $ministryId, stateId: $stateId, zoneId: $zoneId, constituency: $constituency, amount: $amount, sponsor: $sponsor, title: $title, createdBy: $createdBy, modifiedBy: $modifiedBy, createdAt: $createdAt, updatedAt: $updatedAt, isSynced: $isSynced, lastSyncedAt: $lastSyncedAt, remoteId: $remoteId)';
+    return 'Project(code: $code, status: $status, agencyId: $agencyId, ministryId: $ministryId, stateId: $stateId, zoneId: $zoneId, constituency: $constituency, amount: $amount, sponsor: $sponsor, title: $title, createdBy: $createdBy, modifiedBy: $modifiedBy, startDate: $startDate, endDate: $endDate, createdAt: $createdAt, updatedAt: $updatedAt, isSynced: $isSynced, lastSyncedAt: $lastSyncedAt, remoteId: $remoteId)';
   }
 }

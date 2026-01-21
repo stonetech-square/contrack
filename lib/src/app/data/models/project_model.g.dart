@@ -20,6 +20,12 @@ _ProjectModel _$ProjectModelFromJson(Map<String, dynamic> json) =>
       sponsor: json['sponsor'] as String?,
       createdBy: json['created_by'] as String,
       modifiedBy: json['modified_by'] as String?,
+      startDate: json['start_date'] == null
+          ? null
+          : DateTime.parse(json['start_date'] as String),
+      endDate: json['end_date'] == null
+          ? null
+          : DateTime.parse(json['end_date'] as String),
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
       isSynced: json['is_synced'] as bool? ?? false,
@@ -43,6 +49,8 @@ Map<String, dynamic> _$ProjectModelToJson(_ProjectModel instance) =>
       'sponsor': instance.sponsor,
       'created_by': instance.createdBy,
       'modified_by': instance.modifiedBy,
+      'start_date': instance.startDate?.toIso8601String(),
+      'end_date': instance.endDate?.toIso8601String(),
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
       'is_synced': instance.isSynced,

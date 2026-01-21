@@ -28,3 +28,12 @@ class AllProjectsExportRequested extends AllProjectsEvent {
   @override
   List<Object?> get props => [format];
 }
+
+class AllProjectsPageChanged extends AllProjectsEvent {
+  const AllProjectsPageChanged(this.page);
+
+  final int page;
+
+  @override
+  List<Object?> get props => [page];
+}

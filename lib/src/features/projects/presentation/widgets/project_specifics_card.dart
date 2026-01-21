@@ -34,8 +34,8 @@ class ProjectSpecificsCard extends StatelessWidget {
           initialValue: entry.title.value,
           onChanged: (value) {
             context.read<CreateNewProjectBloc>().add(
-                  EntryFieldChanged(index: index, title: value),
-                );
+              EntryFieldChanged(index: index, title: value),
+            );
           },
           errorText: showErrors && entry.title.displayError != null
               ? 'Title is required'
@@ -49,8 +49,8 @@ class ProjectSpecificsCard extends StatelessWidget {
           initialValue: entry.sponsor,
           onChanged: (value) {
             context.read<CreateNewProjectBloc>().add(
-                  EntryFieldChanged(index: index, sponsor: value),
-                );
+              EntryFieldChanged(index: index, sponsor: value),
+            );
           },
         ),
         const SizedBox(height: 15),
@@ -62,14 +62,17 @@ class ProjectSpecificsCard extends StatelessWidget {
                 key: ValueKey('budget_${entry.code}'),
                 label: 'Budget Allocation',
                 hintText: '₦',
+                initialValue: entry.budget.value > 0
+                    ? NumberFormat.decimalPattern().format(entry.budget.value)
+                    : null,
                 keyboardType: TextInputType.number,
                 inputFormatters: [CurrencyInputFormatter()],
                 onChanged: (value) {
                   final cleanValue = value.replaceAll(',', '');
                   final budget = double.tryParse(cleanValue) ?? 0.0;
                   context.read<CreateNewProjectBloc>().add(
-                        EntryFieldChanged(index: index, budget: budget),
-                      );
+                    EntryFieldChanged(index: index, budget: budget),
+                  );
                 },
                 errorText: showErrors && entry.budget.displayError != null
                     ? 'Invalid budget'
@@ -88,8 +91,8 @@ class ProjectSpecificsCard extends StatelessWidget {
                   );
                   if (date != null && context.mounted) {
                     context.read<CreateNewProjectBloc>().add(
-                          EntryFieldChanged(index: index, startDate: date),
-                        );
+                      EntryFieldChanged(index: index, startDate: date),
+                    );
                   }
                 },
                 child: AbsorbPointer(
@@ -100,8 +103,8 @@ class ProjectSpecificsCard extends StatelessWidget {
                         : 'MM/DD/YYYY',
                     errorText:
                         showErrors && entry.startDate.displayError != null
-                            ? 'Required'
-                            : null,
+                        ? 'Required'
+                        : null,
                   ),
                 ),
               ),
@@ -118,8 +121,8 @@ class ProjectSpecificsCard extends StatelessWidget {
                   );
                   if (date != null && context.mounted) {
                     context.read<CreateNewProjectBloc>().add(
-                          EntryFieldChanged(index: index, endDate: date),
-                        );
+                      EntryFieldChanged(index: index, endDate: date),
+                    );
                   }
                 },
                 child: AbsorbPointer(

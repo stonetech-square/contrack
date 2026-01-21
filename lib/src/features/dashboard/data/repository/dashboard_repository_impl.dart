@@ -204,6 +204,8 @@ class DashboardRepositoryImpl implements DashboardRepository {
           createdBy: user.uid,
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
+          startDate: null,
+          endDate: null,
         );
 
         successfulProjects.add(projectModel.toEntity());

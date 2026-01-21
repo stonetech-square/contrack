@@ -11,8 +11,8 @@ import 'package:injectable/injectable.dart';
 abstract class ProjectsLocalDataSource {
   String generateProjectCode(String userId, {DateTime? date});
   Future<void> createProject(List<ProjectModel> projects);
-  Future<ProjectWithDetailsModel?> getProjectByCode(String code);
-  Stream<List<ProjectModel>> watchProjectsForUser(
+  Stream<ProjectWithDetailsModel?> watchProjectByCode(String code);
+  Stream<List<ProjectWithDetailsModel>> watchProjectsForUser(
     String userId,
     UserRole role, {
     String? query,
@@ -57,12 +57,34 @@ class ProjectsLocalDataSourceImpl implements ProjectsLocalDataSource {
   Future<void> createProject(List<ProjectModel> projects) async {
     if (projects.isEmpty) return;
 
-    final companions = projects
-        .map((project) => project.toDriftCompanion())
-        .toList();
-
     await _database.batch((batch) {
-      batch.insertAllOnConflictUpdate(_database.projects, companions);
+      for (final project in projects) {
+        final companion = project.toDriftCompanion();
+        batch.insert(
+          _database.projects,
+          companion,
+          onConflict: DoUpdate((old) {
+            return ProjectsCompanion(
+              status: companion.status,
+              agencyId: companion.agencyId,
+              ministryId: companion.ministryId,
+              stateId: companion.stateId,
+              zoneId: companion.zoneId,
+              title: companion.title,
+              amount: companion.amount,
+              constituency: companion.constituency,
+              sponsor: companion.sponsor,
+              modifiedBy: companion.modifiedBy,
+              updatedAt: companion.updatedAt,
+              isSynced: companion.isSynced,
+              lastSyncedAt: companion.lastSyncedAt,
+              remoteId: companion.remoteId,
+              startDate: companion.startDate,
+              endDate: companion.endDate,
+            );
+          }),
+        );
+      }
     });
   }
 
@@ -100,7 +122,10 @@ class ProjectsLocalDataSourceImpl implements ProjectsLocalDataSource {
   }
 
   @override
-  Future<ProjectWithDetailsModel?> getProjectByCode(String code) async {
+  Stream<ProjectWithDetailsModel?> watchProjectByCode(String code) {
+    final creators = _database.alias(_database.users, 'creators');
+    final modifiers = _database.alias(_database.users, 'modifiers');
+
     final query =
         _database.select(_database.projects).join([
             leftOuterJoin(
@@ -121,6 +146,14 @@ class ProjectsLocalDataSourceImpl implements ProjectsLocalDataSource {
                 _database.projects.zoneId,
               ),
             ),
+            leftOuterJoin(
+              creators,
+              creators.uid.equalsExp(_database.projects.createdBy),
+            ),
+            leftOuterJoin(
+              modifiers,
+              modifiers.uid.equalsExp(_database.projects.modifiedBy),
+            ),
           ])
           ..where(_database.projects.code.equals(code))
           ..orderBy([
@@ -131,42 +164,49 @@ class ProjectsLocalDataSourceImpl implements ProjectsLocalDataSource {
           ])
           ..limit(1);
 
-    final result = await query.getSingleOrNull();
-    if (result == null) return null;
+    return query.watchSingleOrNull().map((result) {
+      if (result == null) return null;
 
-    final project = result.readTable(_database.projects);
-    final agency = result.readTableOrNull(_database.agencies);
-    final state = result.readTableOrNull(_database.states);
-    final ministry = result.readTableOrNull(_database.ministries);
-    final zone = result.readTableOrNull(_database.geopoliticalZones);
+      final project = result.readTable(_database.projects);
+      final agency = result.readTableOrNull(_database.agencies);
+      final state = result.readTableOrNull(_database.states);
+      final ministry = result.readTableOrNull(_database.ministries);
+      final zone = result.readTableOrNull(_database.geopoliticalZones);
+      final creator = result.readTableOrNull(creators);
+      final modifier = result.readTableOrNull(modifiers);
 
-    return ProjectWithDetailsModel(
-      code: project.code,
-      status: project.status,
-      agencyId: project.agencyId,
-      agencyName: agency?.name ?? 'Unknown Agency',
-      ministryId: project.ministryId,
-      ministryName: ministry?.name ?? 'Unknown Ministry',
-      stateId: project.stateId,
-      stateName: state?.name ?? 'Unknown State',
-      zoneId: project.zoneId,
-      zoneName: zone?.name ?? 'Unknown Zone',
-      title: project.title,
-      amount: project.amount,
-      constituency: project.constituency,
-      sponsor: project.sponsor,
-      createdBy: project.createdBy,
-      modifiedBy: project.modifiedBy,
-      createdAt: project.createdAt,
-      updatedAt: project.updatedAt,
-      isSynced: project.isSynced,
-      lastSyncedAt: project.lastSyncedAt,
-      remoteId: project.remoteId,
-    );
+      return ProjectWithDetailsModel(
+        code: project.code,
+        status: project.status,
+        agencyId: project.agencyId,
+        agencyName: agency?.name ?? 'Unknown Agency',
+        ministryId: project.ministryId,
+        ministryName: ministry?.name ?? 'Unknown Ministry',
+        stateId: project.stateId,
+        stateName: state?.name ?? 'Unknown State',
+        zoneId: project.zoneId,
+        zoneName: zone?.name ?? 'Unknown Zone',
+        title: project.title,
+        amount: project.amount,
+        constituency: project.constituency,
+        sponsor: project.sponsor,
+        createdBy: project.createdBy,
+        createdByName: creator?.fullName ?? creator?.username,
+        modifiedBy: project.modifiedBy,
+        modifiedByName: modifier?.fullName ?? modifier?.username,
+        createdAt: project.createdAt,
+        updatedAt: project.updatedAt,
+        isSynced: project.isSynced,
+        lastSyncedAt: project.lastSyncedAt,
+        remoteId: project.remoteId,
+        startDate: project.startDate,
+        endDate: project.endDate,
+      );
+    });
   }
 
   @override
-  Stream<List<ProjectModel>> watchProjectsForUser(
+  Stream<List<ProjectWithDetailsModel>> watchProjectsForUser(
     String userId,
     UserRole role, {
     String? query,
@@ -186,6 +226,14 @@ class ProjectsLocalDataSourceImpl implements ProjectsLocalDataSource {
       leftOuterJoin(
         _database.states,
         _database.states.id.equalsExp(_database.projects.stateId),
+      ),
+      leftOuterJoin(
+        _database.geopoliticalZones,
+        _database.geopoliticalZones.id.equalsExp(_database.projects.zoneId),
+      ),
+      leftOuterJoin(
+        _database.users,
+        _database.users.uid.equalsExp(_database.projects.createdBy),
       ),
     ]);
 
@@ -275,11 +323,41 @@ class ProjectsLocalDataSourceImpl implements ProjectsLocalDataSource {
     }
 
     return baseQuery.watch().map(
-      (results) => results
-          .map(
-            (row) => ProjectModel.fromDrift(row.readTable(_database.projects)),
-          )
-          .toList(),
+      (results) => results.map((row) {
+        final project = row.readTable(_database.projects);
+        final agency = row.readTableOrNull(_database.agencies);
+        final state = row.readTableOrNull(_database.states);
+        final ministry = row.readTableOrNull(_database.ministries);
+        final zone = row.readTableOrNull(_database.geopoliticalZones);
+        final user = row.readTableOrNull(_database.users);
+
+        return ProjectWithDetailsModel(
+          code: project.code,
+          status: project.status,
+          agencyId: project.agencyId,
+          agencyName: agency?.name ?? 'Unknown Agency',
+          ministryId: project.ministryId,
+          ministryName: ministry?.name ?? 'Unknown Ministry',
+          stateId: project.stateId,
+          stateName: state?.name ?? 'Unknown State',
+          zoneId: project.zoneId,
+          zoneName: zone?.name ?? 'Unknown Zone',
+          title: project.title,
+          amount: project.amount,
+          constituency: project.constituency,
+          sponsor: project.sponsor,
+          createdBy: project.createdBy,
+          createdByName: user?.fullName ?? user?.username,
+          modifiedBy: project.modifiedBy,
+          createdAt: project.createdAt,
+          updatedAt: project.updatedAt,
+          isSynced: project.isSynced,
+          lastSyncedAt: project.lastSyncedAt,
+          remoteId: project.remoteId,
+          startDate: project.startDate,
+          endDate: project.endDate,
+        );
+      }).toList(),
     );
   }
 
@@ -308,6 +386,10 @@ class ProjectsLocalDataSourceImpl implements ProjectsLocalDataSource {
       leftOuterJoin(
         _database.geopoliticalZones,
         _database.geopoliticalZones.id.equalsExp(_database.projects.zoneId),
+      ),
+      leftOuterJoin(
+        _database.users,
+        _database.users.uid.equalsExp(_database.projects.createdBy),
       ),
     ]);
 
@@ -404,6 +486,7 @@ class ProjectsLocalDataSourceImpl implements ProjectsLocalDataSource {
       final state = row.readTableOrNull(_database.states);
       final ministry = row.readTableOrNull(_database.ministries);
       final zone = row.readTableOrNull(_database.geopoliticalZones);
+      final user = row.readTableOrNull(_database.users);
 
       return ProjectWithDetailsModel(
         code: project.code,
@@ -421,7 +504,10 @@ class ProjectsLocalDataSourceImpl implements ProjectsLocalDataSource {
         constituency: project.constituency,
         sponsor: project.sponsor,
         createdBy: project.createdBy,
+        createdByName: user?.fullName ?? user?.username,
         modifiedBy: project.modifiedBy,
+        startDate: project.startDate,
+        endDate: project.endDate,
         createdAt: project.createdAt,
         updatedAt: project.updatedAt,
         isSynced: project.isSynced,

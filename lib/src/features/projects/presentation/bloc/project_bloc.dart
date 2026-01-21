@@ -35,41 +35,39 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
       ),
     );
 
-    try {
-      final project = await _getProjectByCodeUseCase(
-        GetProjectByCodeParams(code: event.code),
-      );
+    final stream = _getProjectByCodeUseCase(
+      GetProjectByCodeParams(code: event.code),
+    );
 
-      if (project == null) {
-        emit(
-          state.copyWith(
+    await emit.forEach<ProjectWithDetails?>(
+      stream,
+      onData: (project) {
+        if (project == null) {
+          return state.copyWith(
             isLoading: false,
             errorMessage: 'Project not found with code: ${event.code}',
             projectCode: event.code,
-          ),
-        );
-      } else {
-        emit(
-          state.copyWith(
+          );
+        } else {
+          return state.copyWith(
             project: project,
             projectCode: event.code,
             isLoading: false,
             errorMessage: null,
-          ),
-        );
-      }
-    } catch (e, stackTrace) {
-      final failure = e is Failure
-          ? e
-          : AppFailure.fromException(e, stackTrace);
-      emit(
-        state.copyWith(
+          );
+        }
+      },
+      onError: (e, stackTrace) {
+        final failure = e is Failure
+            ? e
+            : AppFailure.fromException(e, stackTrace);
+        return state.copyWith(
           isLoading: false,
           errorMessage: failure.message,
           projectCode: event.code,
-        ),
-      );
-    }
+        );
+      },
+    );
   }
 
   Future<void> _onExportRequested(
