@@ -10,6 +10,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
+import 'package:contrack/src/features/projects/domain/entities/export_type.dart';
+
 @LazySingleton(as: ProjectExportService)
 class ProjectExportServiceImpl implements ProjectExportService {
   final _currencyFormat = NumberFormat.currency(symbol: '₦', decimalDigits: 2);
@@ -33,62 +35,111 @@ class ProjectExportServiceImpl implements ProjectExportService {
   @override
   Future<String> exportProject(
     ProjectWithDetails project,
-    ExportFormat format,
-  ) async {
+    ExportFormat format, {
+    ExportType type = ExportType.preferred,
+  }) async {
     switch (format) {
       case ExportFormat.csv:
-        return await _exportToCsv(project);
+        return await _exportToCsv(project, type);
       case ExportFormat.excel:
-        return await _exportToExcel(project);
+        return await _exportToExcel(project, type);
       case ExportFormat.pdf:
-        return await _exportToPdf(project);
+        return await _exportToPdf(project, type);
     }
   }
 
   @override
   Future<String> exportProjects(
     List<ProjectWithDetails> projects,
-    ExportFormat format,
-  ) async {
+    ExportFormat format, {
+    ExportType type = ExportType.preferred,
+  }) async {
     switch (format) {
       case ExportFormat.csv:
-        return await _exportMultipleToCsv(projects);
+        return await _exportMultipleToCsv(projects, type);
       case ExportFormat.excel:
-        return await _exportMultipleToExcel(projects);
+        return await _exportMultipleToExcel(projects, type);
       case ExportFormat.pdf:
-        return await _exportMultipleToPdf(projects);
+        return await _exportMultipleToPdf(projects, type);
     }
   }
 
-  Future<String> _exportToCsv(ProjectWithDetails project) async {
-    final rows = [
-      [
-        'S/NO',
-        'CODE',
-        'PROJECT TITLE',
-        'STATUS',
-        'AMOUNT (₦)',
-        'AGENCY',
-        'MINISTRY',
-        'STATE',
-        'ZONE',
-        'CONSTITUENCY',
-        'SPONSOR',
-      ],
-      [
-        '1',
-        project.code,
-        project.title,
-        project.status.displayName,
-        _currencyFormat.format(project.amount),
-        project.agencyName,
-        project.ministryName,
-        project.stateName,
-        project.zoneName,
-        project.constituency,
-        project.sponsor ?? '',
-      ],
+  List<String> _getHeaders(ExportType type) {
+    switch (type) {
+      case ExportType.preferred:
+        return [
+          'S/NO',
+          'CODE',
+          'PROJECT TITLE',
+          'STATUS',
+          'AMOUNT (₦)',
+          'AGENCY',
+          'MINISTRY',
+        ];
+      case ExportType.extra:
+        return [
+          'S/NO',
+          'CODE',
+          'PROJECT TITLE',
+          'STATUS',
+          'AMOUNT (₦)',
+          'AGENCY',
+          'MINISTRY',
+          'STATE',
+          'ZONE',
+          'CONSTITUENCY',
+          'SPONSOR',
+          'START DATE',
+          'END DATE',
+          'CREATED BY',
+          'MODIFIED BY',
+          'CREATED AT',
+          'UPDATED AT',
+        ];
+    }
+  }
+
+  List<String> _getRowData(
+    ProjectWithDetails project,
+    int index,
+    ExportType type,
+  ) {
+    final baseData = [
+      (index + 1).toString(),
+      project.code,
+      project.title,
+      project.status.displayName,
+      _currencyFormat.format(project.amount),
+      project.agencyName,
+      project.ministryName,
     ];
+
+    if (type == ExportType.preferred) return baseData;
+
+    return [
+      ...baseData,
+      project.stateName,
+      project.zoneName,
+      project.constituency,
+      project.sponsor ?? '',
+      project.startDate != null
+          ? DateFormat('yyyy-MM-dd').format(project.startDate!)
+          : '',
+      project.endDate != null
+          ? DateFormat('yyyy-MM-dd').format(project.endDate!)
+          : '',
+      project.createdByName ?? project.createdBy,
+      project.modifiedByName ?? project.modifiedBy ?? '',
+      DateFormat('yyyy-MM-dd HH:mm').format(project.createdAt),
+      DateFormat('yyyy-MM-dd HH:mm').format(project.updatedAt),
+    ];
+  }
+
+  Future<String> _exportToCsv(
+    ProjectWithDetails project,
+    ExportType type,
+  ) async {
+    final rows = [_getHeaders(type), _getRowData(project, 0, type)];
 
     final csv = const ListToCsvConverter().convert(rows);
 
@@ -100,47 +151,29 @@ class ProjectExportServiceImpl implements ProjectExportService {
     return file.path;
   }
 
-  Future<String> _exportToExcel(ProjectWithDetails project) async {
+  Future<String> _exportToExcel(
+    ProjectWithDetails project,
+    ExportType type,
+  ) async {
     final excel = Excel.createExcel();
     final sheet = excel['Project Export'];
 
-    final headers = [
-      'S/NO',
-      'CODE',
-      'PROJECT TITLE',
-      'STATUS',
-      'AMOUNT (₦)',
-      'AGENCY',
-      'MINISTRY',
-      'STATE',
-      'ZONE',
-      'CONSTITUENCY',
-      'SPONSOR',
-    ];
+    final headers = _getHeaders(type);
 
     sheet.appendRow(headers.map((h) => TextCellValue(h)).toList());
 
-    final data = [
-      TextCellValue('1'),
-      TextCellValue(project.code),
-      TextCellValue(project.title),
-      TextCellValue(project.status.displayName),
-      TextCellValue(_currencyFormat.format(project.amount)),
-      TextCellValue(project.agencyName),
-      TextCellValue(project.ministryName),
-      TextCellValue(project.stateName),
-      TextCellValue(project.zoneName),
-      TextCellValue(project.constituency),
-      TextCellValue(project.sponsor ?? ''),
-    ];
+    final data = _getRowData(
+      project,
+      0,
+      type,
+    ).map((d) => TextCellValue(d)).toList();
     sheet.appendRow(data);
 
     for (var i = 0; i < headers.length; i++) {
-      sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: 0))
-          .cellStyle = CellStyle(
-        bold: true,
+      var cell = sheet.cell(
+        CellIndex.indexByColumnRow(columnIndex: i, rowIndex: 0),
       );
+      cell.cellStyle = CellStyle(bold: true);
     }
 
     final directory = await _getExportDirectory();
@@ -153,7 +186,10 @@ class ProjectExportServiceImpl implements ProjectExportService {
     return file.path;
   }
 
-  Future<String> _exportToPdf(ProjectWithDetails project) async {
+  Future<String> _exportToPdf(
+    ProjectWithDetails project,
+    ExportType type,
+  ) async {
     final pdf = pw.Document();
 
     pdf.addPage(
@@ -172,34 +208,8 @@ class ProjectExportServiceImpl implements ProjectExportService {
               ),
               pw.SizedBox(height: 20),
               pw.TableHelper.fromTextArray(
-                headers: [
-                  'S/NO',
-                  'CODE',
-                  'PROJECT TITLE',
-                  'STATUS',
-                  'AMOUNT (₦)',
-                  'AGENCY',
-                  'MINISTRY',
-                  'STATE',
-                  'ZONE',
-                  'CONSTITUENCY',
-                  'SPONSOR',
-                ],
-                data: [
-                  [
-                    '1',
-                    project.code,
-                    project.title,
-                    project.status.displayName,
-                    _currencyFormat.format(project.amount),
-                    project.agencyName,
-                    project.ministryName,
-                    project.stateName,
-                    project.zoneName,
-                    project.constituency,
-                    project.sponsor ?? '',
-                  ],
-                ],
+                headers: _getHeaders(type),
+                data: [_getRowData(project, 0, type)],
                 headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
                 cellAlignment: pw.Alignment.centerLeft,
                 border: pw.TableBorder.all(),
@@ -218,38 +228,14 @@ class ProjectExportServiceImpl implements ProjectExportService {
     return file.path;
   }
 
-  Future<String> _exportMultipleToCsv(List<ProjectWithDetails> projects) async {
-    final rows = [
-      [
-        'S/NO',
-        'CODE',
-        'PROJECT TITLE',
-        'STATUS',
-        'AMOUNT (₦)',
-        'AGENCY',
-        'MINISTRY',
-        'STATE',
-        'ZONE',
-        'CONSTITUENCY',
-        'SPONSOR',
-      ],
-    ];
+  Future<String> _exportMultipleToCsv(
+    List<ProjectWithDetails> projects,
+    ExportType type,
+  ) async {
+    final rows = [_getHeaders(type)];
 
     for (var i = 0; i < projects.length; i++) {
-      final project = projects[i];
-      rows.add([
-        (i + 1).toString(),
-        project.code,
-        project.title,
-        project.status.displayName,
-        _currencyFormat.format(project.amount),
-        project.agencyName,
-        project.ministryName,
-        project.stateName,
-        project.zoneName,
-        project.constituency,
-        project.sponsor ?? '',
-      ]);
+      rows.add(_getRowData(projects[i], i, type));
     }
 
     final csv = const ListToCsvConverter().convert(rows);
@@ -264,50 +250,29 @@ class ProjectExportServiceImpl implements ProjectExportService {
 
   Future<String> _exportMultipleToExcel(
     List<ProjectWithDetails> projects,
+    ExportType type,
   ) async {
     final excel = Excel.createExcel();
     final sheet = excel['Projects Export'];
 
-    final headers = [
-      'S/NO',
-      'CODE',
-      'PROJECT TITLE',
-      'STATUS',
-      'AMOUNT (₦)',
-      'AGENCY',
-      'MINISTRY',
-      'STATE',
-      'ZONE',
-      'CONSTITUENCY',
-      'SPONSOR',
-    ];
+    final headers = _getHeaders(type);
 
     sheet.appendRow(headers.map((h) => TextCellValue(h)).toList());
 
     for (var i = 0; i < projects.length; i++) {
-      final project = projects[i];
-      final data = [
-        TextCellValue((i + 1).toString()),
-        TextCellValue(project.code),
-        TextCellValue(project.title),
-        TextCellValue(project.status.displayName),
-        TextCellValue(_currencyFormat.format(project.amount)),
-        TextCellValue(project.agencyName),
-        TextCellValue(project.ministryName),
-        TextCellValue(project.stateName),
-        TextCellValue(project.zoneName),
-        TextCellValue(project.constituency),
-        TextCellValue(project.sponsor ?? ''),
-      ];
+      final data = _getRowData(
+        projects[i],
+        i,
+        type,
+      ).map((d) => TextCellValue(d)).toList();
       sheet.appendRow(data);
     }
 
     for (var i = 0; i < headers.length; i++) {
-      sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: 0))
-          .cellStyle = CellStyle(
-        bold: true,
+      var cell = sheet.cell(
+        CellIndex.indexByColumnRow(columnIndex: i, rowIndex: 0),
       );
+      cell.cellStyle = CellStyle(bold: true);
     }
 
     final directory = await _getExportDirectory();
@@ -320,7 +285,10 @@ class ProjectExportServiceImpl implements ProjectExportService {
     return file.path;
   }
 
-  Future<String> _exportMultipleToPdf(List<ProjectWithDetails> projects) async {
+  Future<String> _exportMultipleToPdf(
+    List<ProjectWithDetails> projects,
+    ExportType type,
+  ) async {
     final pdf = pw.Document();
 
     pdf.addPage(
@@ -339,37 +307,11 @@ class ProjectExportServiceImpl implements ProjectExportService {
               ),
               pw.SizedBox(height: 20),
               pw.TableHelper.fromTextArray(
-                headers: [
-                  'S/NO',
-                  'CODE',
-                  'PROJECT TITLE',
-                  'STATUS',
-                  'AMOUNT (₦)',
-                  'AGENCY',
-                  'MINISTRY',
-                  'STATE',
-                  'ZONE',
-                  'CONSTITUENCY',
-                  'SPONSOR',
-                ],
+                headers: _getHeaders(type),
                 data: projects
                     .asMap()
                     .entries
-                    .map(
-                      (entry) => [
-                        (entry.key + 1).toString(),
-                        entry.value.code,
-                        entry.value.title,
-                        entry.value.status.displayName,
-                        _currencyFormat.format(entry.value.amount),
-                        entry.value.agencyName,
-                        entry.value.ministryName,
-                        entry.value.stateName,
-                        entry.value.zoneName,
-                        entry.value.constituency,
-                        entry.value.sponsor ?? '',
-                      ],
-                    )
+                    .map((entry) => _getRowData(entry.value, entry.key, type))
                     .toList(),
                 headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
                 cellAlignment: pw.Alignment.centerLeft,

@@ -17,6 +17,8 @@ class ProjectImportDto extends Equatable {
   final String zone;
   final String constituency;
   final String? sponsor;
+  final String? startDate;
+  final String? endDate;
 
   const ProjectImportDto({
     required this.code,
@@ -29,6 +31,8 @@ class ProjectImportDto extends Equatable {
     required this.zone,
     required this.constituency,
     this.sponsor,
+    this.startDate,
+    this.endDate,
   });
 
   @override
@@ -43,5 +47,7 @@ class ProjectImportDto extends Equatable {
     zone,
     constituency,
     sponsor,
+    startDate,
+    endDate,
   ];
 }

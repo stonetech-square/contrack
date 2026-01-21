@@ -2,9 +2,9 @@ import 'package:auto_route/auto_route.dart';
 import 'package:contrack/src/app/router/app_router.dart';
 import 'package:contrack/src/app/theme/app_colors.dart';
 import 'package:contrack/src/app/theme/app_typography.dart';
-import 'package:contrack/src/core/database/tables/export_history.dart';
-
+import 'package:contrack/src/core/database/tables/tables.dart';
 import 'package:contrack/src/features/projects/presentation/bloc/project_bloc.dart';
+import 'package:contrack/src/features/projects/presentation/widgets/export_type_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -20,10 +20,16 @@ class ProjectHeaderActions extends StatelessWidget {
             FilledButton.icon(
               onPressed: state.isExporting
                   ? null
-                  : () {
-                      context.read<ProjectBloc>().add(
-                        ProjectExportRequestedEvent(ExportFormat.csv),
-                      );
+                  : () async {
+                      final result = await ExportTypeDialog.show(context);
+                      if (result != null && context.mounted) {
+                        context.read<ProjectBloc>().add(
+                          ProjectExportRequestedEvent(
+                            ExportFormat.csv,
+                            type: result,
+                          ),
+                        );
+                      }
                     },
               style: FilledButton.styleFrom(
                 backgroundColor: context.colors.neutralInverted,

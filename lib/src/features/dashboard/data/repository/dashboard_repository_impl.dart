@@ -121,7 +121,6 @@ class DashboardRepositoryImpl implements DashboardRepository {
   Future<List<Project>> importProjects(File file) async {
     final user = _userSession.currentUser;
     if (user == null) throw AppFailure('User not logged in');
-    // user verified
 
     final dtos = await _importService.importProjectsDto(file);
     final successfulProjects = <Project>[];
@@ -147,38 +146,45 @@ class DashboardRepositoryImpl implements DashboardRepository {
 
     for (final dto in dtos) {
       try {
-        final zoneId = zoneCache[dto.zone.toLowerCase()];
-        if (zoneId == null) throw Exception('Zone not found: ${dto.zone}');
+        var zoneId = 0;
+        var stateId = 0;
+        var ministryId = 0;
+        var agencyId = 0;
 
-        if (!stateCache.containsKey(zoneId)) {
-          final states = await _localDataSource.getStatesByZoneId(zoneId);
-          stateCache[zoneId] = {
-            for (var s in states) s.name.toLowerCase(): s.id,
-          };
-        }
-        final stateId = stateCache[zoneId]![dto.state.toLowerCase()];
-        if (stateId == null) {
-          throw Exception('State not found: ${dto.state} in zone ${dto.zone}');
+        if (dto.zone.isNotEmpty &&
+            zoneCache.containsKey(dto.zone.toLowerCase())) {
+          zoneId = zoneCache[dto.zone.toLowerCase()]!;
         }
 
-        final ministryId = ministryCache[dto.ministry.toLowerCase()];
-        if (ministryId == null) {
-          throw Exception('Ministry not found: ${dto.ministry}');
+        if (zoneId > 0 && dto.state.isNotEmpty) {
+          if (!stateCache.containsKey(zoneId)) {
+            final states = await _localDataSource.getStatesByZoneId(zoneId);
+            stateCache[zoneId] = {
+              for (var s in states) s.name.toLowerCase(): s.id,
+            };
+          }
+          if (stateCache[zoneId]!.containsKey(dto.state.toLowerCase())) {
+            stateId = stateCache[zoneId]![dto.state.toLowerCase()]!;
+          }
         }
 
-        if (!agencyCache.containsKey(ministryId)) {
-          final agencies = await _localDataSource.getAgenciesByMinistryId(
-            ministryId,
-          );
-          agencyCache[ministryId] = {
-            for (var a in agencies) a.name.toLowerCase(): a.id,
-          };
+        if (dto.ministry.isNotEmpty &&
+            ministryCache.containsKey(dto.ministry.toLowerCase())) {
+          ministryId = ministryCache[dto.ministry.toLowerCase()]!;
         }
-        final agencyId = agencyCache[ministryId]![dto.agency.toLowerCase()];
-        if (agencyId == null) {
-          throw Exception(
-            'Agency not found: ${dto.agency} for ministry ${dto.ministry}',
-          );
+
+        if (ministryId > 0 && dto.agency.isNotEmpty) {
+          if (!agencyCache.containsKey(ministryId)) {
+            final agencies = await _localDataSource.getAgenciesByMinistryId(
+              ministryId,
+            );
+            agencyCache[ministryId] = {
+              for (var a in agencies) a.name.toLowerCase(): a.id,
+            };
+          }
+          if (agencyCache[ministryId]!.containsKey(dto.agency.toLowerCase())) {
+            agencyId = agencyCache[ministryId]![dto.agency.toLowerCase()]!;
+          }
         }
 
         final status = ProjectStatus.values.firstWhere(
@@ -204,8 +210,10 @@ class DashboardRepositoryImpl implements DashboardRepository {
           createdBy: user.uid,
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
-          startDate: null,
-          endDate: null,
+          startDate: dto.startDate != null
+              ? DateTime.tryParse(dto.startDate!)
+              : null,
+          endDate: dto.endDate != null ? DateTime.tryParse(dto.endDate!) : null,
         );
 
         successfulProjects.add(projectModel.toEntity());

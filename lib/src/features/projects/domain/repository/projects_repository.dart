@@ -7,9 +7,12 @@ import 'package:contrack/src/features/projects/domain/entities/nigerian_state.da
 import 'package:contrack/src/features/projects/domain/entities/sort_field.dart';
 import 'package:contrack/src/features/projects/domain/entities/supervising_ministry.dart';
 
+import 'package:contrack/src/features/projects/domain/entities/export_type.dart';
+
 abstract class ProjectsRepository {
   String generateProjectCode({DateTime? date});
   Future<void> createProject(List<Project> projects);
+  Future<void> deleteProject(String code);
 
   Future<List<GeopoliticalZone>> getGeopoliticalZones();
   Future<List<NigerianState>> getStates(int zoneId);
@@ -24,10 +27,12 @@ abstract class ProjectsRepository {
   Future<String> exportProject({
     required ProjectWithDetails project,
     required ExportFormat format,
+    ExportType type = ExportType.preferred,
   });
 
   Future<String> exportAllProjects({
     required ExportFormat format,
+    ExportType type = ExportType.preferred,
     String? query,
     ProjectFilter filter = const ProjectFilter(),
   });

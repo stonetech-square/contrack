@@ -17,7 +17,7 @@ class ProjectImportServiceImpl implements ProjectImportService {
 
     for (var i = 1; i < rows.length; i++) {
       final row = rows[i];
-      if (row.length < 11) continue;
+      if (row.length < 7) continue;
 
       try {
         final code = row[1].toString();
@@ -26,12 +26,15 @@ class ProjectImportServiceImpl implements ProjectImportService {
         final amountStr = row[4].toString();
         final agency = row[5].toString();
         final ministry = row[6].toString();
-        final state = row[7].toString();
-        final zone = row[8].toString();
-        final constituency = row[9].toString();
-        final sponsor = row[10]?.toString();
 
         final amount = _parseAmount(amountStr);
+
+        final state = row.length > 7 ? row[7].toString() : '';
+        final zone = row.length > 8 ? row[8].toString() : '';
+        final constituency = row.length > 9 ? row[9].toString() : '';
+        final sponsor = row.length > 10 ? row[10].toString() : null;
+        final startDate = row.length > 11 ? row[11].toString() : null;
+        final endDate = row.length > 12 ? row[12].toString() : null;
 
         projects.add(
           ProjectImportDto(
@@ -45,6 +48,8 @@ class ProjectImportServiceImpl implements ProjectImportService {
             zone: zone,
             constituency: constituency,
             sponsor: sponsor,
+            startDate: startDate,
+            endDate: endDate,
           ),
         );
       } catch (e) {

@@ -4,6 +4,7 @@ import 'package:contrack/src/app/router/app_router.dart';
 import 'package:contrack/src/app/theme/app_colors.dart';
 import 'package:contrack/src/app/theme/app_typography.dart';
 import 'package:contrack/src/features/dashboard/domain/entities/project_with_details.dart';
+import 'package:contrack/src/features/master_data/presentation/widgets/delete_confirmation_dialog.dart';
 import 'package:contrack/src/features/projects/presentation/bloc/all_projects_bloc.dart';
 import 'package:contrack/src/features/projects/presentation/widgets/project_status_badge.dart';
 import 'package:flutter/material.dart';
@@ -150,6 +151,7 @@ class _ProjectsTableRow extends StatelessWidget {
                 children: [
                   _ActionButton(
                     icon: Icons.edit_outlined,
+                    tooltip: 'Edit Project',
                     onTap: () {
                       context.router.push(
                         CreateNewProjectRoute(projects: [project.toProject()]),
@@ -159,9 +161,22 @@ class _ProjectsTableRow extends StatelessWidget {
                   const SizedBox(width: 2),
                   _ActionButton(
                     icon: Icons.delete_outline,
+                    tooltip: 'Delete Project',
                     color: context.colors.error,
-                    onTap: () {
-                      // TODO: Implement delete
+                    onTap: () async {
+                      final confirmed = await DeleteConfirmationDialog.show(
+                        context,
+                        title: 'Delete Project',
+                        itemName: project.title,
+                        message:
+                            'Are you sure you want to delete project with code "${project.code}"?',
+                      );
+
+                      if (confirmed == true && context.mounted) {
+                        context.read<AllProjectsBloc>().add(
+                          AllProjectsProjectDeleted(project.code),
+                        );
+                      }
                     },
                   ),
                 ],
@@ -223,16 +238,23 @@ class _DataCell extends StatelessWidget {
 }
 
 class _ActionButton extends StatelessWidget {
-  const _ActionButton({required this.icon, required this.onTap, this.color});
+  const _ActionButton({
+    required this.icon,
+    required this.onTap,
+    this.color,
+    this.tooltip,
+  });
 
   final IconData icon;
   final VoidCallback onTap;
   final Color? color;
+  final String? tooltip;
 
   @override
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: onTap,
+      tooltip: tooltip,
       icon: Icon(icon, size: 18, color: color ?? context.colors.textSubtle),
     );
   }

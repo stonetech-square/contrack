@@ -1,6 +1,7 @@
 import 'package:contrack/src/core/database/tables/export_history.dart';
 import 'package:contrack/src/core/errors/failures.dart';
 import 'package:contrack/src/features/dashboard/domain/entities/project_with_details.dart';
+import 'package:contrack/src/features/projects/domain/entities/export_type.dart';
 import 'package:contrack/src/features/projects/domain/usecase/export_project_use_case.dart';
 import 'package:contrack/src/features/projects/domain/usecase/get_project_by_code_use_case.dart';
 import 'package:equatable/equatable.dart';
@@ -95,7 +96,11 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
 
     try {
       final filePath = await _exportProjectUseCase(
-        ExportProjectParams(project: state.project!, format: event.format),
+        ExportProjectParams(
+          project: state.project!,
+          format: event.format,
+          type: event.type,
+        ),
       );
 
       emit(

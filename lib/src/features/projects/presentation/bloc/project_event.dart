@@ -16,9 +16,10 @@ class ProjectFetchByCodeEvent extends ProjectEvent {
 
 class ProjectExportRequestedEvent extends ProjectEvent {
   final ExportFormat format;
+  final ExportType type;
 
-  ProjectExportRequestedEvent(this.format);
+  ProjectExportRequestedEvent(this.format, {this.type = ExportType.preferred});
 
   @override
-  List<Object?> get props => [format];
+  List<Object?> get props => [format, type];
 }

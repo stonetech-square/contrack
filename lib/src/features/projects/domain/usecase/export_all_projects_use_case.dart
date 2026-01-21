@@ -5,6 +5,8 @@ import 'package:contrack/src/features/projects/domain/repository/projects_reposi
 import 'package:equatable/equatable.dart';
 import 'package:injectable/injectable.dart';
 
+import 'package:contrack/src/features/projects/domain/entities/export_type.dart';
+
 @lazySingleton
 class ExportAllProjectsUseCase
     implements UseCase<Future<String>, ExportAllProjectsParams> {
@@ -16,6 +18,7 @@ class ExportAllProjectsUseCase
   Future<String> call(ExportAllProjectsParams params) async {
     return await _projectsRepository.exportAllProjects(
       format: params.format,
+      type: params.type,
       query: params.query,
       filter: params.filter,
     );
@@ -24,15 +27,17 @@ class ExportAllProjectsUseCase
 
 class ExportAllProjectsParams extends Equatable {
   final ExportFormat format;
+  final ExportType type;
   final String? query;
   final ProjectFilter filter;
 
   const ExportAllProjectsParams({
     required this.format,
+    this.type = ExportType.preferred,
     this.query,
     this.filter = const ProjectFilter(),
   });
 
   @override
-  List<Object?> get props => [format, query, filter];
+  List<Object?> get props => [format, type, query, filter];
 }

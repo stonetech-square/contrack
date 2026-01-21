@@ -4,7 +4,9 @@ import 'package:contrack/src/core/errors/failures.dart';
 
 import 'package:contrack/src/core/database/tables/export_history.dart';
 import 'package:contrack/src/features/dashboard/domain/entities/project_with_details.dart';
+import 'package:contrack/src/features/projects/domain/entities/export_type.dart';
 import 'package:contrack/src/features/projects/domain/entities/sort_field.dart';
+import 'package:contrack/src/features/projects/domain/usecase/delete_project_use_case.dart';
 import 'package:contrack/src/features/projects/domain/usecase/export_all_projects_use_case.dart';
 import 'package:contrack/src/features/projects/domain/usecase/watch_projects_for_user_use_case.dart';
 import 'package:equatable/equatable.dart';
@@ -20,14 +22,31 @@ part 'all_projects_bloc.freezed.dart';
 class AllProjectsBloc extends Bloc<AllProjectsEvent, AllProjectsState> {
   final WatchProjectsForUserUseCase _watchProjectsForUserUseCase;
   final ExportAllProjectsUseCase _exportAllProjectsUseCase;
+  final DeleteProjectUseCase _deleteProjectUseCase;
 
   AllProjectsBloc(
     this._watchProjectsForUserUseCase,
     this._exportAllProjectsUseCase,
+    this._deleteProjectUseCase,
   ) : super(const AllProjectsState()) {
     on<AllProjectsWatchStarted>(_onWatchStarted);
     on<AllProjectsExportRequested>(_onExportRequested);
     on<AllProjectsPageChanged>(_onPageChanged);
+    on<AllProjectsProjectDeleted>(_onProjectDeleted);
+  }
+
+  Future<void> _onProjectDeleted(
+    AllProjectsProjectDeleted event,
+    Emitter<AllProjectsState> emit,
+  ) async {
+    try {
+      await _deleteProjectUseCase(DeleteProjectParams(code: event.code));
+    } catch (e, stackTrace) {
+      final failure = e is Failure
+          ? e
+          : AppFailure.fromException(e, stackTrace);
+      emit(state.copyWith(errorMessage: failure.message));
+    }
   }
 
   Future<void> _onWatchStarted(
@@ -85,7 +104,9 @@ class AllProjectsBloc extends Bloc<AllProjectsEvent, AllProjectsState> {
       final filePath = await _exportAllProjectsUseCase(
         ExportAllProjectsParams(
           format: event.format,
-          query: null,
+          type: event.type,
+          query:
+              null, // Ideally this should come from state or event but kept as is for now
           filter: const ProjectFilter(),
         ),
       );

@@ -538,4 +538,11 @@ class ProjectsLocalDataSourceImpl implements ProjectsLocalDataSource {
           ),
         );
   }
+
+  @override
+  Future<void> deleteProject(String code) async {
+    await (_database.delete(
+      _database.projects,
+    )..where((t) => t.code.equals(code))).go();
+  }
 }

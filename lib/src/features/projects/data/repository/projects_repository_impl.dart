@@ -2,9 +2,11 @@ import 'package:contrack/src/app/data/models/models.dart';
 import 'package:contrack/src/core/audit/audit_service.dart';
 import 'package:contrack/src/core/database/tables/export_history.dart';
 import 'package:contrack/src/core/session/user_session.dart';
+import 'package:contrack/src/core/services/project_export_service.dart';
 import 'package:contrack/src/features/dashboard/domain/entities/project.dart';
 import 'package:contrack/src/features/dashboard/domain/entities/project_with_details.dart';
 import 'package:contrack/src/features/projects/data/datasource/projects_local_datasource.dart';
+import 'package:contrack/src/features/projects/domain/entities/export_type.dart';
 import 'package:contrack/src/features/projects/domain/entities/geopolitical_zone.dart'
     as domain;
 import 'package:contrack/src/features/projects/domain/entities/implementing_agency.dart';
@@ -12,7 +14,6 @@ import 'package:contrack/src/features/projects/domain/entities/nigerian_state.da
 import 'package:contrack/src/features/projects/domain/entities/sort_field.dart';
 import 'package:contrack/src/features/projects/domain/entities/supervising_ministry.dart';
 import 'package:contrack/src/features/projects/domain/repository/projects_repository.dart';
-import 'package:contrack/src/core/services/project_export_service.dart';
 import 'package:injectable/injectable.dart';
 
 @LazySingleton(as: ProjectsRepository)
@@ -58,6 +59,15 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
         .map((project) => ProjectModel.fromEntity(project))
         .toList();
     await _localDataSource.createProject(projectModels);
+  }
+
+  @override
+  Future<void> deleteProject(String code) async {
+    final user = _userSession.currentUser;
+    if (user == null) {
+      throw Exception('User not logged in');
+    }
+    await _localDataSource.deleteProject(code);
   }
 
   @override
@@ -129,13 +139,18 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
   Future<String> exportProject({
     required ProjectWithDetails project,
     required ExportFormat format,
+    ExportType type = ExportType.preferred,
   }) async {
     final user = _userSession.currentUser;
     if (user == null) {
       throw Exception('User not logged in');
     }
 
-    final filePath = await _exportService.exportProject(project, format);
+    final filePath = await _exportService.exportProject(
+      project,
+      format,
+      type: type,
+    );
     final fileName = filePath.split('/').last;
 
     await _localDataSource.recordExport(
@@ -158,6 +173,7 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
   @override
   Future<String> exportAllProjects({
     required ExportFormat format,
+    ExportType type = ExportType.preferred,
     String? query,
     ProjectFilter filter = const ProjectFilter(),
   }) async {
@@ -180,6 +196,7 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
     final filePath = await _exportService.exportProjects(
       projects.map((model) => model.toEntity()).toList(),
       format,
+      type: type,
     );
     final fileName = filePath.split('/').last;
 

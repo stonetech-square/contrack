@@ -86,6 +86,8 @@ import '../../features/projects/domain/repository/projects_repository.dart'
     as _i605;
 import '../../features/projects/domain/usecase/create_project_use_case.dart'
     as _i546;
+import '../../features/projects/domain/usecase/delete_project_use_case.dart'
+    as _i1;
 import '../../features/projects/domain/usecase/export_all_projects_use_case.dart'
     as _i471;
 import '../../features/projects/domain/usecase/export_project_use_case.dart'
@@ -302,6 +304,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i546.CreateProjectUseCase>(
       () => _i546.CreateProjectUseCase(gh<_i605.ProjectsRepository>()),
     );
+    gh.lazySingleton<_i1.DeleteProjectUseCase>(
+      () => _i1.DeleteProjectUseCase(gh<_i605.ProjectsRepository>()),
+    );
     gh.lazySingleton<_i597.GenerateProjectCodeUseCase>(
       () => _i597.GenerateProjectCodeUseCase(gh<_i605.ProjectsRepository>()),
     );
@@ -337,6 +342,13 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i689.WatchMinistriesUseCase>(
       () => _i689.WatchMinistriesUseCase(gh<_i939.MasterDataRepository>()),
+    );
+    gh.factory<_i259.AllProjectsBloc>(
+      () => _i259.AllProjectsBloc(
+        gh<_i1001.WatchProjectsForUserUseCase>(),
+        gh<_i471.ExportAllProjectsUseCase>(),
+        gh<_i1.DeleteProjectUseCase>(),
+      ),
     );
     gh.factory<_i948.SyncNowUseCase>(
       () => _i948.SyncNowUseCase(gh<_i454.AppRepository>()),
@@ -388,12 +400,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i948.SyncNowUseCase>(),
         gh<_i249.UpdateCurrentUserUseCase>(),
         gh<_i964.DatabaseSeeder>(),
-      ),
-    );
-    gh.factory<_i259.AllProjectsBloc>(
-      () => _i259.AllProjectsBloc(
-        gh<_i1001.WatchProjectsForUserUseCase>(),
-        gh<_i471.ExportAllProjectsUseCase>(),
       ),
     );
     gh.factory<_i1070.MasterDataBloc>(
