@@ -111,4 +111,17 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
       currentUserRole: currentUser.role,
     );
   }
+
+  @override
+  Future<void> resendInvitation(String userId) async {
+    final currentUser = _userSession.currentUser;
+    if (currentUser == null) {
+      throw Exception('No active user session');
+    }
+    if (!currentUser.role.isAnyAdmin) {
+      throw Exception('You are not authorized to resend invitations');
+    }
+
+    await _remoteDataSource.resendInvitation(userId);
+  }
 }

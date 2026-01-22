@@ -34,3 +34,12 @@ class UserRoleChanged extends UserManagementEvent {
   @override
   List<Object?> get props => [userId, role];
 }
+
+class InvitationResent extends UserManagementEvent {
+  final String userId;
+
+  const InvitationResent(this.userId);
+
+  @override
+  List<Object?> get props => [userId];
+}

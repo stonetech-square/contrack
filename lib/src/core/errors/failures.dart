@@ -1,4 +1,5 @@
 import 'package:logging/logging.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class Failure {
   final String message;
@@ -28,6 +29,8 @@ class AppFailure extends Failure {
     : super(message ?? 'Something went wrong. Please try again later.');
 
   factory AppFailure.fromException(Object error, [StackTrace? stackTrace]) {
+    Sentry.captureException(error, stackTrace: stackTrace);
+
     _logger.severe(
       'Error occurred: $error\nStack: $stackTrace',
       error,

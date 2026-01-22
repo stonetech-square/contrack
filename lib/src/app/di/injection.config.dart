@@ -123,6 +123,8 @@ import '../../features/user_management/domain/usecase/change_user_role_use_case.
     as _i108;
 import '../../features/user_management/domain/usecase/create_user_use_case.dart'
     as _i836;
+import '../../features/user_management/domain/usecase/resend_invitation_use_case.dart'
+    as _i700;
 import '../../features/user_management/domain/usecase/toggle_user_status_use_case.dart'
     as _i848;
 import '../../features/user_management/domain/usecase/watch_users_use_case.dart'
@@ -364,6 +366,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i836.CreateUserUseCase>(
       () => _i836.CreateUserUseCase(gh<_i282.UserManagementRepository>()),
     );
+    gh.lazySingleton<_i700.ResendInvitationUseCase>(
+      () => _i700.ResendInvitationUseCase(gh<_i282.UserManagementRepository>()),
+    );
     gh.lazySingleton<_i848.ToggleUserStatusUseCase>(
       () => _i848.ToggleUserStatusUseCase(gh<_i282.UserManagementRepository>()),
     );
@@ -395,6 +400,14 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i964.DatabaseSeeder>(),
       ),
     );
+    gh.factory<_i787.UserManagementBloc>(
+      () => _i787.UserManagementBloc(
+        gh<_i641.WatchUsersUseCase>(),
+        gh<_i848.ToggleUserStatusUseCase>(),
+        gh<_i108.ChangeUserRoleUseCase>(),
+        gh<_i700.ResendInvitationUseCase>(),
+      ),
+    );
     gh.factory<_i1070.MasterDataBloc>(
       () => _i1070.MasterDataBloc(
         gh<_i689.WatchMinistriesUseCase>(),
@@ -405,13 +418,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i334.DeleteAgencyUseCase>(),
         gh<_i73.UpdateMinistryUseCase>(),
         gh<_i752.UpdateAgencyUseCase>(),
-      ),
-    );
-    gh.factory<_i787.UserManagementBloc>(
-      () => _i787.UserManagementBloc(
-        gh<_i641.WatchUsersUseCase>(),
-        gh<_i848.ToggleUserStatusUseCase>(),
-        gh<_i108.ChangeUserRoleUseCase>(),
       ),
     );
     gh.factory<_i259.AllProjectsBloc>(

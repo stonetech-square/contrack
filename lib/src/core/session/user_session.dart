@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:contrack/src/core/common/enums/user_role.dart';
 import 'package:contrack/src/core/database/database.dart';
+import 'package:contrack/src/core/utils/sentry_utils.dart';
 import 'package:drift/drift.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
@@ -56,20 +57,21 @@ class UserSession {
   }
 
   Future<void> setSession(String userId) async {
+    final user = await (_db.select(
+      _db.users,
+    )..where((u) => u.uid.equals(userId))).getSingleOrNull();
+
+    _userSubject.add(user);
+
+    if (user != null) {
+      _subscribeToUserRoles(user.uid);
+    }
     await _db.transaction(() async {
       await _db.delete(_db.sessions).go();
       await _db
           .into(_db.sessions)
           .insert(SessionsCompanion.insert(activeUserId: Value(userId)));
     });
-
-    final user = await (_db.select(
-      _db.users,
-    )..where((u) => u.uid.equals(userId))).getSingleOrNull();
-    _userSubject.add(user);
-    if (user != null) {
-      _subscribeToUserRoles(user.uid);
-    }
   }
 
   Future<void> setUser({
@@ -119,13 +121,22 @@ class UserSession {
     }
 
     await setSession(uid);
+
+    await SentryUtils.setUser(
+      id: uid,
+      email: email,
+      username: username,
+      extras: {'role': role.name, 'fullName': fullName},
+    );
   }
 
   Future<void> clear() async {
-    await _db.delete(_db.sessions).go();
     _userSubject.add(null);
     _rolesSubscription?.unsubscribe();
     _rolesSubscription = null;
+
+    await SentryUtils.clearUser();
+    await _db.delete(_db.sessions).go();
   }
 
   Future<void> updateCurrentUser({

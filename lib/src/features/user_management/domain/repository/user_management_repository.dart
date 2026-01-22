@@ -12,4 +12,5 @@ abstract class UserManagementRepository {
 
   Future<void> toggleUserStatus(String userId);
   Future<void> changeUserRole(String userId, UserRole role);
+  Future<void> resendInvitation(String userId);
 }

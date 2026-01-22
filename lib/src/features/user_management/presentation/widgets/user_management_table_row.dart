@@ -32,13 +32,13 @@ class UserManagementTableRow extends StatelessWidget {
           children: [
             _DataCell(
               user.fullName ?? user.username,
-              flex: 3,
+              flex: 2,
               style: context.textStyles.bodyMedium.copyWith(
                 color: context.colors.textHeading,
                 fontWeight: FontWeight.w500,
               ),
             ),
-            _DataCell(user.email, flex: 4),
+            _DataCell(user.email, flex: 3),
             Expanded(
               flex: 2,
               child: Align(
@@ -53,7 +53,7 @@ class UserManagementTableRow extends StatelessWidget {
                 child: UserStatusBadge(isActive: user.isActive),
               ),
             ),
-            _DataCell(DateFormat('d MMM yyyy').format(user.createdAt), flex: 2),
+            _DataCell(DateFormat('d MMM yyyy').format(user.createdAt), flex: 1),
             Expanded(
               flex: 2,
               child: BlocBuilder<AppBloc, AppState>(
@@ -140,6 +140,40 @@ class UserManagementTableRow extends StatelessWidget {
                                         UserRoleChanged(user.uid, newRole),
                                       );
                                     }
+                                  },
+                            color: context.colors.textBody,
+                          );
+                        },
+                      ),
+                      const SizedBox(width: 8),
+                      BlocBuilder<UserManagementBloc, UserManagementState>(
+                        buildWhen: (previous, current) =>
+                            (previous.resendingInvitationUserId == user.uid) !=
+                            (current.resendingInvitationUserId == user.uid),
+                        builder: (context, state) {
+                          final isResending =
+                              state.resendingInvitationUserId == user.uid;
+                          return IconButton(
+                            key: ValueKey('resend_${user.uid}'),
+                            icon: isResending
+                                ? SizedBox(
+                                    width: 18,
+                                    height: 18,
+                                    child: CircularProgressIndicator(
+                                      color: context.colors.neutralInverted,
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : Icon(Icons.email_outlined, size: 18),
+                            tooltip: isOffline
+                                ? 'Offline'
+                                : 'Resend invitation email',
+                            onPressed: isOffline || isResending
+                                ? null
+                                : () {
+                                    context.read<UserManagementBloc>().add(
+                                      InvitationResent(user.uid),
+                                    );
                                   },
                             color: context.colors.textBody,
                           );

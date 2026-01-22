@@ -4,6 +4,7 @@ import 'package:contrack/src/core/common/enums/user_role.dart';
 import 'package:contrack/src/core/database/database.dart' as db;
 import 'package:contrack/src/core/errors/failures.dart';
 import 'package:contrack/src/features/user_management/domain/usecase/change_user_role_use_case.dart';
+import 'package:contrack/src/features/user_management/domain/usecase/resend_invitation_use_case.dart';
 import 'package:contrack/src/features/user_management/domain/usecase/toggle_user_status_use_case.dart';
 
 import 'package:contrack/src/features/user_management/domain/usecase/watch_users_use_case.dart';
@@ -22,14 +23,17 @@ class UserManagementBloc
   final WatchUsersUseCase _watchUsersUseCase;
   final ToggleUserStatusUseCase _toggleUserStatusUseCase;
   final ChangeUserRoleUseCase _changeUserRoleUseCase;
+  final ResendInvitationUseCase _resendInvitationUseCase;
   UserManagementBloc(
     this._watchUsersUseCase,
     this._toggleUserStatusUseCase,
     this._changeUserRoleUseCase,
+    this._resendInvitationUseCase,
   ) : super(const UserManagementState()) {
     on<UserWatchStarted>(_onWatchStarted);
     on<UserStatusToggled>(_onStatusToggled);
     on<UserRoleChanged>(_onRoleChanged);
+    on<InvitationResent>(_onInvitationResent);
   }
 
   Future<void> _onWatchStarted(
@@ -86,6 +90,37 @@ class UserManagementBloc
         state.copyWith(
           changingRoleUserId: null,
           changeRoleError: failure.message,
+        ),
+      );
+    }
+  }
+
+  Future<void> _onInvitationResent(
+    InvitationResent event,
+    Emitter<UserManagementState> emit,
+  ) async {
+    emit(
+      state.copyWith(
+        resendingInvitationUserId: event.userId,
+        resendInvitationError: null,
+        resendInvitationSuccess: null,
+      ),
+    );
+    try {
+      await _resendInvitationUseCase(ResendInvitationParams(event.userId));
+      emit(
+        state.copyWith(
+          resendingInvitationUserId: null,
+          resendInvitationSuccess: 'Invitation resent successfully',
+        ),
+      );
+    } catch (e, stackTrace) {
+      final failure =
+          e is Failure ? e : AppFailure.fromException(e, stackTrace);
+      emit(
+        state.copyWith(
+          resendingInvitationUserId: null,
+          resendInvitationError: failure.message,
         ),
       );
     }

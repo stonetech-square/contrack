@@ -10,6 +10,9 @@ sealed class UserManagementState with _$UserManagementState {
     @Default(null) String? toggleError,
     @Default(null) String? changingRoleUserId,
     @Default(null) String? changeRoleError,
+    @Default(null) String? resendingInvitationUserId,
+    @Default(null) String? resendInvitationError,
+    @Default(null) String? resendInvitationSuccess,
   }) = _UserManagementState;
 
   const UserManagementState._();

@@ -19,6 +19,7 @@ abstract class UserManagementRemoteDataSource {
   });
   Future<ToggleStatusResult> toggleUserStatus(String userId);
   Future<ChangeRoleResult> changeUserRole(String userId, UserRole role);
+  Future<void> resendInvitation(String userId);
 }
 
 @LazySingleton(as: UserManagementRemoteDataSource)
@@ -90,5 +91,17 @@ class UserManagementRemoteDataSourceImpl
       success: data['success'] == true,
       role: UserRole.values.firstWhere((e) => e.name == data['role']),
     );
+  }
+
+  @override
+  Future<void> resendInvitation(String userId) async {
+    final response = await _supabaseClient.functions.invoke(
+      'resend-invitation',
+      body: {'userId': userId},
+    );
+    final data = response.data as Map<String, dynamic>;
+    if (data['success'] != true) {
+      throw Exception(data['error'] ?? 'Failed to resend invitation');
+    }
   }
 }

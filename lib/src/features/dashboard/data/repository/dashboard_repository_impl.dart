@@ -41,7 +41,8 @@ class DashboardRepositoryImpl implements DashboardRepository {
   Stream<List<Project>> watchRecentProjects() {
     return _userSession.userStream.switchMap((user) {
       if (user == null) {
-        throw AppFailure('User not logged in');
+        _logger.warning('User not logged in');
+        return Stream.empty();
       }
 
       return _localDataSource
@@ -62,7 +63,8 @@ class DashboardRepositoryImpl implements DashboardRepository {
   Stream<List<ProjectWithDetails>> watchRecentProjectsWithDetails() {
     return _userSession.userStream.switchMap((user) {
       if (user == null) {
-        throw AppFailure('User not logged in');
+        _logger.warning('User not logged in');
+        return Stream.empty();
       }
 
       return _localDataSource
@@ -83,7 +85,8 @@ class DashboardRepositoryImpl implements DashboardRepository {
   Stream<int> watchUnsyncedProjectCount() {
     return _userSession.userStream.switchMap((user) {
       if (user == null) {
-        throw AppFailure('User not logged in');
+        _logger.warning('User not logged in');
+        return Stream.empty();
       }
       return _localDataSource
           .watchUnsyncProjectCount(user.uid, user.role)
@@ -102,7 +105,8 @@ class DashboardRepositoryImpl implements DashboardRepository {
   Stream<Map<ProjectStatus, int>> watchProjectCountsByStatus() {
     return _userSession.userStream.switchMap((user) {
       if (user == null) {
-        throw AppFailure('User not logged in');
+        _logger.warning('User not logged in');
+        return Stream.empty();
       }
       return _localDataSource
           .watchProjectCountsByStatus(user.uid, user.role)
@@ -120,7 +124,10 @@ class DashboardRepositoryImpl implements DashboardRepository {
   @override
   Future<List<Project>> importProjects(File file) async {
     final user = _userSession.currentUser;
-    if (user == null) throw AppFailure('User not logged in');
+    if (user == null) {
+      _logger.warning('User not logged in');
+      return [];
+    }
 
     final dtos = await _importService.importProjectsDto(file);
     final successfulProjects = <Project>[];

@@ -15,6 +15,7 @@ import 'package:contrack/src/features/projects/domain/entities/sort_field.dart';
 import 'package:contrack/src/features/projects/domain/entities/supervising_ministry.dart';
 import 'package:contrack/src/features/projects/domain/repository/projects_repository.dart';
 import 'package:injectable/injectable.dart';
+import 'package:logging/logging.dart';
 
 @LazySingleton(as: ProjectsRepository)
 class ProjectsRepositoryImpl implements ProjectsRepository {
@@ -22,6 +23,7 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
   final UserSession _userSession;
   final ProjectExportService _exportService;
   final AuditService _auditService;
+  final Logger _logger = Logger('ProjectsRepositoryImpl');
 
   ProjectsRepositoryImpl(
     this._localDataSource,
@@ -34,7 +36,8 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
   String generateProjectCode({DateTime? date}) {
     final user = _userSession.currentUser;
     if (user == null) {
-      throw Exception('User not logged in');
+      _logger.warning('User not logged in');
+      return '';
     }
     return _localDataSource.generateProjectCode(user.uid, date: date);
   }
@@ -43,7 +46,8 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
   Future<void> createProject(List<Project> projects) async {
     final user = _userSession.currentUser;
     if (user == null) {
-      throw Exception('User not logged in');
+      _logger.warning('User not logged in');
+      return;
     }
     final projectsToSave = projects
         .map(
@@ -65,7 +69,8 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
   Future<void> deleteProject(String code) async {
     final user = _userSession.currentUser;
     if (user == null) {
-      throw Exception('User not logged in');
+      _logger.warning('User not logged in');
+      return;
     }
     await _localDataSource.deleteProject(code);
   }
@@ -127,7 +132,8 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
   }) {
     final user = _userSession.currentUser;
     if (user == null) {
-      throw Exception('User not logged in');
+      _logger.warning('User not logged in');
+      return Stream.empty();
     }
 
     return _localDataSource
@@ -143,7 +149,8 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
   }) async {
     final user = _userSession.currentUser;
     if (user == null) {
-      throw Exception('User not logged in');
+      _logger.warning('User not logged in');
+      return '';
     }
 
     final filePath = await _exportService.exportProject(
@@ -179,7 +186,8 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
   }) async {
     final user = _userSession.currentUser;
     if (user == null) {
-      throw Exception('User not logged in');
+      _logger.warning('User not logged in');
+      return '';
     }
 
     final projects = await _localDataSource.getAllProjectsWithDetails(

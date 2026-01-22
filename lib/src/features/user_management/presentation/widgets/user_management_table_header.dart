@@ -18,11 +18,11 @@ class UserManagementTableHeader extends StatelessWidget {
       ),
       child: Row(
         children: const [
-          _HeaderCell('NAME', flex: 3),
-          _HeaderCell('EMAIL', flex: 4),
+          _HeaderCell('NAME', flex: 2),
+          _HeaderCell('EMAIL', flex: 3),
           _HeaderCell('ROLE', flex: 2),
           _HeaderCell('STATUS', flex: 2),
-          _HeaderCell('CREATED', flex: 2),
+          _HeaderCell('CREATED', flex: 1),
           _HeaderCell('ACTIONS', flex: 2),
         ],
       ),

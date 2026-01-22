@@ -10,6 +10,7 @@ import 'package:logging/logging.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,5 +49,14 @@ Future<void> main() async {
   );
 
   Bloc.observer = AppBlocObserver();
-  runApp(ContrackApp());
+  await SentryFlutter.init((options) {
+    options.dsn =
+        'https://b5b3fc1c582b76996e49a3435737929d@o4506044291874816.ingest.us.sentry.io/4510751302811648';
+    options.sendDefaultPii = true;
+    options.enableLogs = true;
+    options.tracesSampleRate = 1.0;
+    options.profilesSampleRate = 1.0;
+    options.replay.sessionSampleRate = 0.1;
+    options.replay.onErrorSampleRate = 1.0;
+  }, appRunner: () => runApp(SentryWidget(child: ContrackApp())));
 }

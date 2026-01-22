@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$UserManagementState {
 
- List<db.User> get users; bool get isLoadingUsers; String? get errorMessage; String? get togglingUserId; String? get toggleError; String? get changingRoleUserId; String? get changeRoleError;
+ List<db.User> get users; bool get isLoadingUsers; String? get errorMessage; String? get togglingUserId; String? get toggleError; String? get changingRoleUserId; String? get changeRoleError; String? get resendingInvitationUserId; String? get resendInvitationError; String? get resendInvitationSuccess;
 /// Create a copy of UserManagementState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $UserManagementStateCopyWith<UserManagementState> get copyWith => _$UserManageme
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserManagementState&&const DeepCollectionEquality().equals(other.users, users)&&(identical(other.isLoadingUsers, isLoadingUsers) || other.isLoadingUsers == isLoadingUsers)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.togglingUserId, togglingUserId) || other.togglingUserId == togglingUserId)&&(identical(other.toggleError, toggleError) || other.toggleError == toggleError)&&(identical(other.changingRoleUserId, changingRoleUserId) || other.changingRoleUserId == changingRoleUserId)&&(identical(other.changeRoleError, changeRoleError) || other.changeRoleError == changeRoleError));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserManagementState&&const DeepCollectionEquality().equals(other.users, users)&&(identical(other.isLoadingUsers, isLoadingUsers) || other.isLoadingUsers == isLoadingUsers)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.togglingUserId, togglingUserId) || other.togglingUserId == togglingUserId)&&(identical(other.toggleError, toggleError) || other.toggleError == toggleError)&&(identical(other.changingRoleUserId, changingRoleUserId) || other.changingRoleUserId == changingRoleUserId)&&(identical(other.changeRoleError, changeRoleError) || other.changeRoleError == changeRoleError)&&(identical(other.resendingInvitationUserId, resendingInvitationUserId) || other.resendingInvitationUserId == resendingInvitationUserId)&&(identical(other.resendInvitationError, resendInvitationError) || other.resendInvitationError == resendInvitationError)&&(identical(other.resendInvitationSuccess, resendInvitationSuccess) || other.resendInvitationSuccess == resendInvitationSuccess));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(users),isLoadingUsers,errorMessage,togglingUserId,toggleError,changingRoleUserId,changeRoleError);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(users),isLoadingUsers,errorMessage,togglingUserId,toggleError,changingRoleUserId,changeRoleError,resendingInvitationUserId,resendInvitationError,resendInvitationSuccess);
 
 @override
 String toString() {
-  return 'UserManagementState(users: $users, isLoadingUsers: $isLoadingUsers, errorMessage: $errorMessage, togglingUserId: $togglingUserId, toggleError: $toggleError, changingRoleUserId: $changingRoleUserId, changeRoleError: $changeRoleError)';
+  return 'UserManagementState(users: $users, isLoadingUsers: $isLoadingUsers, errorMessage: $errorMessage, togglingUserId: $togglingUserId, toggleError: $toggleError, changingRoleUserId: $changingRoleUserId, changeRoleError: $changeRoleError, resendingInvitationUserId: $resendingInvitationUserId, resendInvitationError: $resendInvitationError, resendInvitationSuccess: $resendInvitationSuccess)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $UserManagementStateCopyWith<$Res>  {
   factory $UserManagementStateCopyWith(UserManagementState value, $Res Function(UserManagementState) _then) = _$UserManagementStateCopyWithImpl;
 @useResult
 $Res call({
- List<db.User> users, bool isLoadingUsers, String? errorMessage, String? togglingUserId, String? toggleError, String? changingRoleUserId, String? changeRoleError
+ List<db.User> users, bool isLoadingUsers, String? errorMessage, String? togglingUserId, String? toggleError, String? changingRoleUserId, String? changeRoleError, String? resendingInvitationUserId, String? resendInvitationError, String? resendInvitationSuccess
 });
 
 
@@ -62,7 +62,7 @@ class _$UserManagementStateCopyWithImpl<$Res>
 
 /// Create a copy of UserManagementState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? users = null,Object? isLoadingUsers = null,Object? errorMessage = freezed,Object? togglingUserId = freezed,Object? toggleError = freezed,Object? changingRoleUserId = freezed,Object? changeRoleError = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? users = null,Object? isLoadingUsers = null,Object? errorMessage = freezed,Object? togglingUserId = freezed,Object? toggleError = freezed,Object? changingRoleUserId = freezed,Object? changeRoleError = freezed,Object? resendingInvitationUserId = freezed,Object? resendInvitationError = freezed,Object? resendInvitationSuccess = freezed,}) {
   return _then(_self.copyWith(
 users: null == users ? _self.users : users // ignore: cast_nullable_to_non_nullable
 as List<db.User>,isLoadingUsers: null == isLoadingUsers ? _self.isLoadingUsers : isLoadingUsers // ignore: cast_nullable_to_non_nullable
@@ -71,6 +71,9 @@ as String?,togglingUserId: freezed == togglingUserId ? _self.togglingUserId : to
 as String?,toggleError: freezed == toggleError ? _self.toggleError : toggleError // ignore: cast_nullable_to_non_nullable
 as String?,changingRoleUserId: freezed == changingRoleUserId ? _self.changingRoleUserId : changingRoleUserId // ignore: cast_nullable_to_non_nullable
 as String?,changeRoleError: freezed == changeRoleError ? _self.changeRoleError : changeRoleError // ignore: cast_nullable_to_non_nullable
+as String?,resendingInvitationUserId: freezed == resendingInvitationUserId ? _self.resendingInvitationUserId : resendingInvitationUserId // ignore: cast_nullable_to_non_nullable
+as String?,resendInvitationError: freezed == resendInvitationError ? _self.resendInvitationError : resendInvitationError // ignore: cast_nullable_to_non_nullable
+as String?,resendInvitationSuccess: freezed == resendInvitationSuccess ? _self.resendInvitationSuccess : resendInvitationSuccess // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -153,10 +156,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<db.User> users,  bool isLoadingUsers,  String? errorMessage,  String? togglingUserId,  String? toggleError,  String? changingRoleUserId,  String? changeRoleError)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<db.User> users,  bool isLoadingUsers,  String? errorMessage,  String? togglingUserId,  String? toggleError,  String? changingRoleUserId,  String? changeRoleError,  String? resendingInvitationUserId,  String? resendInvitationError,  String? resendInvitationSuccess)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UserManagementState() when $default != null:
-return $default(_that.users,_that.isLoadingUsers,_that.errorMessage,_that.togglingUserId,_that.toggleError,_that.changingRoleUserId,_that.changeRoleError);case _:
+return $default(_that.users,_that.isLoadingUsers,_that.errorMessage,_that.togglingUserId,_that.toggleError,_that.changingRoleUserId,_that.changeRoleError,_that.resendingInvitationUserId,_that.resendInvitationError,_that.resendInvitationSuccess);case _:
   return orElse();
 
 }
@@ -174,10 +177,10 @@ return $default(_that.users,_that.isLoadingUsers,_that.errorMessage,_that.toggli
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<db.User> users,  bool isLoadingUsers,  String? errorMessage,  String? togglingUserId,  String? toggleError,  String? changingRoleUserId,  String? changeRoleError)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<db.User> users,  bool isLoadingUsers,  String? errorMessage,  String? togglingUserId,  String? toggleError,  String? changingRoleUserId,  String? changeRoleError,  String? resendingInvitationUserId,  String? resendInvitationError,  String? resendInvitationSuccess)  $default,) {final _that = this;
 switch (_that) {
 case _UserManagementState():
-return $default(_that.users,_that.isLoadingUsers,_that.errorMessage,_that.togglingUserId,_that.toggleError,_that.changingRoleUserId,_that.changeRoleError);}
+return $default(_that.users,_that.isLoadingUsers,_that.errorMessage,_that.togglingUserId,_that.toggleError,_that.changingRoleUserId,_that.changeRoleError,_that.resendingInvitationUserId,_that.resendInvitationError,_that.resendInvitationSuccess);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -191,10 +194,10 @@ return $default(_that.users,_that.isLoadingUsers,_that.errorMessage,_that.toggli
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<db.User> users,  bool isLoadingUsers,  String? errorMessage,  String? togglingUserId,  String? toggleError,  String? changingRoleUserId,  String? changeRoleError)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<db.User> users,  bool isLoadingUsers,  String? errorMessage,  String? togglingUserId,  String? toggleError,  String? changingRoleUserId,  String? changeRoleError,  String? resendingInvitationUserId,  String? resendInvitationError,  String? resendInvitationSuccess)?  $default,) {final _that = this;
 switch (_that) {
 case _UserManagementState() when $default != null:
-return $default(_that.users,_that.isLoadingUsers,_that.errorMessage,_that.togglingUserId,_that.toggleError,_that.changingRoleUserId,_that.changeRoleError);case _:
+return $default(_that.users,_that.isLoadingUsers,_that.errorMessage,_that.togglingUserId,_that.toggleError,_that.changingRoleUserId,_that.changeRoleError,_that.resendingInvitationUserId,_that.resendInvitationError,_that.resendInvitationSuccess);case _:
   return null;
 
 }
@@ -206,7 +209,7 @@ return $default(_that.users,_that.isLoadingUsers,_that.errorMessage,_that.toggli
 
 
 class _UserManagementState extends UserManagementState {
-  const _UserManagementState({final  List<db.User> users = const [], this.isLoadingUsers = false, this.errorMessage = null, this.togglingUserId = null, this.toggleError = null, this.changingRoleUserId = null, this.changeRoleError = null}): _users = users,super._();
+  const _UserManagementState({final  List<db.User> users = const [], this.isLoadingUsers = false, this.errorMessage = null, this.togglingUserId = null, this.toggleError = null, this.changingRoleUserId = null, this.changeRoleError = null, this.resendingInvitationUserId = null, this.resendInvitationError = null, this.resendInvitationSuccess = null}): _users = users,super._();
   
 
  final  List<db.User> _users;
@@ -222,6 +225,9 @@ class _UserManagementState extends UserManagementState {
 @override@JsonKey() final  String? toggleError;
 @override@JsonKey() final  String? changingRoleUserId;
 @override@JsonKey() final  String? changeRoleError;
+@override@JsonKey() final  String? resendingInvitationUserId;
+@override@JsonKey() final  String? resendInvitationError;
+@override@JsonKey() final  String? resendInvitationSuccess;
 
 /// Create a copy of UserManagementState
 /// with the given fields replaced by the non-null parameter values.
@@ -233,16 +239,16 @@ _$UserManagementStateCopyWith<_UserManagementState> get copyWith => __$UserManag
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserManagementState&&const DeepCollectionEquality().equals(other._users, _users)&&(identical(other.isLoadingUsers, isLoadingUsers) || other.isLoadingUsers == isLoadingUsers)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.togglingUserId, togglingUserId) || other.togglingUserId == togglingUserId)&&(identical(other.toggleError, toggleError) || other.toggleError == toggleError)&&(identical(other.changingRoleUserId, changingRoleUserId) || other.changingRoleUserId == changingRoleUserId)&&(identical(other.changeRoleError, changeRoleError) || other.changeRoleError == changeRoleError));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserManagementState&&const DeepCollectionEquality().equals(other._users, _users)&&(identical(other.isLoadingUsers, isLoadingUsers) || other.isLoadingUsers == isLoadingUsers)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.togglingUserId, togglingUserId) || other.togglingUserId == togglingUserId)&&(identical(other.toggleError, toggleError) || other.toggleError == toggleError)&&(identical(other.changingRoleUserId, changingRoleUserId) || other.changingRoleUserId == changingRoleUserId)&&(identical(other.changeRoleError, changeRoleError) || other.changeRoleError == changeRoleError)&&(identical(other.resendingInvitationUserId, resendingInvitationUserId) || other.resendingInvitationUserId == resendingInvitationUserId)&&(identical(other.resendInvitationError, resendInvitationError) || other.resendInvitationError == resendInvitationError)&&(identical(other.resendInvitationSuccess, resendInvitationSuccess) || other.resendInvitationSuccess == resendInvitationSuccess));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_users),isLoadingUsers,errorMessage,togglingUserId,toggleError,changingRoleUserId,changeRoleError);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_users),isLoadingUsers,errorMessage,togglingUserId,toggleError,changingRoleUserId,changeRoleError,resendingInvitationUserId,resendInvitationError,resendInvitationSuccess);
 
 @override
 String toString() {
-  return 'UserManagementState(users: $users, isLoadingUsers: $isLoadingUsers, errorMessage: $errorMessage, togglingUserId: $togglingUserId, toggleError: $toggleError, changingRoleUserId: $changingRoleUserId, changeRoleError: $changeRoleError)';
+  return 'UserManagementState(users: $users, isLoadingUsers: $isLoadingUsers, errorMessage: $errorMessage, togglingUserId: $togglingUserId, toggleError: $toggleError, changingRoleUserId: $changingRoleUserId, changeRoleError: $changeRoleError, resendingInvitationUserId: $resendingInvitationUserId, resendInvitationError: $resendInvitationError, resendInvitationSuccess: $resendInvitationSuccess)';
 }
 
 
@@ -253,7 +259,7 @@ abstract mixin class _$UserManagementStateCopyWith<$Res> implements $UserManagem
   factory _$UserManagementStateCopyWith(_UserManagementState value, $Res Function(_UserManagementState) _then) = __$UserManagementStateCopyWithImpl;
 @override @useResult
 $Res call({
- List<db.User> users, bool isLoadingUsers, String? errorMessage, String? togglingUserId, String? toggleError, String? changingRoleUserId, String? changeRoleError
+ List<db.User> users, bool isLoadingUsers, String? errorMessage, String? togglingUserId, String? toggleError, String? changingRoleUserId, String? changeRoleError, String? resendingInvitationUserId, String? resendInvitationError, String? resendInvitationSuccess
 });
 
 
@@ -270,7 +276,7 @@ class __$UserManagementStateCopyWithImpl<$Res>
 
 /// Create a copy of UserManagementState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? users = null,Object? isLoadingUsers = null,Object? errorMessage = freezed,Object? togglingUserId = freezed,Object? toggleError = freezed,Object? changingRoleUserId = freezed,Object? changeRoleError = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? users = null,Object? isLoadingUsers = null,Object? errorMessage = freezed,Object? togglingUserId = freezed,Object? toggleError = freezed,Object? changingRoleUserId = freezed,Object? changeRoleError = freezed,Object? resendingInvitationUserId = freezed,Object? resendInvitationError = freezed,Object? resendInvitationSuccess = freezed,}) {
   return _then(_UserManagementState(
 users: null == users ? _self._users : users // ignore: cast_nullable_to_non_nullable
 as List<db.User>,isLoadingUsers: null == isLoadingUsers ? _self.isLoadingUsers : isLoadingUsers // ignore: cast_nullable_to_non_nullable
@@ -279,6 +285,9 @@ as String?,togglingUserId: freezed == togglingUserId ? _self.togglingUserId : to
 as String?,toggleError: freezed == toggleError ? _self.toggleError : toggleError // ignore: cast_nullable_to_non_nullable
 as String?,changingRoleUserId: freezed == changingRoleUserId ? _self.changingRoleUserId : changingRoleUserId // ignore: cast_nullable_to_non_nullable
 as String?,changeRoleError: freezed == changeRoleError ? _self.changeRoleError : changeRoleError // ignore: cast_nullable_to_non_nullable
+as String?,resendingInvitationUserId: freezed == resendingInvitationUserId ? _self.resendingInvitationUserId : resendingInvitationUserId // ignore: cast_nullable_to_non_nullable
+as String?,resendInvitationError: freezed == resendInvitationError ? _self.resendInvitationError : resendInvitationError // ignore: cast_nullable_to_non_nullable
+as String?,resendInvitationSuccess: freezed == resendInvitationSuccess ? _self.resendInvitationSuccess : resendInvitationSuccess // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
