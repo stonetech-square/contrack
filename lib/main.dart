@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:contrack/src/app/app_bloc_observer.dart';
 import 'package:contrack/src/app/contrack_app.dart';
 import 'package:contrack/src/app/di/injection.dart';
@@ -22,7 +24,9 @@ Future<void> main() async {
     minimumSize: Size(1200, 850),
     backgroundColor: Colors.transparent,
     skipTaskbar: false,
-    titleBarStyle: TitleBarStyle.hidden,
+    titleBarStyle: Platform.isMacOS
+        ? TitleBarStyle.hidden
+        : TitleBarStyle.normal,
   );
   windowManager.waitUntilReadyToShow(windowOptions, () async {
     await windowManager.show();
