@@ -80,9 +80,12 @@ jobs:
         env:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
-          echo "🔐 Signing macOS app..."
+          echo "� Listing available signing identities..."
+          security find-identity -v -p codesigning
+          
+          echo "�🔐 Signing macOS app..."
           codesign --deep --force --verify --verbose \
-            --sign "Developer ID Application: StoneTech ($APPLE_TEAM_ID)" \
+            --sign "Developer ID Application" \
             --options runtime \
             --timestamp \
             "build/macos/Build/Products/Release/contrack.app"
@@ -113,7 +116,7 @@ jobs:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
           echo "🔐 Signing DMG..."
-          codesign --sign "Developer ID Application: StoneTech ($APPLE_TEAM_ID)" \
+          codesign --sign "Developer ID Application" \
             --timestamp \
             "build/macos/contrack.dmg"
           echo "✅ DMG signed successfully"
