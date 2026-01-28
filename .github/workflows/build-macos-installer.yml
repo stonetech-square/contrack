@@ -33,6 +33,7 @@ permissions:
 jobs:
   build-macos:
     runs-on: macos-latest
+    environment: release
     
     steps:
       - name: Checkout repository

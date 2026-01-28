@@ -36,6 +36,7 @@ permissions:
 jobs:
   build-windows:
     runs-on: windows-latest
+    environment: release
     
     steps:
       - name: Checkout repository
