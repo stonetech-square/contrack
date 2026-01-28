@@ -27,8 +27,12 @@ This guide walks you through setting up code signing and notarization for your m
 ```bash
 base64 -i certificate.p12 | pbcopy
 ```
+{I)H"EB@i;95kXA[\NpfT_
 
 This copies the base64-encoded certificate to your clipboard.
+
+
+
 
 ---
 
@@ -40,7 +44,7 @@ This copies the base64-encoded certificate to your clipboard.
 4. Click **Generate an app-specific password**
 5. Name it: "Contrack Notarization"
 6. **Save the password** (you can't see it again!)
-
+ybwu-pcum-ynok-aawb
 ---
 
 ## Step 3: Configure GitHub Secrets

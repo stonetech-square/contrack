@@ -38,7 +38,39 @@ jobs:
           flutter build macos --release \
             --dart-define=PROJECT_URL="$PROJECT_URL" \
             --dart-define=PROJECT_KEY="$PROJECT_KEY" \
-            --dart-define=LOCAL_DB_KEY="$LOCAL_DB_KEY"
+            --dart-define=LOCAL_DB_KEY="$LOCAL_DB_KEY" \
+            --build-name=1.0.0 \
+            --build-number=${{ github.run_number }}
+
+      - name: Import Code Signing Certificate
+        env:
+          MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+          MACOS_CERTIFICATE_PASSWORD: ${{ secrets.MACOS_CERTIFICATE_PASSWORD }}
+        run: |
+          echo "📝 Importing code signing certificate..."
+          echo "$MACOS_CERTIFICATE" | base64 --decode > certificate.p12
+          security create-keychain -p actions build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p actions build.keychain
+          security import certificate.p12 -k build.keychain -P "$MACOS_CERTIFICATE_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k actions build.keychain
+          rm certificate.p12
+          echo "✅ Certificate imported successfully"
+
+      - name: Sign macOS App
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          echo "🔐 Signing macOS app..."
+          codesign --deep --force --verify --verbose \
+            --sign "Developer ID Application: StoneTech ($APPLE_TEAM_ID)" \
+            --options runtime \
+            --timestamp \
+            "build/macos/Build/Products/Release/contrack.app"
+          
+          echo "✅ Verifying signature..."
+          codesign --verify --verbose=4 "build/macos/Build/Products/Release/contrack.app"
+          echo "✅ App signed successfully"
 
       - name: Install create-dmg
         run: brew install create-dmg
@@ -56,6 +88,36 @@ jobs:
             --no-internet-enable \
             "build/macos/contrack.dmg" \
             "build/macos/Build/Products/Release/contrack.app" || true
+
+      - name: Sign DMG
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          echo "🔐 Signing DMG..."
+          codesign --sign "Developer ID Application: StoneTech ($APPLE_TEAM_ID)" \
+            --timestamp \
+            "build/macos/contrack.dmg"
+          echo "✅ DMG signed successfully"
+
+      - name: Notarize DMG
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          echo "📤 Submitting DMG for notarization..."
+          xcrun notarytool submit "build/macos/contrack.dmg" \
+            --apple-id "$APPLE_ID" \
+            --team-id "$APPLE_TEAM_ID" \
+            --password "$APPLE_ID_PASSWORD" \
+            --wait
+          
+          echo "📎 Stapling notarization ticket to DMG..."
+          xcrun stapler staple "build/macos/contrack.dmg"
+          
+          echo "✅ Verifying notarization..."
+          xcrun stapler validate "build/macos/contrack.dmg"
+          echo "✅ DMG notarized successfully"
 
       - name: Verify DMG creation
         run: |
