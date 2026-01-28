@@ -1,12 +1,30 @@
 name: Build macOS Installer
 
 on:
+  workflow_dispatch:  
   push:
     branches:
       - main
+    paths:
+      - 'macos/**'                                   
+      - 'lib/**'                                     
+      - 'pubspec.yaml'                               
+      - 'pubspec.lock'                               
+      - 'assets/**'                                  
+      - '.github/workflows/build-macos-installer.yml'
+      - 'flutter_launcher_icons.yaml'      
+
   pull_request:
     branches:
       - main
+    paths:
+      - 'macos/**'
+      - 'lib/**'
+      - 'pubspec.yaml'
+      - 'pubspec.lock'
+      - 'assets/**'
+      - '.github/workflows/build-macos-installer.yml'
+      - 'flutter_launcher_icons.yaml'      
 
 permissions:
   contents: write

@@ -1,12 +1,33 @@
 name: Build Windows Installer
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
+    paths:
+      - 'windows/**'
+      - 'lib/**'                                    
+      - 'pubspec.yaml'                              
+      - 'pubspec.lock'                              
+      - 'assets/**'                                 
+      - '.github/workflows/build-windows-installer.yml'
+      - 'windows/installer.iss'
+      - 'flutter_launcher_icons.yaml'
+      - 'assets/*'
   pull_request:
     branches:
       - main
+    paths:
+      - 'windows/**'
+      - 'lib/**'
+      - 'pubspec.yaml'
+      - 'pubspec.lock'
+      - 'assets/**'
+      - '.github/workflows/build-windows-installer.yml'
+      - 'windows/installer.iss'
+      - 'flutter_launcher_icons.yaml'
+      - 'assets/*'
 
 permissions:
   contents: write
