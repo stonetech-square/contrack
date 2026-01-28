@@ -69,6 +69,11 @@ jobs:
           PROJECT_KEY: ${{ secrets.PROJECT_KEY }}
           LOCAL_DB_KEY: ${{ secrets.LOCAL_DB_KEY }}
         run: |
+          echo "🔍 Debugging Secrets..."
+          if [ -z "$PROJECT_URL" ]; then echo "❌ PROJECT_URL is empty"; else echo "✅ PROJECT_URL is set (length: ${#PROJECT_URL})"; fi
+          if [ -z "$PROJECT_KEY" ]; then echo "❌ PROJECT_KEY is empty"; else echo "✅ PROJECT_KEY is set (length: ${#PROJECT_KEY})"; fi
+          if [ -z "$LOCAL_DB_KEY" ]; then echo "❌ LOCAL_DB_KEY is empty"; else echo "✅ LOCAL_DB_KEY is set (length: ${#LOCAL_DB_KEY})"; fi
+          
           flutter build macos --release \
             --dart-define=PROJECT_URL="$PROJECT_URL" \
             --dart-define=PROJECT_KEY="$PROJECT_KEY" \

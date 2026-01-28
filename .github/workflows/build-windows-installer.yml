@@ -57,6 +57,11 @@ jobs:
           PROJECT_KEY: ${{ secrets.PROJECT_KEY }}
           LOCAL_DB_KEY: ${{ secrets.LOCAL_DB_KEY }}
         run: |
+          echo "🔍 Debugging Secrets..."
+          if ($env:PROJECT_URL -eq "") { echo "❌ PROJECT_URL is empty" } else { echo "✅ PROJECT_URL is set (length: $($env:PROJECT_URL.Length))" }
+          if ($env:PROJECT_KEY -eq "") { echo "❌ PROJECT_KEY is empty" } else { echo "✅ PROJECT_KEY is set (length: $($env:PROJECT_KEY.Length))" }
+          if ($env:LOCAL_DB_KEY -eq "") { echo "❌ LOCAL_DB_KEY is empty" } else { echo "✅ LOCAL_DB_KEY is set (length: $($env:LOCAL_DB_KEY.Length))" }
+
           flutter build windows --release `
             --dart-define=PROJECT_URL="$env:PROJECT_URL" `
             --dart-define=PROJECT_KEY="$env:PROJECT_KEY" `
