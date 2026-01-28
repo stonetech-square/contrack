@@ -1,0 +1,83 @@
+name: Build macOS Installer
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Build macOS release
+        env:
+          PROJECT_URL: ${{ secrets.PROJECT_URL }}
+          PROJECT_KEY: ${{ secrets.PROJECT_KEY }}
+          LOCAL_DB_KEY: ${{ secrets.LOCAL_DB_KEY }}
+        run: |
+          flutter build macos --release \
+            --dart-define=PROJECT_URL="$PROJECT_URL" \
+            --dart-define=PROJECT_KEY="$PROJECT_KEY" \
+            --dart-define=LOCAL_DB_KEY="$LOCAL_DB_KEY"
+
+      - name: Install create-dmg
+        run: brew install create-dmg
+
+      - name: Create DMG installer
+        run: |
+          create-dmg \
+            --volname "Contrack Installer" \
+            --window-pos 200 120 \
+            --window-size 800 400 \
+            --icon-size 100 \
+            --icon "contrack.app" 200 190 \
+            --hide-extension "contrack.app" \
+            --app-drop-link 600 185 \
+            --no-internet-enable \
+            "build/macos/contrack.dmg" \
+            "build/macos/Build/Products/Release/contrack.app" || true
+
+      - name: Verify DMG creation
+        run: |
+          if [ -f "build/macos/contrack.dmg" ]; then
+            echo "DMG created successfully"
+            ls -lh build/macos/contrack.dmg
+          else
+            echo "DMG creation failed, checking for alternative location"
+            find build/macos -name "*.dmg" -type f
+          fi
+
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-installer
+          path: build/macos/contrack.dmg
+          retention-days: 30
+
+      - name: Create Release (on main branch only)
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v1.0.0-${{ github.run_number }}
+          name: Release v1.0.0-${{ github.run_number }}
+          files: build/macos/contrack.dmg
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
