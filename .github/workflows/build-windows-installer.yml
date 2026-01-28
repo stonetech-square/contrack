@@ -8,6 +8,10 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+  packages: write
+
 jobs:
   build-windows:
     runs-on: windows-latest
@@ -41,7 +45,7 @@ jobs:
           $issContent = @"
           #define MyAppName "Contrack"
           #define MyAppVersion "1.0.0"
-          #define MyAppPublisher "Your Company"
+          #define MyAppPublisher "StoneTech"
           #define MyAppExeName "contrack.exe"
 
           [Setup]
