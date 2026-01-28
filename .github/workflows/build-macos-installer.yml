@@ -47,19 +47,6 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      - name: Build macOS release
-        env:
-          PROJECT_URL: ${{ secrets.PROJECT_URL }}
-          PROJECT_KEY: ${{ secrets.PROJECT_KEY }}
-          LOCAL_DB_KEY: ${{ secrets.LOCAL_DB_KEY }}
-        run: |
-          flutter build macos --release \
-            --dart-define=PROJECT_URL="$PROJECT_URL" \
-            --dart-define=PROJECT_KEY="$PROJECT_KEY" \
-            --dart-define=LOCAL_DB_KEY="$LOCAL_DB_KEY" \
-            --build-name=1.0.0 \
-            --build-number=${{ github.run_number }}
-
       - name: Import Code Signing Certificate
         env:
           MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
@@ -74,6 +61,19 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k actions build.keychain
           rm certificate.p12
           echo "✅ Certificate imported successfully"
+
+      - name: Build macOS release
+        env:
+          PROJECT_URL: ${{ secrets.PROJECT_URL }}
+          PROJECT_KEY: ${{ secrets.PROJECT_KEY }}
+          LOCAL_DB_KEY: ${{ secrets.LOCAL_DB_KEY }}
+        run: |
+          flutter build macos --release \
+            --dart-define=PROJECT_URL="$PROJECT_URL" \
+            --dart-define=PROJECT_KEY="$PROJECT_KEY" \
+            --dart-define=LOCAL_DB_KEY="$LOCAL_DB_KEY" \
+            --build-name=1.0.0 \
+            --build-number=${{ github.run_number }}
 
       - name: Sign macOS App
         env:
