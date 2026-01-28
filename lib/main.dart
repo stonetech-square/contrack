@@ -22,7 +22,7 @@ Future<void> main() async {
   WindowOptions windowOptions = WindowOptions(
     size: Size(1200, 850),
     minimumSize: Size(1200, 850),
-    backgroundColor: Colors.transparent,
+    backgroundColor: Platform.isMacOS ? Colors.transparent : null,
     skipTaskbar: false,
     titleBarStyle: Platform.isMacOS
         ? TitleBarStyle.hidden
