@@ -111,6 +111,39 @@ import '../../features/projects/presentation/bloc/all_projects_bloc.dart'
 import '../../features/projects/presentation/bloc/create_new_project_bloc.dart'
     as _i921;
 import '../../features/projects/presentation/bloc/project_bloc.dart' as _i205;
+import '../../features/seeding/data/datasource/seeding_local_datasource.dart'
+    as _i337;
+import '../../features/seeding/data/datasource/seeding_remote_datasource.dart'
+    as _i761;
+import '../../features/seeding/data/repository/seeding_repository_impl.dart'
+    as _i530;
+import '../../features/seeding/domain/repository/seeding_repository.dart'
+    as _i289;
+import '../../features/seeding/domain/usecase/get_remote_agencies_count_use_case.dart'
+    as _i605;
+import '../../features/seeding/domain/usecase/get_remote_ministries_count_use_case.dart'
+    as _i427;
+import '../../features/seeding/domain/usecase/get_remote_projects_count_use_case.dart'
+    as _i418;
+import '../../features/seeding/domain/usecase/get_remote_users_count_use_case.dart'
+    as _i529;
+import '../../features/seeding/domain/usecase/seed_agencies_use_case.dart'
+    as _i88;
+import '../../features/seeding/domain/usecase/seed_ministries_use_case.dart'
+    as _i409;
+import '../../features/seeding/domain/usecase/seed_projects_use_case.dart'
+    as _i241;
+import '../../features/seeding/domain/usecase/seed_users_use_case.dart'
+    as _i296;
+import '../../features/seeding/domain/usecase/watch_agencies_count_use_case.dart'
+    as _i781;
+import '../../features/seeding/domain/usecase/watch_ministries_count_use_case.dart'
+    as _i65;
+import '../../features/seeding/domain/usecase/watch_projects_count_use_case.dart'
+    as _i439;
+import '../../features/seeding/domain/usecase/watch_users_count_use_case.dart'
+    as _i147;
+import '../../features/seeding/presentation/bloc/seeding_bloc.dart' as _i407;
 import '../../features/user_management/data/datasource/user_management_local_datasource.dart'
     as _i642;
 import '../../features/user_management/data/datasource/user_management_remote_datasource.dart'
@@ -158,6 +191,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i454.SupabaseClient>(() => appModule.supabaseClient);
     gh.lazySingleton<_i869.ProjectCodeGenerator>(
       () => _i869.ProjectCodeGenerator(),
+    );
+    gh.lazySingleton<_i761.SeedingRemoteDataSource>(
+      () => _i761.SeedingRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
     );
     gh.lazySingleton<_i642.DashboardLocalDataSource>(
       () => _i642.DashboardLocalDataSourceImpl(gh<_i339.AppDatabase>()),
@@ -212,10 +248,19 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i44.UserManagementRemoteDataSource>(
       () => _i44.UserManagementRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
     );
+    gh.lazySingleton<_i337.SeedingLocalDataSource>(
+      () => _i337.SeedingLocalDatasourceImpl(gh<_i339.AppDatabase>()),
+    );
     gh.lazySingleton<_i465.ProjectsLocalDataSource>(
       () => _i465.ProjectsLocalDataSourceImpl(
         gh<_i339.AppDatabase>(),
         gh<_i869.ProjectCodeGenerator>(),
+      ),
+    );
+    gh.lazySingleton<_i289.SeedingRepository>(
+      () => _i530.SeedingRepositoryImpl(
+        gh<_i337.SeedingLocalDataSource>(),
+        gh<_i761.SeedingRemoteDataSource>(),
       ),
     );
     gh.lazySingleton<_i961.AuthRepository>(
@@ -318,6 +363,43 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i1001.WatchProjectsForUserUseCase>(
       () => _i1001.WatchProjectsForUserUseCase(gh<_i605.ProjectsRepository>()),
     );
+    gh.lazySingleton<_i605.GetRemoteAgenciesCountUseCase>(
+      () => _i605.GetRemoteAgenciesCountUseCase(gh<_i289.SeedingRepository>()),
+    );
+    gh.lazySingleton<_i427.GetRemoteMinistriesCountUseCase>(
+      () =>
+          _i427.GetRemoteMinistriesCountUseCase(gh<_i289.SeedingRepository>()),
+    );
+    gh.lazySingleton<_i418.GetRemoteProjectsCountUseCase>(
+      () => _i418.GetRemoteProjectsCountUseCase(gh<_i289.SeedingRepository>()),
+    );
+    gh.lazySingleton<_i529.GetRemoteUsersCountUseCase>(
+      () => _i529.GetRemoteUsersCountUseCase(gh<_i289.SeedingRepository>()),
+    );
+    gh.lazySingleton<_i88.SeedAgenciesUseCase>(
+      () => _i88.SeedAgenciesUseCase(gh<_i289.SeedingRepository>()),
+    );
+    gh.lazySingleton<_i409.SeedMinistriesUseCase>(
+      () => _i409.SeedMinistriesUseCase(gh<_i289.SeedingRepository>()),
+    );
+    gh.lazySingleton<_i241.SeedProjectsUseCase>(
+      () => _i241.SeedProjectsUseCase(gh<_i289.SeedingRepository>()),
+    );
+    gh.lazySingleton<_i296.SeedUsersUseCase>(
+      () => _i296.SeedUsersUseCase(gh<_i289.SeedingRepository>()),
+    );
+    gh.lazySingleton<_i781.WatchAgenciesCountUseCase>(
+      () => _i781.WatchAgenciesCountUseCase(gh<_i289.SeedingRepository>()),
+    );
+    gh.lazySingleton<_i65.WatchMinistriesCountUseCase>(
+      () => _i65.WatchMinistriesCountUseCase(gh<_i289.SeedingRepository>()),
+    );
+    gh.lazySingleton<_i439.WatchProjectsCountUseCase>(
+      () => _i439.WatchProjectsCountUseCase(gh<_i289.SeedingRepository>()),
+    );
+    gh.lazySingleton<_i147.WatchUsersCountUseCase>(
+      () => _i147.WatchUsersCountUseCase(gh<_i289.SeedingRepository>()),
+    );
     gh.factory<_i135.SignInBloc>(
       () => _i135.SignInBloc(gh<_i277.SignInUseCase>()),
     );
@@ -344,6 +426,22 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i689.WatchMinistriesUseCase>(
       () => _i689.WatchMinistriesUseCase(gh<_i939.MasterDataRepository>()),
+    );
+    gh.factory<_i407.SeedingBloc>(
+      () => _i407.SeedingBloc(
+        gh<_i296.SeedUsersUseCase>(),
+        gh<_i409.SeedMinistriesUseCase>(),
+        gh<_i88.SeedAgenciesUseCase>(),
+        gh<_i241.SeedProjectsUseCase>(),
+        gh<_i147.WatchUsersCountUseCase>(),
+        gh<_i65.WatchMinistriesCountUseCase>(),
+        gh<_i781.WatchAgenciesCountUseCase>(),
+        gh<_i439.WatchProjectsCountUseCase>(),
+        gh<_i529.GetRemoteUsersCountUseCase>(),
+        gh<_i427.GetRemoteMinistriesCountUseCase>(),
+        gh<_i605.GetRemoteAgenciesCountUseCase>(),
+        gh<_i418.GetRemoteProjectsCountUseCase>(),
+      ),
     );
     gh.factory<_i948.SyncNowUseCase>(
       () => _i948.SyncNowUseCase(gh<_i454.AppRepository>()),

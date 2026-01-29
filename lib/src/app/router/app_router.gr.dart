@@ -43,6 +43,22 @@ class AppRootRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [AuhtenticatedMainScreen]
+class AuhtenticatedMainRoute extends PageRouteInfo<void> {
+  const AuhtenticatedMainRoute({List<PageRouteInfo>? children})
+    : super(AuhtenticatedMainRoute.name, initialChildren: children);
+
+  static const String name = 'AuhtenticatedMainRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const AuhtenticatedMainScreen();
+    },
+  );
+}
+
+/// generated route for
 /// [AuthenticatedShellScreen]
 class AuthenticatedShellRoute extends PageRouteInfo<void> {
   const AuthenticatedShellRoute({List<PageRouteInfo>? children})
@@ -216,6 +232,22 @@ class ReportRoute extends PageRouteInfo<void> {
     name,
     builder: (data) {
       return const ReportScreen();
+    },
+  );
+}
+
+/// generated route for
+/// [SeedingScreen]
+class SeedingRoute extends PageRouteInfo<void> {
+  const SeedingRoute({List<PageRouteInfo>? children})
+    : super(SeedingRoute.name, initialChildren: children);
+
+  static const String name = 'SeedingRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const SeedingScreen();
     },
   );
 }
