@@ -287,11 +287,51 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: macos-installer
+          path: .
 
       - name: Download Windows Artifact
         uses: actions/download-artifact@v4
         with:
           name: windows-installer
+          path: .
+
+      - name: Upload to Supabase Storage
+        env:
+          PROJECT_URL: ${{ secrets.PROJECT_URL }}
+          PROJECT_SECRET: ${{ secrets.PROJECT_SECRET }}
+        continue-on-error: true
+        run: |
+          if [ -n "$PROJECT_SECRET" ] && [ -n "$PROJECT_URL" ]; then
+             echo "🚀 Uploading installers to Supabase Storage..."
+             
+             # Upload DMG
+             if [ -f "contrack.dmg" ]; then
+               echo "📤 Uploading contrack.dmg..."
+               curl -X POST "${PROJECT_URL}/storage/v1/object/installations/contrack.dmg" \
+                 -H "Authorization: Bearer ${PROJECT_SECRET}" \
+                 -H "Content-Type: application/x-apple-diskimage" \
+                 -H "x-upsert: true" \
+                 --data-binary "@contrack.dmg" || echo "⚠️ Failed to upload DMG"
+             else
+               echo "⚠️ contrack.dmg not found, skipping upload."
+             fi
+
+             # Upload EXE
+             if [ -f "contrack-setup.exe" ]; then
+               echo "📤 Uploading contrack-setup.exe as contrack.exe..."
+               curl -X POST "${PROJECT_URL}/storage/v1/object/installations/contrack.exe" \
+                 -H "Authorization: Bearer ${PROJECT_SECRET}" \
+                 -H "Content-Type: application/vnd.microsoft.portable-executable" \
+                 -H "x-upsert: true" \
+                 --data-binary "@contrack-setup.exe" || echo "⚠️ Failed to upload EXE"
+             else
+               echo "⚠️ contrack-setup.exe not found, skipping upload."
+             fi
+             
+             echo "✅ Storage upload process completed."
+          else
+             echo "⚠️ PROJECT_SECRET or PROJECT_URL missing. Skipping upload to Supabase Storage."
+          fi
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
