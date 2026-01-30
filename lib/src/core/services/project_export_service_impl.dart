@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:contrack/src/core/common/enums/project_status.dart';
 import 'package:contrack/src/core/database/tables/export_history.dart';
+import 'package:contrack/src/core/errors/exeptions.dart';
 import 'package:contrack/src/features/dashboard/domain/entities/project_with_details.dart';
 import 'package:contrack/src/core/services/project_export_service.dart';
 import 'package:csv/csv.dart';
@@ -62,6 +63,10 @@ class ProjectExportServiceImpl implements ProjectExportService {
                 p.inHouseStatus != InHouseStatus.suspended,
           )
           .toList();
+    }
+
+    if (projectsToExport.isEmpty) {
+      throw NoProjectsToExportException();
     }
 
     switch (format) {

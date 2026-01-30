@@ -1,5 +1,6 @@
 import 'package:logging/logging.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:contrack/src/core/errors/exeptions.dart';
 
 abstract class Failure {
   final String message;
@@ -42,6 +43,10 @@ class AppFailure extends Failure {
     }
 
     if (error is Failure) {
+      return AppFailure(error.message);
+    }
+
+    if (error is AppException) {
       return AppFailure(error.message);
     }
 
