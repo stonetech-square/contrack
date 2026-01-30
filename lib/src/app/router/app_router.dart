@@ -33,6 +33,7 @@ class AppRouter extends RootStackRouter {
       children: [
         AutoRoute(
           page: UnAuthenticatedShellRoute.page,
+          initial: true,
           children: [AutoRoute(page: SignInRoute.page, initial: true)],
         ),
         AutoRoute(
