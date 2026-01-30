@@ -4,12 +4,31 @@ import 'package:contrack/src/core/services/project_import_service.dart';
 import 'package:csv/csv.dart';
 import 'package:injectable/injectable.dart';
 
+import 'package:excel/excel.dart';
+import 'package:path/path.dart' as p;
+
 @LazySingleton(as: ProjectImportService)
 class ProjectImportServiceImpl implements ProjectImportService {
   @override
   Future<List<ProjectImportDto>> importProjectsDto(File file) async {
-    final input = await file.readAsString();
-    final rows = const CsvToListConverter().convert(input);
+    final extension = p.extension(file.path).toLowerCase();
+    List<List<dynamic>> rows = [];
+
+    if (extension == '.csv') {
+      final input = await file.readAsString();
+      rows = const CsvToListConverter().convert(input);
+    } else if (extension == '.xlsx' || extension == '.xls') {
+      final bytes = await file.readAsBytes();
+      final excel = Excel.decodeBytes(bytes);
+      if (excel.tables.isNotEmpty) {
+        final table = excel.tables[excel.tables.keys.first];
+        if (table != null) {
+          rows = table.rows.map((row) {
+            return row.map((cell) => cell?.value?.toString() ?? '').toList();
+          }).toList();
+        }
+      }
+    }
 
     if (rows.isEmpty) return [];
 
@@ -35,12 +54,14 @@ class ProjectImportServiceImpl implements ProjectImportService {
         final sponsor = row.length > 10 ? row[10].toString() : null;
         final startDate = row.length > 11 ? row[11].toString() : null;
         final endDate = row.length > 12 ? row[12].toString() : null;
+        final inHouseStatus = row.length > 13 ? row[13].toString() : null;
 
         projects.add(
           ProjectImportDto(
             code: code,
             title: title,
-            status: status,
+            projectStatus: status,
+            inHouseStatus: inHouseStatus,
             amount: amount,
             agency: agency,
             ministry: ministry,
@@ -61,6 +82,7 @@ class ProjectImportServiceImpl implements ProjectImportService {
   }
 
   double _parseAmount(String amountStr) {
+    if (amountStr.isEmpty) return 0.0;
     final cleaned = amountStr.replaceAll('₦', '').replaceAll(',', '').trim();
     return double.tryParse(cleaned) ?? 0.0;
   }

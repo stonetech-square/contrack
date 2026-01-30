@@ -9,7 +9,8 @@ abstract class DashboardRepository {
   Stream<List<Project>> watchRecentProjects();
   Stream<List<ProjectWithDetails>> watchRecentProjectsWithDetails();
   Stream<int> watchUnsyncedProjectCount();
-  Stream<Map<ProjectStatus, int>> watchProjectCountsByStatus();
+  Stream<Map<InHouseStatus, int>> watchProjectCountsByStatus();
+  Stream<double> watchTotalProjectBudget();
   Future<List<Project>> importProjects(File file);
   Future<String?> pickProjectFile();
 }

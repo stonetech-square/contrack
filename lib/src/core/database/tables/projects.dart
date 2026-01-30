@@ -7,7 +7,10 @@ class Projects extends Table {
   @override
   Set<Column> get primaryKey => {code};
   TextColumn get code => text().withLength(min: 1, max: 100)();
-  TextColumn get status => textEnum<ProjectStatus>()();
+  TextColumn get projectStatus => textEnum<ProjectStatus>()();
+  TextColumn get inHouseStatus => textEnum<InHouseStatus>().withDefault(
+    Constant(InHouseStatus.notStarted.name),
+  )();
   IntColumn get agencyId => integer().references(Agencies, #id)();
   IntColumn get ministryId => integer().references(Ministries, #id)();
   IntColumn get stateId => integer().references(States, #id)();

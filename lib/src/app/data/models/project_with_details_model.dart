@@ -13,7 +13,8 @@ sealed class ProjectWithDetailsModel with _$ProjectWithDetailsModel {
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory ProjectWithDetailsModel({
     required String code,
-    required ProjectStatus status,
+    required ProjectStatus projectStatus,
+    required InHouseStatus inHouseStatus,
     required int agencyId,
     required String agencyName,
     required int ministryId,
@@ -45,7 +46,8 @@ sealed class ProjectWithDetailsModel with _$ProjectWithDetailsModel {
   ProjectWithDetails toEntity() {
     return ProjectWithDetails(
       code: code,
-      status: status,
+      projectStatus: projectStatus,
+      inHouseStatus: inHouseStatus,
       agencyId: agencyId,
       agencyName: agencyName,
       ministryId: ministryId,

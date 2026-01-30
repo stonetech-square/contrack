@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class ProjectStatusBadge extends StatelessWidget {
   const ProjectStatusBadge({super.key, required this.status});
 
-  final ProjectStatus status;
+  final InHouseStatus status;
 
   @override
   Widget build(BuildContext context) {
@@ -14,24 +14,24 @@ class ProjectStatusBadge extends StatelessWidget {
     Color textColor;
 
     switch (status) {
-      case ProjectStatus.ongoing:
+      case InHouseStatus.ongoing:
         backgroundColor = context.colors.bgOrange.withValues(alpha: 0.1);
         textColor = context.colors.statusPlanned;
         break;
-      case ProjectStatus.completed:
-        backgroundColor = context.colors.success.withValues(alpha: 0.1);
-        textColor = context.colors.success;
-        break;
-      case ProjectStatus.notStarted:
+      case InHouseStatus.notStarted:
         backgroundColor = context.colors.bgGray.withValues(alpha: 0.1);
         textColor = context.colors.textSubtle;
         break;
-      case ProjectStatus.suspended:
-        backgroundColor = context.colors.statusPlanned.withValues(alpha: 0.1);
-        textColor = context.colors.statusPlanned;
+      case InHouseStatus.completed:
+        backgroundColor = context.colors.bgGreen.withValues(alpha: 0.1);
+        textColor = context.colors.statusCompleted;
         break;
-      case ProjectStatus.cancelled:
+      case InHouseStatus.suspended:
         backgroundColor = context.colors.bgRed.withValues(alpha: 0.1);
+        textColor = context.colors.statusStalled;
+        break;
+      case InHouseStatus.cancelled:
+        backgroundColor = context.colors.bgGray.withValues(alpha: 0.1);
         textColor = context.colors.statusCancelled;
         break;
     }

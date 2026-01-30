@@ -24,6 +24,7 @@ sealed class ProjectEntryFormData with _$ProjectEntryFormData {
     @Default(RequiredDouble.pure()) RequiredDouble budget,
     @Default(RequiredDate.pure()) RequiredDate startDate,
     @Default(RequiredDate.pure()) RequiredDate endDate,
+    @Default(InHouseStatus.notStarted) InHouseStatus inHouseStatus,
     @Default([]) List<ImplementingAgency> agencies,
     @Default([]) List<NigerianState> states,
     // Preserved fields for editing existing projects
@@ -49,7 +50,8 @@ sealed class ProjectEntryFormData with _$ProjectEntryFormData {
 
   Project toProject() => Project(
     code: code,
-    status: status.value ?? ProjectStatus.notStarted,
+    projectStatus: status.value ?? ProjectStatus.newProject,
+    inHouseStatus: inHouseStatus,
     agencyId: implementingAgencyId.value,
     ministryId: supervisingMinistryId.value,
     stateId: stateId.value,

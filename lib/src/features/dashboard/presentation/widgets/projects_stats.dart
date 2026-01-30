@@ -7,6 +7,7 @@ import 'package:contrack/src/core/common/enums/project_status.dart';
 import 'package:contrack/src/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart' hide TextDirection;
 
 class ProjectsStats extends StatelessWidget {
   const ProjectsStats({super.key});
@@ -50,11 +51,34 @@ class ProjectsStats extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(width: 8),
+                  SizedBox(width: 32),
                   Expanded(
                     flex: 1,
-                    child: _StatusLegend(
-                      statusDistribution: stats.statusDistribution,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          'Total Budget:',
+                          style: context.textStyles.labelSmall.copyWith(
+                            color: context.colors.textSubtle,
+                          ),
+                        ),
+                        Text(
+                          NumberFormat.currency(
+                            symbol: '₦',
+                            decimalDigits: 2,
+                          ).format(stats.totalBudget),
+                          style: context.textStyles.titleLarge.copyWith(
+                            color: context.colors.textHeading,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 12),
+                        _StatusLegend(
+                          statusDistribution: stats.statusDistribution,
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -75,7 +99,7 @@ class _DonutChart extends StatelessWidget {
   });
 
   final int totalProjects;
-  final Map<ProjectStatus, dynamic> statusDistribution;
+  final Map<InHouseStatus, dynamic> statusDistribution;
 
   @override
   Widget build(BuildContext context) {
@@ -123,7 +147,7 @@ class _DonutChart extends StatelessWidget {
 class _DonutChartPainter extends CustomPainter {
   _DonutChartPainter({required this.statusDistribution, required this.colors});
 
-  final Map<ProjectStatus, dynamic> statusDistribution;
+  final Map<InHouseStatus, dynamic> statusDistribution;
   final AppColorsExtension colors;
 
   @override
@@ -143,13 +167,7 @@ class _DonutChartPainter extends CustomPainter {
 
     const gapAngle = 0.06;
 
-    final statusOrder = [
-      ProjectStatus.ongoing,
-      ProjectStatus.notStarted,
-      ProjectStatus.completed,
-      ProjectStatus.suspended,
-      ProjectStatus.cancelled,
-    ];
+    final statusOrder = InHouseStatus.values;
 
     final visibleStatuses = statusOrder.where((status) {
       final info = statusDistribution[status];
@@ -219,17 +237,17 @@ class _DonutChartPainter extends CustomPainter {
     }
   }
 
-  Color _getColorForStatus(ProjectStatus status) {
+  Color _getColorForStatus(InHouseStatus status) {
     switch (status) {
-      case ProjectStatus.ongoing:
+      case InHouseStatus.ongoing:
         return colors.statusOngoing;
-      case ProjectStatus.completed:
-        return colors.statusCompleted;
-      case ProjectStatus.notStarted:
+      case InHouseStatus.notStarted:
         return colors.statusPlanned;
-      case ProjectStatus.suspended:
+      case InHouseStatus.completed:
+        return colors.statusCompleted;
+      case InHouseStatus.suspended:
         return colors.statusStalled;
-      case ProjectStatus.cancelled:
+      case InHouseStatus.cancelled:
         return colors.statusCancelled;
     }
   }
@@ -255,17 +273,11 @@ class _ArcSegment {
 class _StatusLegend extends StatelessWidget {
   const _StatusLegend({required this.statusDistribution});
 
-  final Map<ProjectStatus, dynamic> statusDistribution;
+  final Map<InHouseStatus, dynamic> statusDistribution;
 
   @override
   Widget build(BuildContext context) {
-    final legendItems = [
-      (ProjectStatus.ongoing, 'Ongoing'),
-      (ProjectStatus.completed, 'Completed'),
-      (ProjectStatus.notStarted, 'Not Started'),
-      (ProjectStatus.suspended, 'Suspended'),
-      (ProjectStatus.cancelled, 'Cancelled'),
-    ];
+    final legendItems = InHouseStatus.values.map((s) => (s, s.displayName));
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -309,18 +321,18 @@ class _StatusLegend extends StatelessWidget {
     );
   }
 
-  Color _getColorForStatus(BuildContext context, ProjectStatus status) {
+  Color _getColorForStatus(BuildContext context, InHouseStatus status) {
     final colors = context.colors;
     switch (status) {
-      case ProjectStatus.ongoing:
+      case InHouseStatus.ongoing:
         return colors.statusOngoing;
-      case ProjectStatus.completed:
-        return colors.statusCompleted;
-      case ProjectStatus.notStarted:
+      case InHouseStatus.notStarted:
         return colors.statusPlanned;
-      case ProjectStatus.suspended:
+      case InHouseStatus.completed:
+        return colors.statusCompleted;
+      case InHouseStatus.suspended:
         return colors.statusStalled;
-      case ProjectStatus.cancelled:
+      case InHouseStatus.cancelled:
         return colors.statusCancelled;
     }
   }

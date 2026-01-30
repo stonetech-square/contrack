@@ -44,7 +44,7 @@ class ProjectSummaryCard extends StatelessWidget {
                   ),
                 ],
               ),
-              ProjectStatusBadge(status: project.status),
+              ProjectStatusBadge(status: project.inHouseStatus),
             ],
           ),
           const SizedBox(height: 24),

@@ -10,7 +10,8 @@ sealed class SeedProjectModel with _$SeedProjectModel {
   const factory SeedProjectModel({
     required String id,
     required String code,
-    required ProjectStatus status,
+    required ProjectStatus projectStatus,
+    @Default(InHouseStatus.notStarted) InHouseStatus inHouseStatus,
     required String agencyId,
     required String ministryId,
     required String stateId,

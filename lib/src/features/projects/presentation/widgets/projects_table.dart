@@ -137,7 +137,7 @@ class _ProjectsTableRow extends StatelessWidget {
               flex: 1,
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: ProjectStatusBadge(status: project.status),
+                child: ProjectStatusBadge(status: project.inHouseStatus),
               ),
             ),
             _DataCell(

@@ -14,11 +14,9 @@ import 'package:contrack/src/features/projects/domain/entities/export_type.dart'
 
 @LazySingleton(as: ProjectExportService)
 class ProjectExportServiceImpl implements ProjectExportService {
-  final _currencyFormat = NumberFormat.currency(symbol: '₦', decimalDigits: 2);
-
   Future<Directory> _getExportDirectory() async {
     if (Platform.isMacOS || Platform.isLinux) {
-      // TODO: confirm save dir works on windows and linux
+      // TODO: confirm save dir works linux
       return await getDownloadsDirectory() ??
           await getApplicationDocumentsDirectory();
     } else if (Platform.isWindows) {
@@ -72,7 +70,7 @@ class ProjectExportServiceImpl implements ProjectExportService {
           'CODE',
           'PROJECT TITLE',
           'STATUS',
-          'AMOUNT (₦)',
+          'AMOUNT (NAIRA)',
           'AGENCY',
           'MINISTRY',
         ];
@@ -81,8 +79,9 @@ class ProjectExportServiceImpl implements ProjectExportService {
           'S/NO',
           'CODE',
           'PROJECT TITLE',
-          'STATUS',
-          'AMOUNT (₦)',
+          'PROJECT STATUS',
+          'IN-HOUSE STATUS',
+          'AMOUNT (NAIRA)',
           'AGENCY',
           'MINISTRY',
           'STATE',
@@ -99,17 +98,18 @@ class ProjectExportServiceImpl implements ProjectExportService {
     }
   }
 
-  List<String> _getRowData(
+  List<dynamic> _getRowData(
     ProjectWithDetails project,
     int index,
     ExportType type,
   ) {
     final baseData = [
-      (index + 1).toString(),
+      (index + 1),
       project.code,
       project.title,
-      project.status.displayName,
-      _currencyFormat.format(project.amount),
+      project.projectStatus.displayName,
+      if (type == ExportType.extra) project.inHouseStatus.displayName,
+      project.amount.toInt(),
       project.agencyName,
       project.ministryName,
     ];
@@ -139,7 +139,16 @@ class ProjectExportServiceImpl implements ProjectExportService {
     ProjectWithDetails project,
     ExportType type,
   ) async {
-    final rows = [_getHeaders(type), _getRowData(project, 0, type)];
+    final rows = <List<dynamic>>[];
+    rows.add(_getHeaders(type));
+    rows.add(_getRowData(project, 0, type));
+
+    // Add total row
+    final totalRow = List<dynamic>.filled(_getHeaders(type).length, '');
+    totalRow[0] = 'TOTAL';
+    final amountIndex = type == ExportType.preferred ? 4 : 5;
+    totalRow[amountIndex] = project.amount.toInt();
+    rows.add(totalRow);
 
     final csv = const ListToCsvConverter().convert(rows);
 
@@ -156,18 +165,29 @@ class ProjectExportServiceImpl implements ProjectExportService {
     ExportType type,
   ) async {
     final excel = Excel.createExcel();
+    final defaultSheet = excel.getDefaultSheet();
+    if (defaultSheet != null) {
+      excel.rename(defaultSheet, 'Project Export');
+    }
     final sheet = excel['Project Export'];
 
     final headers = _getHeaders(type);
 
     sheet.appendRow(headers.map((h) => TextCellValue(h)).toList());
 
-    final data = _getRowData(
-      project,
-      0,
-      type,
-    ).map((d) => TextCellValue(d)).toList();
+    final data = _getRowData(project, 0, type)
+        .map((d) => d is int ? IntCellValue(d) : TextCellValue(d.toString()))
+        .toList();
     sheet.appendRow(data);
+
+    // Add total row
+    final totalRow = List<CellValue>.filled(headers.length, TextCellValue(''));
+    totalRow[0] = TextCellValue('TOTAL');
+    final amountIndex = type == ExportType.preferred ? 4 : 5;
+    final colName = type == ExportType.preferred ? 'E' : 'F';
+    // Data is on row 2. Total on row 3. Sum E2:E2.
+    totalRow[amountIndex] = FormulaCellValue('SUM(${colName}2:${colName}2)');
+    sheet.appendRow(totalRow);
 
     for (var i = 0; i < headers.length; i++) {
       var cell = sheet.cell(
@@ -232,11 +252,21 @@ class ProjectExportServiceImpl implements ProjectExportService {
     List<ProjectWithDetails> projects,
     ExportType type,
   ) async {
-    final rows = [_getHeaders(type)];
+    final rows = <List<dynamic>>[];
+    rows.add(_getHeaders(type));
 
+    double totalAmount = 0;
     for (var i = 0; i < projects.length; i++) {
+      totalAmount += projects[i].amount;
       rows.add(_getRowData(projects[i], i, type));
     }
+
+    // Add total row
+    final totalRow = List<dynamic>.filled(_getHeaders(type).length, '');
+    totalRow[0] = 'TOTAL';
+    final amountIndex = type == ExportType.preferred ? 4 : 5;
+    totalRow[amountIndex] = totalAmount.toInt();
+    rows.add(totalRow);
 
     final csv = const ListToCsvConverter().convert(rows);
 
@@ -253,6 +283,10 @@ class ProjectExportServiceImpl implements ProjectExportService {
     ExportType type,
   ) async {
     final excel = Excel.createExcel();
+    final defaultSheet = excel.getDefaultSheet();
+    if (defaultSheet != null) {
+      excel.rename(defaultSheet, 'Projects Export');
+    }
     final sheet = excel['Projects Export'];
 
     final headers = _getHeaders(type);
@@ -260,13 +294,23 @@ class ProjectExportServiceImpl implements ProjectExportService {
     sheet.appendRow(headers.map((h) => TextCellValue(h)).toList());
 
     for (var i = 0; i < projects.length; i++) {
-      final data = _getRowData(
-        projects[i],
-        i,
-        type,
-      ).map((d) => TextCellValue(d)).toList();
+      final data = _getRowData(projects[i], i, type)
+          .map((d) => d is int ? IntCellValue(d) : TextCellValue(d.toString()))
+          .toList();
       sheet.appendRow(data);
     }
+
+    // Add total row
+    final totalRow = List<CellValue>.filled(headers.length, TextCellValue(''));
+    totalRow[0] = TextCellValue('TOTAL');
+    final amountIndex = type == ExportType.preferred ? 4 : 5;
+    final colName = type == ExportType.preferred ? 'E' : 'F';
+    // Data starts at row 2. Last data row is projects.length + 1.
+    final lastRow = projects.length + 1;
+    totalRow[amountIndex] = FormulaCellValue(
+      'SUM(${colName}2:$colName$lastRow)',
+    );
+    sheet.appendRow(totalRow);
 
     for (var i = 0; i < headers.length; i++) {
       var cell = sheet.cell(

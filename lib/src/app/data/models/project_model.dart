@@ -14,7 +14,8 @@ sealed class ProjectModel with _$ProjectModel {
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory ProjectModel({
     required String code,
-    required ProjectStatus status,
+    required ProjectStatus projectStatus,
+    @Default(InHouseStatus.notStarted) InHouseStatus inHouseStatus,
     required int agencyId,
     required int ministryId,
     required int stateId,
@@ -37,7 +38,8 @@ sealed class ProjectModel with _$ProjectModel {
   factory ProjectModel.fromDrift(Project driftProject) {
     return ProjectModel(
       code: driftProject.code,
-      status: driftProject.status,
+      projectStatus: driftProject.projectStatus,
+      inHouseStatus: driftProject.inHouseStatus,
       agencyId: driftProject.agencyId,
       ministryId: driftProject.ministryId,
       stateId: driftProject.stateId,
@@ -64,7 +66,8 @@ sealed class ProjectModel with _$ProjectModel {
   entity.Project toEntity() {
     return entity.Project(
       code: code,
-      status: status,
+      projectStatus: projectStatus,
+      inHouseStatus: inHouseStatus,
       agencyId: agencyId,
       ministryId: ministryId,
       stateId: stateId,
@@ -88,7 +91,8 @@ sealed class ProjectModel with _$ProjectModel {
   static ProjectModel fromEntity(entity.Project project) {
     return ProjectModel(
       code: project.code,
-      status: project.status,
+      projectStatus: project.projectStatus,
+      inHouseStatus: project.inHouseStatus,
       agencyId: project.agencyId,
       ministryId: project.ministryId,
       stateId: project.stateId,
@@ -112,7 +116,8 @@ sealed class ProjectModel with _$ProjectModel {
   ProjectsCompanion toDriftCompanion() {
     return ProjectsCompanion(
       code: Value(code),
-      status: Value(status),
+      projectStatus: Value(projectStatus),
+      inHouseStatus: Value(inHouseStatus),
       agencyId: Value(agencyId),
       ministryId: Value(ministryId),
       stateId: Value(stateId),

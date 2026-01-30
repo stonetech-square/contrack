@@ -66,11 +66,11 @@ class _AuhtenticatedMainScreenState extends State<AuhtenticatedMainScreen> {
                     destinations: [
                       AppSidebarDestination.dashboard,
                       AppSidebarDestination.projects,
-                      if (state.user?.role.isAnyAdmin ?? false) ...[
-                        // AppSidebarDestination.reports,
+                      if (state.user?.role.isSuperAdmin ?? false)
                         AppSidebarDestination.userManagement,
+
+                      if (state.user?.role.isAnyAdmin ?? false)
                         AppSidebarDestination.masterData,
-                      ],
                     ],
                   ),
                   Expanded(

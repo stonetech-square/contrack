@@ -102,7 +102,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
   }
 
   @override
-  Stream<Map<ProjectStatus, int>> watchProjectCountsByStatus() {
+  Stream<Map<InHouseStatus, int>> watchProjectCountsByStatus() {
     return _userSession.userStream.switchMap((user) {
       if (user == null) {
         _logger.warning('User not logged in');
@@ -113,6 +113,26 @@ class DashboardRepositoryImpl implements DashboardRepository {
           .handleError((error, stackTrace) {
             _logger.severe(
               'Error watching project counts by status for user: ${user.uid}',
+              error,
+              stackTrace,
+            );
+            throw AppFailure.fromException(error, stackTrace);
+          });
+    });
+  }
+
+  @override
+  Stream<double> watchTotalProjectBudget() {
+    return _userSession.userStream.switchMap((user) {
+      if (user == null) {
+        _logger.warning('User not logged in');
+        return Stream.empty();
+      }
+      return _localDataSource
+          .watchTotalProjectBudget(user.uid, user.role)
+          .handleError((error, stackTrace) {
+            _logger.severe(
+              'Error watching total project budget for user: ${user.uid}',
               error,
               stackTrace,
             );
@@ -194,9 +214,14 @@ class DashboardRepositoryImpl implements DashboardRepository {
           }
         }
 
-        final status = ProjectStatus.values.firstWhere(
-          (e) => e.displayName.toLowerCase() == dto.status.toLowerCase(),
-          orElse: () => ProjectStatus.notStarted,
+        final projectStatus = ProjectStatus.values.firstWhere(
+          (e) => e.displayName.toLowerCase() == dto.projectStatus.toLowerCase(),
+          orElse: () => ProjectStatus.newProject,
+        );
+        final inHouseStatus = InHouseStatus.values.firstWhere(
+          (e) =>
+              e.displayName.toLowerCase() == dto.inHouseStatus?.toLowerCase(),
+          orElse: () => InHouseStatus.notStarted,
         );
 
         final code = _isValidProjectCode(dto.code)
@@ -205,7 +230,8 @@ class DashboardRepositoryImpl implements DashboardRepository {
 
         final projectModel = ProjectModel(
           code: code,
-          status: status,
+          projectStatus: projectStatus,
+          inHouseStatus: inHouseStatus,
           agencyId: agencyId,
           ministryId: ministryId,
           stateId: stateId,
@@ -234,6 +260,6 @@ class DashboardRepositoryImpl implements DashboardRepository {
 
   @override
   Future<String?> pickProjectFile() async {
-    return _filePickerService.pickCsvFile();
+    return _filePickerService.pickImportFile();
   }
 }

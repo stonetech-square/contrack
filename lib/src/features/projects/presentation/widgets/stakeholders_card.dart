@@ -1,4 +1,6 @@
 import 'package:contrack/src/app/presentation/widgets/widgets.dart';
+import 'package:contrack/src/features/projects/domain/entities/implementing_agency.dart';
+import 'package:contrack/src/features/projects/domain/entities/supervising_ministry.dart';
 import 'package:contrack/src/features/projects/presentation/bloc/create_new_project_bloc.dart';
 import 'package:contrack/src/features/projects/presentation/widgets/create_new_project_entry_card.dart';
 import 'package:flutter/material.dart';
@@ -24,16 +26,16 @@ class StakeholdersCard extends StatelessWidget {
       headerText: 'Stakeholders',
       headerIcon: Icons.people,
       children: [
-        AppDropDownField<int>(
+        AppSearchableDropDownField<SupervisingMinistry, int>(
           label: 'Supervising Ministry',
           hintText: 'Select Ministry',
           isRequired: true,
+          items: state.ministries,
+          labelBuilder: (m) => m.name,
+          valueBuilder: (m) => m.id,
           value: entry.supervisingMinistryId.value == 0
               ? null
               : entry.supervisingMinistryId.value,
-          items: state.ministries
-              .map((e) => DropdownMenuItem(value: e.id, child: Text(e.name)))
-              .toList(),
           onChanged: (value) {
             if (value != null) {
               context.read<CreateNewProjectBloc>().add(
@@ -47,16 +49,16 @@ class StakeholdersCard extends StatelessWidget {
               : null,
         ),
         const SizedBox(height: 15),
-        AppDropDownField<int>(
+        AppSearchableDropDownField<ImplementingAgency, int>(
           label: 'Implementing Agency',
           hintText: 'Select an Agency',
           isRequired: true,
+          items: entry.agencies,
+          labelBuilder: (a) => a.name,
+          valueBuilder: (a) => a.id,
           value: entry.implementingAgencyId.value == 0
               ? null
               : entry.implementingAgencyId.value,
-          items: entry.agencies
-              .map((e) => DropdownMenuItem(value: e.id, child: Text(e.name)))
-              .toList(),
           onChanged: (value) {
             if (value != null) {
               context.read<CreateNewProjectBloc>().add(

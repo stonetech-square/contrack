@@ -427,22 +427,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i689.WatchMinistriesUseCase>(
       () => _i689.WatchMinistriesUseCase(gh<_i939.MasterDataRepository>()),
     );
-    gh.factory<_i407.SeedingBloc>(
-      () => _i407.SeedingBloc(
-        gh<_i296.SeedUsersUseCase>(),
-        gh<_i409.SeedMinistriesUseCase>(),
-        gh<_i88.SeedAgenciesUseCase>(),
-        gh<_i241.SeedProjectsUseCase>(),
-        gh<_i147.WatchUsersCountUseCase>(),
-        gh<_i65.WatchMinistriesCountUseCase>(),
-        gh<_i781.WatchAgenciesCountUseCase>(),
-        gh<_i439.WatchProjectsCountUseCase>(),
-        gh<_i529.GetRemoteUsersCountUseCase>(),
-        gh<_i427.GetRemoteMinistriesCountUseCase>(),
-        gh<_i605.GetRemoteAgenciesCountUseCase>(),
-        gh<_i418.GetRemoteProjectsCountUseCase>(),
-      ),
-    );
     gh.factory<_i948.SyncNowUseCase>(
       () => _i948.SyncNowUseCase(gh<_i454.AppRepository>()),
     );
@@ -553,6 +537,23 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i304.ImportProjectsUseCase>(),
         gh<_i1037.PickProjectFileUseCase>(),
         gh<_i471.ExportAllProjectsUseCase>(),
+      ),
+    );
+    gh.factory<_i407.SeedingBloc>(
+      () => _i407.SeedingBloc(
+        gh<_i296.SeedUsersUseCase>(),
+        gh<_i409.SeedMinistriesUseCase>(),
+        gh<_i88.SeedAgenciesUseCase>(),
+        gh<_i241.SeedProjectsUseCase>(),
+        gh<_i147.WatchUsersCountUseCase>(),
+        gh<_i65.WatchMinistriesCountUseCase>(),
+        gh<_i781.WatchAgenciesCountUseCase>(),
+        gh<_i439.WatchProjectsCountUseCase>(),
+        gh<_i529.GetRemoteUsersCountUseCase>(),
+        gh<_i427.GetRemoteMinistriesCountUseCase>(),
+        gh<_i605.GetRemoteAgenciesCountUseCase>(),
+        gh<_i418.GetRemoteProjectsCountUseCase>(),
+        gh<_i964.DatabaseSeeder>(),
       ),
     );
     return this;

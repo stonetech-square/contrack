@@ -60,13 +60,32 @@ class CoreIdentificationCard extends StatelessWidget {
           onChanged: (value) {
             if (value != null) {
               context.read<CreateNewProjectBloc>().add(
-                    EntryFieldChanged(index: index, status: value),
-                  );
+                EntryFieldChanged(index: index, status: value),
+              );
             }
           },
           errorText: showErrors && entry.status.displayError != null
               ? 'Status is required'
               : null,
+        ),
+        const SizedBox(height: 15),
+        AppDropDownField<InHouseStatus>(
+          label: 'In House Status',
+          hintText: 'Select In House Status',
+          isRequired: true,
+          value: entry.inHouseStatus,
+          items: InHouseStatus.values
+              .map(
+                (e) => DropdownMenuItem(value: e, child: Text(e.displayName)),
+              )
+              .toList(),
+          onChanged: (value) {
+            if (value != null) {
+              context.read<CreateNewProjectBloc>().add(
+                EntryFieldChanged(index: index, inHouseStatus: value),
+              );
+            }
+          },
         ),
       ],
     );

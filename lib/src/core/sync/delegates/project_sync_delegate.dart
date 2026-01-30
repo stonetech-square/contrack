@@ -152,7 +152,8 @@ class ProjectSyncDelegate {
   ) async {
     final remoteId = data['id'] as String;
     final code = data['code'] as String;
-    final statusStr = data['status'] as String;
+    final statusStr = data['project_status'] as String;
+    final inHouseStatusStr = data['in_house_status'] as String;
     final agencyIdStr = data['agency_id'] as String;
     final ministryIdStr = data['ministry_id'] as String;
     final stateIdStr = data['state_id'] as String;
@@ -177,9 +178,14 @@ class ProjectSyncDelegate {
         ? DateTime.parse(lastSyncedAtStr)
         : null;
 
-    final status = ProjectStatus.values.firstWhere(
-      (e) => e.name == statusStr,
-      orElse: () => ProjectStatus.notStarted,
+    final projectStatus = ProjectStatus.values.firstWhere(
+      (e) => e.supabaseValue == statusStr,
+      orElse: () => ProjectStatus.newProject,
+    );
+
+    final inHouseStatus = InHouseStatus.values.firstWhere(
+      (e) => e.name == inHouseStatusStr,
+      orElse: () => InHouseStatus.notStarted,
     );
 
     final agency = await (_database.select(
@@ -264,7 +270,8 @@ class ProjectSyncDelegate {
 
       final localDigest = _computeProjectDigest(
         localProject.code,
-        localProject.status,
+        localProject.projectStatus,
+        localProject.inHouseStatus,
         localProject.agencyId,
         localProject.ministryId,
         localProject.stateId,
@@ -281,7 +288,8 @@ class ProjectSyncDelegate {
 
       final remoteDigest = _computeProjectDigest(
         code,
-        status,
+        projectStatus,
+        inHouseStatus,
         agency.id,
         ministry.id,
         state.id,
@@ -305,7 +313,8 @@ class ProjectSyncDelegate {
     final companion = db.ProjectsCompanion(
       code: Value(code),
       remoteId: Value(remoteId),
-      status: Value(status),
+      projectStatus: Value(projectStatus),
+      inHouseStatus: Value(inHouseStatus),
       agencyId: Value(agency.id),
       ministryId: Value(ministry.id),
       stateId: Value(state.id),
@@ -348,7 +357,8 @@ class ProjectSyncDelegate {
         .from('projects')
         .insert({
           'code': project.code,
-          'status': project.status.name,
+          'project_status': project.projectStatus.supabaseValue,
+          'in_house_status': project.inHouseStatus.name,
           'agency_id': agencyRemoteId,
           'ministry_id': ministryRemoteId,
           'state_id': stateRemoteId,
@@ -395,7 +405,8 @@ class ProjectSyncDelegate {
     await _supabase
         .from('projects')
         .update({
-          'status': project.status.name,
+          'project_status': project.projectStatus.supabaseValue,
+          'in_house_status': project.inHouseStatus.name,
           'agency_id': agencyRemoteId,
           'ministry_id': ministryRemoteId,
           'state_id': stateRemoteId,
@@ -424,7 +435,8 @@ class ProjectSyncDelegate {
 
   int _computeProjectDigest(
     String code,
-    ProjectStatus status,
+    ProjectStatus projectStatus,
+    InHouseStatus inHouseStatus,
     int agencyId,
     int ministryId,
     int stateId,
@@ -440,7 +452,8 @@ class ProjectSyncDelegate {
   ) {
     return Object.hash(
       code,
-      status,
+      projectStatus,
+      inHouseStatus,
       agencyId,
       ministryId,
       stateId,

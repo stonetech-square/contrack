@@ -9,7 +9,8 @@ abstract class ProjectImportService {
 class ProjectImportDto extends Equatable {
   final String code;
   final String title;
-  final String status;
+  final String projectStatus;
+  final String? inHouseStatus;
   final double amount;
   final String agency;
   final String ministry;
@@ -23,7 +24,8 @@ class ProjectImportDto extends Equatable {
   const ProjectImportDto({
     required this.code,
     required this.title,
-    required this.status,
+    required this.projectStatus,
+
     required this.amount,
     required this.agency,
     required this.ministry,
@@ -33,13 +35,15 @@ class ProjectImportDto extends Equatable {
     this.sponsor,
     this.startDate,
     this.endDate,
+    this.inHouseStatus,
   });
 
   @override
   List<Object?> get props => [
     code,
     title,
-    status,
+    projectStatus,
+    inHouseStatus,
     amount,
     agency,
     ministry,

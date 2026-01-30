@@ -110,19 +110,14 @@ class _AddAgencyDialogState extends State<AddAgencyDialog> {
                 },
               ),
               const SizedBox(height: 16),
-              AppDropDownField<Ministry>(
+              AppSearchableDropDownField<Ministry, Ministry>(
                 value: _selectedMinistry,
                 label: 'Ministry',
                 hintText: 'Select a Ministry',
                 isRequired: true,
-                items: widget.ministries
-                    .map(
-                      (ministry) => DropdownMenuItem(
-                        value: ministry,
-                        child: Text(ministry.name),
-                      ),
-                    )
-                    .toList(),
+                items: widget.ministries,
+                labelBuilder: (m) => m.name,
+                valueBuilder: (m) => m,
                 onChanged: (value) {
                   setState(() {
                     _selectedMinistry = value;

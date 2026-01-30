@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:contrack/src/core/database/seed.dart';
 import 'package:contrack/src/core/usecase/usecase.dart';
 import 'package:contrack/src/features/seeding/domain/usecase/get_remote_agencies_count_use_case.dart';
 import 'package:contrack/src/features/seeding/domain/usecase/get_remote_ministries_count_use_case.dart';
@@ -32,6 +33,7 @@ class SeedingBloc extends Bloc<SeedingEvent, SeedingState> {
   final GetRemoteMinistriesCountUseCase _getRemoteMinistriesCountUseCase;
   final GetRemoteAgenciesCountUseCase _getRemoteAgenciesCountUseCase;
   final GetRemoteProjectsCountUseCase _getRemoteProjectsCountUseCase;
+  final DatabaseSeeder _databaseSeeder;
 
   SeedingBloc(
     this._seedUsersUseCase,
@@ -46,6 +48,7 @@ class SeedingBloc extends Bloc<SeedingEvent, SeedingState> {
     this._getRemoteMinistriesCountUseCase,
     this._getRemoteAgenciesCountUseCase,
     this._getRemoteProjectsCountUseCase,
+    this._databaseSeeder,
   ) : super(const SeedingState.initial()) {
     on<SeedingEvent>((event, emit) async {
       await event.map(startSeeding: (e) => _onStartSeeding(e, emit));
@@ -56,7 +59,11 @@ class SeedingBloc extends Bloc<SeedingEvent, SeedingState> {
     dynamic event,
     Emitter<SeedingState> emit,
   ) async {
-    emit(const SeedingState.inProgress(currentStep: 'Checking data sync...'));
+    emit(const SeedingState.inProgress(currentStep: 'Seeding Locations...'));
+    await _databaseSeeder.seedGeopoliticalZones();
+    await _databaseSeeder.seedStates();
+
+    emit(const SeedingState.inProgress(currentStep: 'Checking data Seed...'));
 
     try {
       final remoteUsersCount = await _getRemoteUsersCountUseCase(NoParams());

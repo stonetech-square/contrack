@@ -39,6 +39,7 @@ final class EntryFieldChanged extends CreateNewProjectEvent {
   const EntryFieldChanged({
     required this.index,
     this.status,
+    this.inHouseStatus,
     this.implementingAgencyId,
     this.supervisingMinistryId,
     this.geopoliticalZoneId,
@@ -53,6 +54,7 @@ final class EntryFieldChanged extends CreateNewProjectEvent {
 
   final int index;
   final ProjectStatus? status;
+  final InHouseStatus? inHouseStatus;
   final int? implementingAgencyId;
   final int? supervisingMinistryId;
   final int? geopoliticalZoneId;
@@ -66,19 +68,20 @@ final class EntryFieldChanged extends CreateNewProjectEvent {
 
   @override
   List<Object?> get props => [
-        index,
-        status,
-        implementingAgencyId,
-        supervisingMinistryId,
-        geopoliticalZoneId,
-        stateId,
-        constituency,
-        title,
-        sponsor,
-        budget,
-        startDate,
-        endDate,
-      ];
+    index,
+    status,
+    inHouseStatus,
+    implementingAgencyId,
+    supervisingMinistryId,
+    geopoliticalZoneId,
+    stateId,
+    constituency,
+    title,
+    sponsor,
+    budget,
+    startDate,
+    endDate,
+  ];
 }
 
 final class CreateNewProjectSubmitted extends CreateNewProjectEvent {

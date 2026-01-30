@@ -4,7 +4,6 @@ import 'package:contrack/src/app/presentation/widgets/app_card.dart';
 import 'package:contrack/src/app/router/app_router.dart';
 import 'package:contrack/src/app/theme/app_colors.dart';
 import 'package:contrack/src/app/theme/app_typography.dart';
-import 'package:contrack/src/core/database/tables/export_history.dart';
 import 'package:contrack/src/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:contrack/src/features/projects/presentation/widgets/export_type_dialog.dart';
 import 'package:flutter/material.dart';
@@ -17,55 +16,65 @@ class QuickActionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppCard(
       constraints: BoxConstraints(maxHeight: 335),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            'Quick Actions',
-            style: context.textStyles.titleMedium.copyWith(
-              color: context.colors.textHeading,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          SizedBox(height: 4),
-          Text(
-            'Common administrative tasks.',
-            style: context.textStyles.bodyMedium.copyWith(
-              color: context.colors.textSubtle,
-            ),
-          ),
-          SizedBox(height: 16),
-          _ActionItem(
-            icon: Icons.description_outlined,
-            title: 'Generate Report',
-            subtitle: 'Export comprehensive data',
-            onTap: () async {
-              final result = await ExportTypeDialog.show(context);
-              if (result != null && context.mounted) {
-                context.read<DashboardBloc>().add(
-                  DashboardExportRequested(ExportFormat.csv, type: result),
-                );
-              }
-            },
-          ),
-          SizedBox(height: 12),
-          _ActionItem(
-            icon: Icons.person_add_outlined,
-            title: 'Add Staff',
-            subtitle: 'Create new user account',
-            onTap: () => context.navigateTo(
-              const UserManagementRoute(children: [CreateUserRoute()]),
-            ),
-          ),
-          SizedBox(height: 12),
-          _ActionItem(
-            icon: Icons.download_outlined,
-            title: 'Sync Data',
-            subtitle: 'Force database sync',
-            onTap: () => context.read<AppBloc>().add(AppSyncRequested()),
-          ),
-        ],
+      child: BlocBuilder<AppBloc, AppState>(
+        buildWhen: (previous, current) =>
+            previous.user != current.user ||
+            previous.syncStatus != current.syncStatus,
+        builder: (context, state) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Quick Actions',
+                style: context.textStyles.titleMedium.copyWith(
+                  color: context.colors.textHeading,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              SizedBox(height: 4),
+              Text(
+                'Common administrative tasks.',
+                style: context.textStyles.bodyMedium.copyWith(
+                  color: context.colors.textSubtle,
+                ),
+              ),
+              SizedBox(height: 16),
+              _ActionItem(
+                icon: Icons.description_outlined,
+                title: 'Generate Report',
+                subtitle: 'Export comprehensive data',
+                onTap: () async {
+                  final result = await ExportTypeDialog.show(context);
+                  if (result != null && context.mounted) {
+                    context.read<DashboardBloc>().add(
+                      DashboardExportRequested(result.$1, type: result.$2),
+                    );
+                  }
+                },
+              ),
+              SizedBox(height: 12),
+              if (state.user?.role.isSuperAdmin ?? false) ...[
+                _ActionItem(
+                  icon: Icons.person_add_outlined,
+                  title: 'Add Staff',
+                  subtitle: 'Create new user account',
+                  onTap: () => context.navigateTo(
+                    const UserManagementRoute(children: [CreateUserRoute()]),
+                  ),
+                ),
+                SizedBox(height: 12),
+              ],
+
+              _ActionItem(
+                icon: Icons.download_outlined,
+                title: 'Sync Data',
+                subtitle: 'Force database sync',
+                onTap: () => context.read<AppBloc>().add(AppSyncRequested()),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

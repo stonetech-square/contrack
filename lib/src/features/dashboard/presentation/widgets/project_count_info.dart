@@ -23,11 +23,12 @@ class ProjectCountInfo extends StatelessWidget {
             ),
 
             DashboardCountCard(
-              title: 'Not Started',
+              title: 'New',
+
               count:
                   state
                       .stats
-                      .statusDistribution[ProjectStatus.notStarted]
+                      .statusDistribution[InHouseStatus.notStarted]
                       ?.count ??
                   0,
               icon: Icons.file_copy_sharp,
@@ -39,7 +40,7 @@ class ProjectCountInfo extends StatelessWidget {
               count:
                   state
                       .stats
-                      .statusDistribution[ProjectStatus.ongoing]
+                      .statusDistribution[InHouseStatus.ongoing]
                       ?.count ??
                   0,
               icon: Icons.schedule,
@@ -51,7 +52,7 @@ class ProjectCountInfo extends StatelessWidget {
               count:
                   state
                       .stats
-                      .statusDistribution[ProjectStatus.completed]
+                      .statusDistribution[InHouseStatus.completed]
                       ?.count ??
                   0,
               icon: Icons.file_open_outlined,

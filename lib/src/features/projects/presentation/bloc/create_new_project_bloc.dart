@@ -98,7 +98,8 @@ class CreateNewProjectBloc
       entries.add(
         ProjectEntryFormData(
           code: project.code,
-          status: RequiredProjectStatus.dirty(project.status),
+          status: RequiredProjectStatus.dirty(project.projectStatus),
+          inHouseStatus: project.inHouseStatus,
           supervisingMinistryId: RequiredId.dirty(project.ministryId),
           implementingAgencyId: RequiredId.dirty(project.agencyId),
           geopoliticalZoneId: RequiredId.dirty(project.zoneId),
@@ -115,7 +116,6 @@ class CreateNewProjectBloc
               : const RequiredDate.pure(),
           agencies: agencies,
           states: states,
-          // Preserve fields for editing existing projects
           remoteId: project.remoteId,
           createdBy: project.createdBy,
           createdAt: project.createdAt,
@@ -173,6 +173,10 @@ class CreateNewProjectBloc
 
     if (event.status != null) {
       entry = entry.copyWith(status: RequiredProjectStatus.dirty(event.status));
+    }
+
+    if (event.inHouseStatus != null) {
+      entry = entry.copyWith(inHouseStatus: event.inHouseStatus!);
     }
 
     if (event.supervisingMinistryId != null) {

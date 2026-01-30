@@ -74,7 +74,10 @@ class RecentProjectsTableRow extends StatelessWidget {
               ),
               Expanded(
                 flex: 2,
-                child: ProjectStatusBadge(status: project.status),
+                child: ProjectStatusBadge(
+                  inhouseStatus: project.inHouseStatus,
+                  status: project.projectStatus,
+                ),
               ),
               if (isAdmin)
                 _DataCell(

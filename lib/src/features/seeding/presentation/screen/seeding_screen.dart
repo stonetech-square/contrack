@@ -1,6 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:contrack/src/app/di/injection.dart';
 import 'package:contrack/src/app/router/app_router.dart';
+import 'package:contrack/src/app/theme/app_colors.dart';
+import 'package:contrack/src/app/theme/app_typography.dart';
 import 'package:contrack/src/core/utils/toast_extension.dart';
 import 'package:contrack/src/features/seeding/presentation/bloc/seeding_bloc.dart';
 import 'package:contrack/src/features/seeding/presentation/bloc/seeding_event.dart';
@@ -43,31 +45,76 @@ class SeedingScreen extends StatelessWidget {
                     ),
                     const Gap(32),
                     state.maybeMap(
-                      inProgress: (progress) => Column(
-                        children: [
-                          _ProgressItem(
-                            label: 'Users',
-                            value: progress.usersProgress,
-                          ),
-                          const Gap(16),
-                          _ProgressItem(
-                            label: 'Ministries',
-                            value: progress.ministriesProgress,
-                          ),
-                          const Gap(16),
-                          _ProgressItem(
-                            label: 'Agencies',
-                            value: progress.agenciesProgress,
-                          ),
-                          const Gap(16),
-                          _ProgressItem(
-                            label: 'Projects',
-                            value: progress.projectsProgress,
-                          ),
-                          const Gap(32),
-                          Text(progress.currentStep),
-                        ],
-                      ),
+                      inProgress: (progress) {
+                        final totalProgress =
+                            (progress.usersProgress +
+                                progress.ministriesProgress +
+                                progress.agenciesProgress +
+                                progress.projectsProgress) /
+                            4;
+                        return Column(
+                          children: [
+                            Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                SizedBox(
+                                  height: 200,
+                                  width: 200,
+                                  child: CircularProgressIndicator(
+                                    value: totalProgress,
+                                    strokeWidth: 12,
+                                    backgroundColor:
+                                        context.colors.surfaceVariant,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      context.colors.primary,
+                                    ),
+                                  ),
+                                ),
+                                Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      '${(totalProgress * 100).toInt()}%',
+                                      style: context.textStyles.displayMedium
+                                          .copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            color: context.colors.primary,
+                                          ),
+                                    ),
+                                    const Gap(8),
+                                    Text(
+                                      'Completed',
+                                      style: context.textStyles.bodyMedium
+                                          .copyWith(
+                                            color: context.colors.textSubtle,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            const Gap(48),
+                            Text(
+                              progress.currentStep,
+                              style: context.textStyles.titleMedium.copyWith(
+                                color: context.colors.textBody,
+                              ),
+                            ),
+                            const Gap(8),
+                            SizedBox(
+                              width: 200,
+                              child: LinearProgressIndicator(
+                                value: null,
+                                minHeight: 4,
+                                backgroundColor: Colors.transparent,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  context.colors.primary.withValues(alpha: 0.2),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                       orElse: () => const CircularProgressIndicator(),
                     ),
                   ],
@@ -77,28 +124,6 @@ class SeedingScreen extends StatelessWidget {
           );
         },
       ),
-    );
-  }
-}
-
-class _ProgressItem extends StatelessWidget {
-  final String label;
-  final double value;
-
-  const _ProgressItem({required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [Text(label), Text('${(value * 100).toInt()}%')],
-        ),
-        const Gap(8),
-        LinearProgressIndicator(value: value),
-      ],
     );
   }
 }

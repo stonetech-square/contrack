@@ -3,7 +3,8 @@ import 'package:equatable/equatable.dart';
 
 class Project extends Equatable {
   final String code;
-  final ProjectStatus status;
+  final ProjectStatus projectStatus;
+  final InHouseStatus inHouseStatus;
   final int agencyId;
   final int ministryId;
   final int stateId;
@@ -24,7 +25,8 @@ class Project extends Equatable {
 
   const Project({
     required this.code,
-    required this.status,
+    required this.projectStatus,
+    required this.inHouseStatus,
     required this.agencyId,
     required this.ministryId,
     required this.stateId,
@@ -47,7 +49,8 @@ class Project extends Equatable {
   factory Project.empty(String code) {
     return Project(
       code: code,
-      status: ProjectStatus.notStarted,
+      projectStatus: ProjectStatus.newProject,
+      inHouseStatus: InHouseStatus.notStarted,
       agencyId: 0,
       ministryId: 0,
       stateId: 0,
@@ -66,7 +69,8 @@ class Project extends Equatable {
 
   Project copyWith({
     String? code,
-    ProjectStatus? status,
+    ProjectStatus? projectStatus,
+    InHouseStatus? inHouseStatus,
     int? agencyId,
     int? ministryId,
     int? stateId,
@@ -87,7 +91,8 @@ class Project extends Equatable {
   }) {
     return Project(
       code: code ?? this.code,
-      status: status ?? this.status,
+      projectStatus: projectStatus ?? this.projectStatus,
+      inHouseStatus: inHouseStatus ?? this.inHouseStatus,
       agencyId: agencyId ?? this.agencyId,
       ministryId: ministryId ?? this.ministryId,
       stateId: stateId ?? this.stateId,
@@ -111,7 +116,8 @@ class Project extends Equatable {
   @override
   List<Object?> get props => [
     code,
-    status,
+    projectStatus,
+    inHouseStatus,
     agencyId,
     ministryId,
     stateId,
@@ -133,6 +139,6 @@ class Project extends Equatable {
 
   @override
   String toString() {
-    return 'Project(code: $code, status: $status, agencyId: $agencyId, ministryId: $ministryId, stateId: $stateId, zoneId: $zoneId, constituency: $constituency, amount: $amount, sponsor: $sponsor, title: $title, createdBy: $createdBy, modifiedBy: $modifiedBy, startDate: $startDate, endDate: $endDate, createdAt: $createdAt, updatedAt: $updatedAt, isSynced: $isSynced, lastSyncedAt: $lastSyncedAt, remoteId: $remoteId)';
+    return 'Project(code: $code, projectStatus: $projectStatus, inHouseStatus: $inHouseStatus, agencyId: $agencyId, ministryId: $ministryId, stateId: $stateId, zoneId: $zoneId, constituency: $constituency, amount: $amount, sponsor: $sponsor, title: $title, createdBy: $createdBy, modifiedBy: $modifiedBy, startDate: $startDate, endDate: $endDate, createdAt: $createdAt, updatedAt: $updatedAt, isSynced: $isSynced, lastSyncedAt: $lastSyncedAt, remoteId: $remoteId)';
   }
 }

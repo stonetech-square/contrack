@@ -29,7 +29,7 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
     if (currentUser == null) {
       throw Exception('No active user session');
     }
-    if (!currentUser.role.isAnyAdmin) {
+    if (!currentUser.role.isSuperAdmin) {
       throw Exception('You are not authorized to create users');
     }
 
@@ -74,7 +74,7 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
     if (currentUser == null) {
       throw Exception('No active user session');
     }
-    if (!currentUser.role.isAnyAdmin) {
+    if (!currentUser.role.isSuperAdmin) {
       throw Exception('You are not authorized to change user role');
     }
 
@@ -96,7 +96,7 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
     if (currentUser == null) {
       throw Exception('No active user session');
     }
-    if (!currentUser.role.isAnyAdmin) {
+    if (!currentUser.role.isSuperAdmin) {
       throw Exception('You are not authorized to toggle user status');
     }
 
@@ -118,7 +118,7 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
     if (currentUser == null) {
       throw Exception('No active user session');
     }
-    if (!currentUser.role.isAnyAdmin) {
+    if (!currentUser.role.isSuperAdmin) {
       throw Exception('You are not authorized to resend invitations');
     }
 

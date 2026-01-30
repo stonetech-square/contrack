@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SeedProjectModel {
 
- String get id; String get code; ProjectStatus get status; String get agencyId; String get ministryId; String get stateId; String get zoneId; String get title; double get amount; String get constituency; String? get sponsor; String get createdBy; String? get modifiedBy; DateTime? get startDate; DateTime? get endDate; DateTime get createdAt; DateTime get updatedAt;
+ String get id; String get code; ProjectStatus get projectStatus; InHouseStatus get inHouseStatus; String get agencyId; String get ministryId; String get stateId; String get zoneId; String get title; double get amount; String get constituency; String? get sponsor; String get createdBy; String? get modifiedBy; DateTime? get startDate; DateTime? get endDate; DateTime get createdAt; DateTime get updatedAt;
 /// Create a copy of SeedProjectModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $SeedProjectModelCopyWith<SeedProjectModel> get copyWith => _$SeedProjectModelCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SeedProjectModel&&(identical(other.id, id) || other.id == id)&&(identical(other.code, code) || other.code == code)&&(identical(other.status, status) || other.status == status)&&(identical(other.agencyId, agencyId) || other.agencyId == agencyId)&&(identical(other.ministryId, ministryId) || other.ministryId == ministryId)&&(identical(other.stateId, stateId) || other.stateId == stateId)&&(identical(other.zoneId, zoneId) || other.zoneId == zoneId)&&(identical(other.title, title) || other.title == title)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.constituency, constituency) || other.constituency == constituency)&&(identical(other.sponsor, sponsor) || other.sponsor == sponsor)&&(identical(other.createdBy, createdBy) || other.createdBy == createdBy)&&(identical(other.modifiedBy, modifiedBy) || other.modifiedBy == modifiedBy)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SeedProjectModel&&(identical(other.id, id) || other.id == id)&&(identical(other.code, code) || other.code == code)&&(identical(other.projectStatus, projectStatus) || other.projectStatus == projectStatus)&&(identical(other.inHouseStatus, inHouseStatus) || other.inHouseStatus == inHouseStatus)&&(identical(other.agencyId, agencyId) || other.agencyId == agencyId)&&(identical(other.ministryId, ministryId) || other.ministryId == ministryId)&&(identical(other.stateId, stateId) || other.stateId == stateId)&&(identical(other.zoneId, zoneId) || other.zoneId == zoneId)&&(identical(other.title, title) || other.title == title)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.constituency, constituency) || other.constituency == constituency)&&(identical(other.sponsor, sponsor) || other.sponsor == sponsor)&&(identical(other.createdBy, createdBy) || other.createdBy == createdBy)&&(identical(other.modifiedBy, modifiedBy) || other.modifiedBy == modifiedBy)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,code,status,agencyId,ministryId,stateId,zoneId,title,amount,constituency,sponsor,createdBy,modifiedBy,startDate,endDate,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,code,projectStatus,inHouseStatus,agencyId,ministryId,stateId,zoneId,title,amount,constituency,sponsor,createdBy,modifiedBy,startDate,endDate,createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'SeedProjectModel(id: $id, code: $code, status: $status, agencyId: $agencyId, ministryId: $ministryId, stateId: $stateId, zoneId: $zoneId, title: $title, amount: $amount, constituency: $constituency, sponsor: $sponsor, createdBy: $createdBy, modifiedBy: $modifiedBy, startDate: $startDate, endDate: $endDate, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'SeedProjectModel(id: $id, code: $code, projectStatus: $projectStatus, inHouseStatus: $inHouseStatus, agencyId: $agencyId, ministryId: $ministryId, stateId: $stateId, zoneId: $zoneId, title: $title, amount: $amount, constituency: $constituency, sponsor: $sponsor, createdBy: $createdBy, modifiedBy: $modifiedBy, startDate: $startDate, endDate: $endDate, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $SeedProjectModelCopyWith<$Res>  {
   factory $SeedProjectModelCopyWith(SeedProjectModel value, $Res Function(SeedProjectModel) _then) = _$SeedProjectModelCopyWithImpl;
 @useResult
 $Res call({
- String id, String code, ProjectStatus status, String agencyId, String ministryId, String stateId, String zoneId, String title, double amount, String constituency, String? sponsor, String createdBy, String? modifiedBy, DateTime? startDate, DateTime? endDate, DateTime createdAt, DateTime updatedAt
+ String id, String code, ProjectStatus projectStatus, InHouseStatus inHouseStatus, String agencyId, String ministryId, String stateId, String zoneId, String title, double amount, String constituency, String? sponsor, String createdBy, String? modifiedBy, DateTime? startDate, DateTime? endDate, DateTime createdAt, DateTime updatedAt
 });
 
 
@@ -65,12 +65,13 @@ class _$SeedProjectModelCopyWithImpl<$Res>
 
 /// Create a copy of SeedProjectModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? code = null,Object? status = null,Object? agencyId = null,Object? ministryId = null,Object? stateId = null,Object? zoneId = null,Object? title = null,Object? amount = null,Object? constituency = null,Object? sponsor = freezed,Object? createdBy = null,Object? modifiedBy = freezed,Object? startDate = freezed,Object? endDate = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? code = null,Object? projectStatus = null,Object? inHouseStatus = null,Object? agencyId = null,Object? ministryId = null,Object? stateId = null,Object? zoneId = null,Object? title = null,Object? amount = null,Object? constituency = null,Object? sponsor = freezed,Object? createdBy = null,Object? modifiedBy = freezed,Object? startDate = freezed,Object? endDate = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,code: null == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
-as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as ProjectStatus,agencyId: null == agencyId ? _self.agencyId : agencyId // ignore: cast_nullable_to_non_nullable
+as String,projectStatus: null == projectStatus ? _self.projectStatus : projectStatus // ignore: cast_nullable_to_non_nullable
+as ProjectStatus,inHouseStatus: null == inHouseStatus ? _self.inHouseStatus : inHouseStatus // ignore: cast_nullable_to_non_nullable
+as InHouseStatus,agencyId: null == agencyId ? _self.agencyId : agencyId // ignore: cast_nullable_to_non_nullable
 as String,ministryId: null == ministryId ? _self.ministryId : ministryId // ignore: cast_nullable_to_non_nullable
 as String,stateId: null == stateId ? _self.stateId : stateId // ignore: cast_nullable_to_non_nullable
 as String,zoneId: null == zoneId ? _self.zoneId : zoneId // ignore: cast_nullable_to_non_nullable
@@ -166,10 +167,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String code,  ProjectStatus status,  String agencyId,  String ministryId,  String stateId,  String zoneId,  String title,  double amount,  String constituency,  String? sponsor,  String createdBy,  String? modifiedBy,  DateTime? startDate,  DateTime? endDate,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String code,  ProjectStatus projectStatus,  InHouseStatus inHouseStatus,  String agencyId,  String ministryId,  String stateId,  String zoneId,  String title,  double amount,  String constituency,  String? sponsor,  String createdBy,  String? modifiedBy,  DateTime? startDate,  DateTime? endDate,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SeedProjectModel() when $default != null:
-return $default(_that.id,_that.code,_that.status,_that.agencyId,_that.ministryId,_that.stateId,_that.zoneId,_that.title,_that.amount,_that.constituency,_that.sponsor,_that.createdBy,_that.modifiedBy,_that.startDate,_that.endDate,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.code,_that.projectStatus,_that.inHouseStatus,_that.agencyId,_that.ministryId,_that.stateId,_that.zoneId,_that.title,_that.amount,_that.constituency,_that.sponsor,_that.createdBy,_that.modifiedBy,_that.startDate,_that.endDate,_that.createdAt,_that.updatedAt);case _:
   return orElse();
 
 }
@@ -187,10 +188,10 @@ return $default(_that.id,_that.code,_that.status,_that.agencyId,_that.ministryId
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String code,  ProjectStatus status,  String agencyId,  String ministryId,  String stateId,  String zoneId,  String title,  double amount,  String constituency,  String? sponsor,  String createdBy,  String? modifiedBy,  DateTime? startDate,  DateTime? endDate,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String code,  ProjectStatus projectStatus,  InHouseStatus inHouseStatus,  String agencyId,  String ministryId,  String stateId,  String zoneId,  String title,  double amount,  String constituency,  String? sponsor,  String createdBy,  String? modifiedBy,  DateTime? startDate,  DateTime? endDate,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _SeedProjectModel():
-return $default(_that.id,_that.code,_that.status,_that.agencyId,_that.ministryId,_that.stateId,_that.zoneId,_that.title,_that.amount,_that.constituency,_that.sponsor,_that.createdBy,_that.modifiedBy,_that.startDate,_that.endDate,_that.createdAt,_that.updatedAt);}
+return $default(_that.id,_that.code,_that.projectStatus,_that.inHouseStatus,_that.agencyId,_that.ministryId,_that.stateId,_that.zoneId,_that.title,_that.amount,_that.constituency,_that.sponsor,_that.createdBy,_that.modifiedBy,_that.startDate,_that.endDate,_that.createdAt,_that.updatedAt);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -204,10 +205,10 @@ return $default(_that.id,_that.code,_that.status,_that.agencyId,_that.ministryId
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String code,  ProjectStatus status,  String agencyId,  String ministryId,  String stateId,  String zoneId,  String title,  double amount,  String constituency,  String? sponsor,  String createdBy,  String? modifiedBy,  DateTime? startDate,  DateTime? endDate,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String code,  ProjectStatus projectStatus,  InHouseStatus inHouseStatus,  String agencyId,  String ministryId,  String stateId,  String zoneId,  String title,  double amount,  String constituency,  String? sponsor,  String createdBy,  String? modifiedBy,  DateTime? startDate,  DateTime? endDate,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _SeedProjectModel() when $default != null:
-return $default(_that.id,_that.code,_that.status,_that.agencyId,_that.ministryId,_that.stateId,_that.zoneId,_that.title,_that.amount,_that.constituency,_that.sponsor,_that.createdBy,_that.modifiedBy,_that.startDate,_that.endDate,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.code,_that.projectStatus,_that.inHouseStatus,_that.agencyId,_that.ministryId,_that.stateId,_that.zoneId,_that.title,_that.amount,_that.constituency,_that.sponsor,_that.createdBy,_that.modifiedBy,_that.startDate,_that.endDate,_that.createdAt,_that.updatedAt);case _:
   return null;
 
 }
@@ -219,12 +220,13 @@ return $default(_that.id,_that.code,_that.status,_that.agencyId,_that.ministryId
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class _SeedProjectModel implements SeedProjectModel {
-  const _SeedProjectModel({required this.id, required this.code, required this.status, required this.agencyId, required this.ministryId, required this.stateId, required this.zoneId, required this.title, required this.amount, required this.constituency, this.sponsor, required this.createdBy, this.modifiedBy, this.startDate, this.endDate, required this.createdAt, required this.updatedAt});
+  const _SeedProjectModel({required this.id, required this.code, required this.projectStatus, this.inHouseStatus = InHouseStatus.notStarted, required this.agencyId, required this.ministryId, required this.stateId, required this.zoneId, required this.title, required this.amount, required this.constituency, this.sponsor, required this.createdBy, this.modifiedBy, this.startDate, this.endDate, required this.createdAt, required this.updatedAt});
   factory _SeedProjectModel.fromJson(Map<String, dynamic> json) => _$SeedProjectModelFromJson(json);
 
 @override final  String id;
 @override final  String code;
-@override final  ProjectStatus status;
+@override final  ProjectStatus projectStatus;
+@override@JsonKey() final  InHouseStatus inHouseStatus;
 @override final  String agencyId;
 @override final  String ministryId;
 @override final  String stateId;
@@ -253,16 +255,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SeedProjectModel&&(identical(other.id, id) || other.id == id)&&(identical(other.code, code) || other.code == code)&&(identical(other.status, status) || other.status == status)&&(identical(other.agencyId, agencyId) || other.agencyId == agencyId)&&(identical(other.ministryId, ministryId) || other.ministryId == ministryId)&&(identical(other.stateId, stateId) || other.stateId == stateId)&&(identical(other.zoneId, zoneId) || other.zoneId == zoneId)&&(identical(other.title, title) || other.title == title)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.constituency, constituency) || other.constituency == constituency)&&(identical(other.sponsor, sponsor) || other.sponsor == sponsor)&&(identical(other.createdBy, createdBy) || other.createdBy == createdBy)&&(identical(other.modifiedBy, modifiedBy) || other.modifiedBy == modifiedBy)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SeedProjectModel&&(identical(other.id, id) || other.id == id)&&(identical(other.code, code) || other.code == code)&&(identical(other.projectStatus, projectStatus) || other.projectStatus == projectStatus)&&(identical(other.inHouseStatus, inHouseStatus) || other.inHouseStatus == inHouseStatus)&&(identical(other.agencyId, agencyId) || other.agencyId == agencyId)&&(identical(other.ministryId, ministryId) || other.ministryId == ministryId)&&(identical(other.stateId, stateId) || other.stateId == stateId)&&(identical(other.zoneId, zoneId) || other.zoneId == zoneId)&&(identical(other.title, title) || other.title == title)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.constituency, constituency) || other.constituency == constituency)&&(identical(other.sponsor, sponsor) || other.sponsor == sponsor)&&(identical(other.createdBy, createdBy) || other.createdBy == createdBy)&&(identical(other.modifiedBy, modifiedBy) || other.modifiedBy == modifiedBy)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,code,status,agencyId,ministryId,stateId,zoneId,title,amount,constituency,sponsor,createdBy,modifiedBy,startDate,endDate,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,code,projectStatus,inHouseStatus,agencyId,ministryId,stateId,zoneId,title,amount,constituency,sponsor,createdBy,modifiedBy,startDate,endDate,createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'SeedProjectModel(id: $id, code: $code, status: $status, agencyId: $agencyId, ministryId: $ministryId, stateId: $stateId, zoneId: $zoneId, title: $title, amount: $amount, constituency: $constituency, sponsor: $sponsor, createdBy: $createdBy, modifiedBy: $modifiedBy, startDate: $startDate, endDate: $endDate, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'SeedProjectModel(id: $id, code: $code, projectStatus: $projectStatus, inHouseStatus: $inHouseStatus, agencyId: $agencyId, ministryId: $ministryId, stateId: $stateId, zoneId: $zoneId, title: $title, amount: $amount, constituency: $constituency, sponsor: $sponsor, createdBy: $createdBy, modifiedBy: $modifiedBy, startDate: $startDate, endDate: $endDate, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -273,7 +275,7 @@ abstract mixin class _$SeedProjectModelCopyWith<$Res> implements $SeedProjectMod
   factory _$SeedProjectModelCopyWith(_SeedProjectModel value, $Res Function(_SeedProjectModel) _then) = __$SeedProjectModelCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String code, ProjectStatus status, String agencyId, String ministryId, String stateId, String zoneId, String title, double amount, String constituency, String? sponsor, String createdBy, String? modifiedBy, DateTime? startDate, DateTime? endDate, DateTime createdAt, DateTime updatedAt
+ String id, String code, ProjectStatus projectStatus, InHouseStatus inHouseStatus, String agencyId, String ministryId, String stateId, String zoneId, String title, double amount, String constituency, String? sponsor, String createdBy, String? modifiedBy, DateTime? startDate, DateTime? endDate, DateTime createdAt, DateTime updatedAt
 });
 
 
@@ -290,12 +292,13 @@ class __$SeedProjectModelCopyWithImpl<$Res>
 
 /// Create a copy of SeedProjectModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? code = null,Object? status = null,Object? agencyId = null,Object? ministryId = null,Object? stateId = null,Object? zoneId = null,Object? title = null,Object? amount = null,Object? constituency = null,Object? sponsor = freezed,Object? createdBy = null,Object? modifiedBy = freezed,Object? startDate = freezed,Object? endDate = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? code = null,Object? projectStatus = null,Object? inHouseStatus = null,Object? agencyId = null,Object? ministryId = null,Object? stateId = null,Object? zoneId = null,Object? title = null,Object? amount = null,Object? constituency = null,Object? sponsor = freezed,Object? createdBy = null,Object? modifiedBy = freezed,Object? startDate = freezed,Object? endDate = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_SeedProjectModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,code: null == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
-as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as ProjectStatus,agencyId: null == agencyId ? _self.agencyId : agencyId // ignore: cast_nullable_to_non_nullable
+as String,projectStatus: null == projectStatus ? _self.projectStatus : projectStatus // ignore: cast_nullable_to_non_nullable
+as ProjectStatus,inHouseStatus: null == inHouseStatus ? _self.inHouseStatus : inHouseStatus // ignore: cast_nullable_to_non_nullable
+as InHouseStatus,agencyId: null == agencyId ? _self.agencyId : agencyId // ignore: cast_nullable_to_non_nullable
 as String,ministryId: null == ministryId ? _self.ministryId : ministryId // ignore: cast_nullable_to_non_nullable
 as String,stateId: null == stateId ? _self.stateId : stateId // ignore: cast_nullable_to_non_nullable
 as String,zoneId: null == zoneId ? _self.zoneId : zoneId // ignore: cast_nullable_to_non_nullable

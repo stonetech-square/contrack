@@ -2677,14 +2677,24 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
     requiredDuringInsert: true,
   );
   @override
-  late final GeneratedColumnWithTypeConverter<ProjectStatus, String> status =
-      GeneratedColumn<String>(
-        'status',
-        aliasedName,
-        false,
-        type: DriftSqlType.string,
-        requiredDuringInsert: true,
-      ).withConverter<ProjectStatus>($ProjectsTable.$converterstatus);
+  late final GeneratedColumnWithTypeConverter<ProjectStatus, String>
+  projectStatus = GeneratedColumn<String>(
+    'project_status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  ).withConverter<ProjectStatus>($ProjectsTable.$converterprojectStatus);
+  @override
+  late final GeneratedColumnWithTypeConverter<InHouseStatus, String>
+  inHouseStatus = GeneratedColumn<String>(
+    'in_house_status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: Constant(InHouseStatus.notStarted.name),
+  ).withConverter<InHouseStatus>($ProjectsTable.$converterinHouseStatus);
   static const VerificationMeta _agencyIdMeta = const VerificationMeta(
     'agencyId',
   );
@@ -2919,7 +2929,8 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
   @override
   List<GeneratedColumn> get $columns => [
     code,
-    status,
+    projectStatus,
+    inHouseStatus,
     agencyId,
     ministryId,
     stateId,
@@ -3109,10 +3120,16 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
         DriftSqlType.string,
         data['${effectivePrefix}code'],
       )!,
-      status: $ProjectsTable.$converterstatus.fromSql(
+      projectStatus: $ProjectsTable.$converterprojectStatus.fromSql(
         attachedDatabase.typeMapping.read(
           DriftSqlType.string,
-          data['${effectivePrefix}status'],
+          data['${effectivePrefix}project_status'],
+        )!,
+      ),
+      inHouseStatus: $ProjectsTable.$converterinHouseStatus.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}in_house_status'],
         )!,
       ),
       agencyId: attachedDatabase.typeMapping.read(
@@ -3199,13 +3216,20 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
     return $ProjectsTable(attachedDatabase, alias);
   }
 
-  static JsonTypeConverter2<ProjectStatus, String, String> $converterstatus =
-      const EnumNameConverter<ProjectStatus>(ProjectStatus.values);
+  static JsonTypeConverter2<ProjectStatus, String, String>
+  $converterprojectStatus = const EnumNameConverter<ProjectStatus>(
+    ProjectStatus.values,
+  );
+  static JsonTypeConverter2<InHouseStatus, String, String>
+  $converterinHouseStatus = const EnumNameConverter<InHouseStatus>(
+    InHouseStatus.values,
+  );
 }
 
 class Project extends DataClass implements Insertable<Project> {
   final String code;
-  final ProjectStatus status;
+  final ProjectStatus projectStatus;
+  final InHouseStatus inHouseStatus;
   final int agencyId;
   final int ministryId;
   final int stateId;
@@ -3227,7 +3251,8 @@ class Project extends DataClass implements Insertable<Project> {
   final DateTime? deletedAt;
   const Project({
     required this.code,
-    required this.status,
+    required this.projectStatus,
+    required this.inHouseStatus,
     required this.agencyId,
     required this.ministryId,
     required this.stateId,
@@ -3253,8 +3278,13 @@ class Project extends DataClass implements Insertable<Project> {
     final map = <String, Expression>{};
     map['code'] = Variable<String>(code);
     {
-      map['status'] = Variable<String>(
-        $ProjectsTable.$converterstatus.toSql(status),
+      map['project_status'] = Variable<String>(
+        $ProjectsTable.$converterprojectStatus.toSql(projectStatus),
+      );
+    }
+    {
+      map['in_house_status'] = Variable<String>(
+        $ProjectsTable.$converterinHouseStatus.toSql(inHouseStatus),
       );
     }
     map['agency_id'] = Variable<int>(agencyId);
@@ -3296,7 +3326,8 @@ class Project extends DataClass implements Insertable<Project> {
   ProjectsCompanion toCompanion(bool nullToAbsent) {
     return ProjectsCompanion(
       code: Value(code),
-      status: Value(status),
+      projectStatus: Value(projectStatus),
+      inHouseStatus: Value(inHouseStatus),
       agencyId: Value(agencyId),
       ministryId: Value(ministryId),
       stateId: Value(stateId),
@@ -3340,8 +3371,11 @@ class Project extends DataClass implements Insertable<Project> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Project(
       code: serializer.fromJson<String>(json['code']),
-      status: $ProjectsTable.$converterstatus.fromJson(
-        serializer.fromJson<String>(json['status']),
+      projectStatus: $ProjectsTable.$converterprojectStatus.fromJson(
+        serializer.fromJson<String>(json['projectStatus']),
+      ),
+      inHouseStatus: $ProjectsTable.$converterinHouseStatus.fromJson(
+        serializer.fromJson<String>(json['inHouseStatus']),
       ),
       agencyId: serializer.fromJson<int>(json['agencyId']),
       ministryId: serializer.fromJson<int>(json['ministryId']),
@@ -3369,8 +3403,11 @@ class Project extends DataClass implements Insertable<Project> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'code': serializer.toJson<String>(code),
-      'status': serializer.toJson<String>(
-        $ProjectsTable.$converterstatus.toJson(status),
+      'projectStatus': serializer.toJson<String>(
+        $ProjectsTable.$converterprojectStatus.toJson(projectStatus),
+      ),
+      'inHouseStatus': serializer.toJson<String>(
+        $ProjectsTable.$converterinHouseStatus.toJson(inHouseStatus),
       ),
       'agencyId': serializer.toJson<int>(agencyId),
       'ministryId': serializer.toJson<int>(ministryId),
@@ -3396,7 +3433,8 @@ class Project extends DataClass implements Insertable<Project> {
 
   Project copyWith({
     String? code,
-    ProjectStatus? status,
+    ProjectStatus? projectStatus,
+    InHouseStatus? inHouseStatus,
     int? agencyId,
     int? ministryId,
     int? stateId,
@@ -3418,7 +3456,8 @@ class Project extends DataClass implements Insertable<Project> {
     Value<DateTime?> deletedAt = const Value.absent(),
   }) => Project(
     code: code ?? this.code,
-    status: status ?? this.status,
+    projectStatus: projectStatus ?? this.projectStatus,
+    inHouseStatus: inHouseStatus ?? this.inHouseStatus,
     agencyId: agencyId ?? this.agencyId,
     ministryId: ministryId ?? this.ministryId,
     stateId: stateId ?? this.stateId,
@@ -3442,7 +3481,12 @@ class Project extends DataClass implements Insertable<Project> {
   Project copyWithCompanion(ProjectsCompanion data) {
     return Project(
       code: data.code.present ? data.code.value : this.code,
-      status: data.status.present ? data.status.value : this.status,
+      projectStatus: data.projectStatus.present
+          ? data.projectStatus.value
+          : this.projectStatus,
+      inHouseStatus: data.inHouseStatus.present
+          ? data.inHouseStatus.value
+          : this.inHouseStatus,
       agencyId: data.agencyId.present ? data.agencyId.value : this.agencyId,
       ministryId: data.ministryId.present
           ? data.ministryId.value
@@ -3477,7 +3521,8 @@ class Project extends DataClass implements Insertable<Project> {
   String toString() {
     return (StringBuffer('Project(')
           ..write('code: $code, ')
-          ..write('status: $status, ')
+          ..write('projectStatus: $projectStatus, ')
+          ..write('inHouseStatus: $inHouseStatus, ')
           ..write('agencyId: $agencyId, ')
           ..write('ministryId: $ministryId, ')
           ..write('stateId: $stateId, ')
@@ -3504,7 +3549,8 @@ class Project extends DataClass implements Insertable<Project> {
   @override
   int get hashCode => Object.hashAll([
     code,
-    status,
+    projectStatus,
+    inHouseStatus,
     agencyId,
     ministryId,
     stateId,
@@ -3530,7 +3576,8 @@ class Project extends DataClass implements Insertable<Project> {
       identical(this, other) ||
       (other is Project &&
           other.code == this.code &&
-          other.status == this.status &&
+          other.projectStatus == this.projectStatus &&
+          other.inHouseStatus == this.inHouseStatus &&
           other.agencyId == this.agencyId &&
           other.ministryId == this.ministryId &&
           other.stateId == this.stateId &&
@@ -3554,7 +3601,8 @@ class Project extends DataClass implements Insertable<Project> {
 
 class ProjectsCompanion extends UpdateCompanion<Project> {
   final Value<String> code;
-  final Value<ProjectStatus> status;
+  final Value<ProjectStatus> projectStatus;
+  final Value<InHouseStatus> inHouseStatus;
   final Value<int> agencyId;
   final Value<int> ministryId;
   final Value<int> stateId;
@@ -3577,7 +3625,8 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
   final Value<int> rowid;
   const ProjectsCompanion({
     this.code = const Value.absent(),
-    this.status = const Value.absent(),
+    this.projectStatus = const Value.absent(),
+    this.inHouseStatus = const Value.absent(),
     this.agencyId = const Value.absent(),
     this.ministryId = const Value.absent(),
     this.stateId = const Value.absent(),
@@ -3601,7 +3650,8 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
   });
   ProjectsCompanion.insert({
     required String code,
-    required ProjectStatus status,
+    required ProjectStatus projectStatus,
+    this.inHouseStatus = const Value.absent(),
     required int agencyId,
     required int ministryId,
     required int stateId,
@@ -3623,7 +3673,7 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : code = Value(code),
-       status = Value(status),
+       projectStatus = Value(projectStatus),
        agencyId = Value(agencyId),
        ministryId = Value(ministryId),
        stateId = Value(stateId),
@@ -3634,7 +3684,8 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
        title = Value(title);
   static Insertable<Project> custom({
     Expression<String>? code,
-    Expression<String>? status,
+    Expression<String>? projectStatus,
+    Expression<String>? inHouseStatus,
     Expression<int>? agencyId,
     Expression<int>? ministryId,
     Expression<int>? stateId,
@@ -3658,7 +3709,8 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
   }) {
     return RawValuesInsertable({
       if (code != null) 'code': code,
-      if (status != null) 'status': status,
+      if (projectStatus != null) 'project_status': projectStatus,
+      if (inHouseStatus != null) 'in_house_status': inHouseStatus,
       if (agencyId != null) 'agency_id': agencyId,
       if (ministryId != null) 'ministry_id': ministryId,
       if (stateId != null) 'state_id': stateId,
@@ -3684,7 +3736,8 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
 
   ProjectsCompanion copyWith({
     Value<String>? code,
-    Value<ProjectStatus>? status,
+    Value<ProjectStatus>? projectStatus,
+    Value<InHouseStatus>? inHouseStatus,
     Value<int>? agencyId,
     Value<int>? ministryId,
     Value<int>? stateId,
@@ -3708,7 +3761,8 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
   }) {
     return ProjectsCompanion(
       code: code ?? this.code,
-      status: status ?? this.status,
+      projectStatus: projectStatus ?? this.projectStatus,
+      inHouseStatus: inHouseStatus ?? this.inHouseStatus,
       agencyId: agencyId ?? this.agencyId,
       ministryId: ministryId ?? this.ministryId,
       stateId: stateId ?? this.stateId,
@@ -3738,9 +3792,14 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
     if (code.present) {
       map['code'] = Variable<String>(code.value);
     }
-    if (status.present) {
-      map['status'] = Variable<String>(
-        $ProjectsTable.$converterstatus.toSql(status.value),
+    if (projectStatus.present) {
+      map['project_status'] = Variable<String>(
+        $ProjectsTable.$converterprojectStatus.toSql(projectStatus.value),
+      );
+    }
+    if (inHouseStatus.present) {
+      map['in_house_status'] = Variable<String>(
+        $ProjectsTable.$converterinHouseStatus.toSql(inHouseStatus.value),
       );
     }
     if (agencyId.present) {
@@ -3810,7 +3869,8 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
   String toString() {
     return (StringBuffer('ProjectsCompanion(')
           ..write('code: $code, ')
-          ..write('status: $status, ')
+          ..write('projectStatus: $projectStatus, ')
+          ..write('inHouseStatus: $inHouseStatus, ')
           ..write('agencyId: $agencyId, ')
           ..write('ministryId: $ministryId, ')
           ..write('stateId: $stateId, ')
@@ -7812,7 +7872,8 @@ typedef $$StatesTableProcessedTableManager =
 typedef $$ProjectsTableCreateCompanionBuilder =
     ProjectsCompanion Function({
       required String code,
-      required ProjectStatus status,
+      required ProjectStatus projectStatus,
+      Value<InHouseStatus> inHouseStatus,
       required int agencyId,
       required int ministryId,
       required int stateId,
@@ -7837,7 +7898,8 @@ typedef $$ProjectsTableCreateCompanionBuilder =
 typedef $$ProjectsTableUpdateCompanionBuilder =
     ProjectsCompanion Function({
       Value<String> code,
-      Value<ProjectStatus> status,
+      Value<ProjectStatus> projectStatus,
+      Value<InHouseStatus> inHouseStatus,
       Value<int> agencyId,
       Value<int> ministryId,
       Value<int> stateId,
@@ -8010,8 +8072,14 @@ class $$ProjectsTableFilterComposer
   );
 
   ColumnWithTypeConverterFilters<ProjectStatus, ProjectStatus, String>
-  get status => $composableBuilder(
-    column: $table.status,
+  get projectStatus => $composableBuilder(
+    column: $table.projectStatus,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<InHouseStatus, InHouseStatus, String>
+  get inHouseStatus => $composableBuilder(
+    column: $table.inHouseStatus,
     builder: (column) => ColumnWithTypeConverterFilters(column),
   );
 
@@ -8258,8 +8326,13 @@ class $$ProjectsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get status => $composableBuilder(
-    column: $table.status,
+  ColumnOrderings<String> get projectStatus => $composableBuilder(
+    column: $table.projectStatus,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get inHouseStatus => $composableBuilder(
+    column: $table.inHouseStatus,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -8479,8 +8552,17 @@ class $$ProjectsTableAnnotationComposer
   GeneratedColumn<String> get code =>
       $composableBuilder(column: $table.code, builder: (column) => column);
 
-  GeneratedColumnWithTypeConverter<ProjectStatus, String> get status =>
-      $composableBuilder(column: $table.status, builder: (column) => column);
+  GeneratedColumnWithTypeConverter<ProjectStatus, String> get projectStatus =>
+      $composableBuilder(
+        column: $table.projectStatus,
+        builder: (column) => column,
+      );
+
+  GeneratedColumnWithTypeConverter<InHouseStatus, String> get inHouseStatus =>
+      $composableBuilder(
+        column: $table.inHouseStatus,
+        builder: (column) => column,
+      );
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
@@ -8727,7 +8809,8 @@ class $$ProjectsTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> code = const Value.absent(),
-                Value<ProjectStatus> status = const Value.absent(),
+                Value<ProjectStatus> projectStatus = const Value.absent(),
+                Value<InHouseStatus> inHouseStatus = const Value.absent(),
                 Value<int> agencyId = const Value.absent(),
                 Value<int> ministryId = const Value.absent(),
                 Value<int> stateId = const Value.absent(),
@@ -8750,7 +8833,8 @@ class $$ProjectsTableTableManager
                 Value<int> rowid = const Value.absent(),
               }) => ProjectsCompanion(
                 code: code,
-                status: status,
+                projectStatus: projectStatus,
+                inHouseStatus: inHouseStatus,
                 agencyId: agencyId,
                 ministryId: ministryId,
                 stateId: stateId,
@@ -8775,7 +8859,8 @@ class $$ProjectsTableTableManager
           createCompanionCallback:
               ({
                 required String code,
-                required ProjectStatus status,
+                required ProjectStatus projectStatus,
+                Value<InHouseStatus> inHouseStatus = const Value.absent(),
                 required int agencyId,
                 required int ministryId,
                 required int stateId,
@@ -8798,7 +8883,8 @@ class $$ProjectsTableTableManager
                 Value<int> rowid = const Value.absent(),
               }) => ProjectsCompanion.insert(
                 code: code,
-                status: status,
+                projectStatus: projectStatus,
+                inHouseStatus: inHouseStatus,
                 agencyId: agencyId,
                 ministryId: ministryId,
                 stateId: stateId,

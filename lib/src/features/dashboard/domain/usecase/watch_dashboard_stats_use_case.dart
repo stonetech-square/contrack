@@ -15,10 +15,11 @@ class WatchDashboardStatsUseCase
 
   @override
   Stream<DashboardStats> call(NoParams params) {
-    return Rx.combineLatest2(
+    return Rx.combineLatest3(
       _repository.watchUnsyncedProjectCount(),
       _repository.watchProjectCountsByStatus(),
-      (unsyncedCount, statusCounts) {
+      _repository.watchTotalProjectBudget(),
+      (unsyncedCount, statusCounts, totalBudget) {
         final totalCount = statusCounts.values.fold<int>(
           0,
           (sum, count) => sum + count,
@@ -31,6 +32,7 @@ class WatchDashboardStatsUseCase
 
         return DashboardStats(
           totalProjectCount: totalCount,
+          totalBudget: totalBudget,
           unsyncedProjectCount: unsyncedCount,
           statusDistribution: statusDistribution,
         );
@@ -38,8 +40,8 @@ class WatchDashboardStatsUseCase
     );
   }
 
-  Map<ProjectStatus, StatusInfo> _calculateStatusDistribution(
-    Map<ProjectStatus, int> statusCounts,
+  Map<InHouseStatus, StatusInfo> _calculateStatusDistribution(
+    Map<InHouseStatus, int> statusCounts,
     int totalCount,
   ) {
     return statusCounts.map((status, count) {

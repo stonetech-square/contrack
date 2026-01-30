@@ -2,10 +2,10 @@ import 'package:contrack/src/core/common/enums/project_status.dart';
 import 'package:contrack/src/features/dashboard/domain/entities/project.dart';
 import 'package:equatable/equatable.dart';
 
-/// Project entity enriched with related entity names from JOINs
 class ProjectWithDetails extends Equatable {
   final String code;
-  final ProjectStatus status;
+  final ProjectStatus projectStatus;
+  final InHouseStatus inHouseStatus;
   final int agencyId;
   final String agencyName;
   final int ministryId;
@@ -32,7 +32,8 @@ class ProjectWithDetails extends Equatable {
 
   const ProjectWithDetails({
     required this.code,
-    required this.status,
+    required this.projectStatus,
+    required this.inHouseStatus,
     required this.agencyId,
     required this.agencyName,
     required this.ministryId,
@@ -61,7 +62,8 @@ class ProjectWithDetails extends Equatable {
   Project toProject() {
     return Project(
       code: code,
-      status: status,
+      projectStatus: projectStatus,
+      inHouseStatus: inHouseStatus,
       agencyId: agencyId,
       ministryId: ministryId,
       stateId: stateId,
@@ -85,7 +87,8 @@ class ProjectWithDetails extends Equatable {
   @override
   List<Object?> get props => [
     code,
-    status,
+    projectStatus,
+    inHouseStatus,
     agencyId,
     agencyName,
     ministryId,

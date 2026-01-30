@@ -35,7 +35,7 @@ class UserManagementLocalDataSourceImpl
     User user, {
     required UserRole currentUserRole,
   }) async {
-    if (!currentUserRole.isAnyAdmin) return;
+    if (!currentUserRole.isSuperAdmin) return;
     final query = _database.select(_database.users)
       ..where((t) => t.uid.equals(user.uid) | t.email.equals(user.email));
     final existingUser = await query.getSingleOrNull();
@@ -53,7 +53,7 @@ class UserManagementLocalDataSourceImpl
     required String currentUserId,
     required UserRole currentUserRole,
   }) {
-    if (!currentUserRole.isAnyAdmin) return Stream.empty();
+    if (!currentUserRole.isSuperAdmin) return Stream.empty();
     final normalizedQuery = searchQuery?.trim().toLowerCase() ?? '';
 
     final query = _database.select(_database.users);
@@ -87,7 +87,7 @@ class UserManagementLocalDataSourceImpl
     bool isActive, {
     required UserRole currentUserRole,
   }) async {
-    if (!currentUserRole.isAnyAdmin) return;
+    if (!currentUserRole.isSuperAdmin) return;
     _database.update(_database.users)
       ..where((t) => t.uid.equals(userId))
       ..write(UsersCompanion.custom(isActive: Constant(isActive)));
@@ -99,7 +99,7 @@ class UserManagementLocalDataSourceImpl
     UserRole role, {
     required UserRole currentUserRole,
   }) async {
-    if (!currentUserRole.isAnyAdmin) return;
+    if (!currentUserRole.isSuperAdmin) return;
     _database.update(_database.users)
       ..where((t) => t.uid.equals(userId))
       ..write(UsersCompanion.custom(role: Constant(role.name)));

@@ -144,27 +144,14 @@ class _EditAgencyDialogState extends State<EditAgencyDialog> {
                 },
               ),
               const SizedBox(height: 16),
-              Text(
-                'Ministry *',
-                style: context.textStyles.labelMedium.copyWith(
-                  color: context.colors.textBody,
-                ),
-              ),
-              const SizedBox(height: 8),
-              DropdownButtonFormField<Ministry>(
-                initialValue: _selectedMinistry,
-                decoration: InputDecoration(
-                  hintText: 'Select ministry',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                items: widget.ministries.map((ministry) {
-                  return DropdownMenuItem<Ministry>(
-                    value: ministry,
-                    child: Text(ministry.name),
-                  );
-                }).toList(),
+              AppSearchableDropDownField<Ministry, Ministry>(
+                label: 'Ministry',
+                hintText: 'Select ministry',
+                isRequired: true,
+                items: widget.ministries,
+                value: _selectedMinistry,
+                labelBuilder: (m) => m.name,
+                valueBuilder: (m) => m,
                 onChanged: (ministry) {
                   setState(() {
                     _selectedMinistry = ministry;

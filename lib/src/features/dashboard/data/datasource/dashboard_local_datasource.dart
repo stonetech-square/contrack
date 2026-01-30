@@ -19,10 +19,11 @@ abstract class DashboardLocalDataSource {
   });
 
   Stream<int> watchUnsyncProjectCount(String userId, UserRole role);
-  Stream<Map<ProjectStatus, int>> watchProjectCountsByStatus(
+  Stream<Map<InHouseStatus, int>> watchProjectCountsByStatus(
     String userId,
     UserRole role,
   );
+  Stream<double> watchTotalProjectBudget(String userId, UserRole role);
 
   Future<List<GeopoliticalZone>> getAllGeopoliticalZones();
   Future<List<Agency>> getAllImplementingAgencies();
@@ -120,7 +121,8 @@ class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
 
         return ProjectWithDetailsModel(
           code: project.code,
-          status: project.status,
+          projectStatus: project.projectStatus,
+          inHouseStatus: project.inHouseStatus,
           agencyId: project.agencyId,
           agencyName: agency?.name ?? 'Unknown Agency',
           ministryId: project.ministryId,
@@ -168,28 +170,47 @@ class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
   }
 
   @override
-  Stream<Map<ProjectStatus, int>> watchProjectCountsByStatus(
+  Stream<Map<InHouseStatus, int>> watchProjectCountsByStatus(
     String userId,
     UserRole role,
   ) {
     final query = database.selectOnly(database.projects)
-      ..addColumns([database.projects.status, database.projects.code.count()])
+      ..addColumns([
+        database.projects.inHouseStatus,
+        database.projects.code.count(),
+      ])
       ..where(_buildRoleBasedPredicate(userId, role))
-      ..groupBy([database.projects.status]);
+      ..groupBy([database.projects.inHouseStatus]);
 
     return query.watch().map((rows) {
-      final counts = {for (final status in ProjectStatus.values) status: 0};
+      final counts = {for (final status in InHouseStatus.values) status: 0};
 
       for (final row in rows) {
-        final statusName = row.read(database.projects.status);
+        // Drift returns the raw string value for textEnum columns in selectOnly queries
+        final statusName = row.read(database.projects.inHouseStatus);
         if (statusName != null) {
-          final status = ProjectStatus.values.byName(statusName);
-          counts[status] = row.read(database.projects.code.count()) ?? 0;
+          try {
+            final status = InHouseStatus.values.byName(statusName);
+            counts[status] = row.read(database.projects.code.count()) ?? 0;
+          } catch (_) {
+            // Ignore invalid status values
+          }
         }
       }
 
       return counts;
     });
+  }
+
+  @override
+  Stream<double> watchTotalProjectBudget(String userId, UserRole role) {
+    final query = database.selectOnly(database.projects)
+      ..addColumns([database.projects.amount.sum()])
+      ..where(_buildRoleBasedPredicate(userId, role));
+
+    return query
+        .map((row) => row.read(database.projects.amount.sum()) ?? 0.0)
+        .watchSingle();
   }
 
   @override

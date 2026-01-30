@@ -66,7 +66,8 @@ class ProjectsLocalDataSourceImpl implements ProjectsLocalDataSource {
           companion,
           onConflict: DoUpdate((old) {
             return ProjectsCompanion(
-              status: companion.status,
+              projectStatus: companion.projectStatus,
+              inHouseStatus: companion.inHouseStatus,
               agencyId: companion.agencyId,
               ministryId: companion.ministryId,
               stateId: companion.stateId,
@@ -156,8 +157,10 @@ class ProjectsLocalDataSourceImpl implements ProjectsLocalDataSource {
               modifiers.uid.equalsExp(_database.projects.modifiedBy),
             ),
           ])
-          ..where(_database.projects.code.equals(code) &
-              _database.projects.isDeleted.equals(false))
+          ..where(
+            _database.projects.code.equals(code) &
+                _database.projects.isDeleted.equals(false),
+          )
           ..orderBy([
             OrderingTerm(
               expression: _database.projects.createdAt,
@@ -179,7 +182,8 @@ class ProjectsLocalDataSourceImpl implements ProjectsLocalDataSource {
 
       return ProjectWithDetailsModel(
         code: project.code,
-        status: project.status,
+        projectStatus: project.projectStatus,
+        inHouseStatus: project.inHouseStatus,
         agencyId: project.agencyId,
         agencyName: agency?.name ?? 'Unknown Agency',
         ministryId: project.ministryId,
@@ -338,7 +342,8 @@ class ProjectsLocalDataSourceImpl implements ProjectsLocalDataSource {
 
         return ProjectWithDetailsModel(
           code: project.code,
-          status: project.status,
+          projectStatus: project.projectStatus,
+          inHouseStatus: project.inHouseStatus,
           agencyId: project.agencyId,
           agencyName: agency?.name ?? 'Unknown Agency',
           ministryId: project.ministryId,
@@ -498,7 +503,8 @@ class ProjectsLocalDataSourceImpl implements ProjectsLocalDataSource {
 
       return ProjectWithDetailsModel(
         code: project.code,
-        status: project.status,
+        projectStatus: project.projectStatus,
+        inHouseStatus: project.inHouseStatus,
         agencyId: project.agencyId,
         agencyName: agency?.name ?? 'Unknown Agency',
         ministryId: project.ministryId,

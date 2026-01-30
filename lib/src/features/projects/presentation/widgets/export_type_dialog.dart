@@ -1,5 +1,6 @@
 import 'package:contrack/src/app/theme/app_colors.dart';
 import 'package:contrack/src/app/theme/app_typography.dart';
+import 'package:contrack/src/core/database/tables/export_history.dart';
 import 'package:contrack/src/features/projects/domain/entities/export_type.dart';
 import 'package:flutter/material.dart';
 
@@ -9,8 +10,8 @@ class ExportTypeDialog extends StatefulWidget {
   @override
   State<ExportTypeDialog> createState() => _ExportTypeDialogState();
 
-  static Future<ExportType?> show(BuildContext context) {
-    return showDialog<ExportType>(
+  static Future<(ExportFormat, ExportType)?> show(BuildContext context) {
+    return showDialog<(ExportFormat, ExportType)>(
       context: context,
       builder: (context) => const ExportTypeDialog(),
     );
@@ -19,6 +20,7 @@ class ExportTypeDialog extends StatefulWidget {
 
 class _ExportTypeDialogState extends State<ExportTypeDialog> {
   var _selectedType = ExportType.preferred;
+  var _selectedFormat = ExportFormat.csv;
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +39,35 @@ class _ExportTypeDialogState extends State<ExportTypeDialog> {
                 style: context.textStyles.titleLarge.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
+              ),
+              const SizedBox(height: 24),
+              Text(
+                'Export Format',
+                style: context.textStyles.labelMedium.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: context.colors.textSubtle,
+                ),
+              ),
+              const SizedBox(height: 12),
+              SegmentedButton<ExportFormat>(
+                segments: const [
+                  ButtonSegment(
+                    value: ExportFormat.csv,
+                    label: Text('CSV'),
+                    icon: Icon(Icons.table_chart_outlined),
+                  ),
+                  ButtonSegment(
+                    value: ExportFormat.excel,
+                    label: Text('Excel'),
+                    icon: Icon(Icons.grid_on_outlined),
+                  ),
+                ],
+                selected: {_selectedFormat},
+                onSelectionChanged: (newSelection) {
+                  setState(() {
+                    _selectedFormat = newSelection.first;
+                  });
+                },
               ),
               const SizedBox(height: 24),
               Text(
@@ -79,7 +110,12 @@ class _ExportTypeDialogState extends State<ExportTypeDialog> {
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Radio<ExportType>(value: type),
+                                Radio<ExportType>(
+                                  value: type,
+                                  groupValue: _selectedType,
+                                  onChanged: (val) =>
+                                      setState(() => _selectedType = val!),
+                                ),
                                 const SizedBox(width: 8),
                                 Expanded(
                                   child: Column(
@@ -135,7 +171,9 @@ class _ExportTypeDialogState extends State<ExportTypeDialog> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: FilledButton.icon(
-                      onPressed: () => Navigator.of(context).pop(_selectedType),
+                      onPressed: () => Navigator.of(
+                        context,
+                      ).pop((_selectedFormat, _selectedType)),
                       icon: const Icon(Icons.save_outlined, size: 20),
                       label: const Text('Export'),
                     ),

@@ -10,7 +10,8 @@ _ProjectWithDetailsModel _$ProjectWithDetailsModelFromJson(
   Map<String, dynamic> json,
 ) => _ProjectWithDetailsModel(
   code: json['code'] as String,
-  status: $enumDecode(_$ProjectStatusEnumMap, json['status']),
+  projectStatus: $enumDecode(_$ProjectStatusEnumMap, json['project_status']),
+  inHouseStatus: $enumDecode(_$InHouseStatusEnumMap, json['in_house_status']),
   agencyId: (json['agency_id'] as num).toInt(),
   agencyName: json['agency_name'] as String,
   ministryId: (json['ministry_id'] as num).toInt(),
@@ -46,7 +47,8 @@ Map<String, dynamic> _$ProjectWithDetailsModelToJson(
   _ProjectWithDetailsModel instance,
 ) => <String, dynamic>{
   'code': instance.code,
-  'status': _$ProjectStatusEnumMap[instance.status]!,
+  'project_status': _$ProjectStatusEnumMap[instance.projectStatus]!,
+  'in_house_status': _$InHouseStatusEnumMap[instance.inHouseStatus]!,
   'agency_id': instance.agencyId,
   'agency_name': instance.agencyName,
   'ministry_id': instance.ministryId,
@@ -73,9 +75,14 @@ Map<String, dynamic> _$ProjectWithDetailsModelToJson(
 };
 
 const _$ProjectStatusEnumMap = {
-  ProjectStatus.notStarted: 'notStarted',
+  ProjectStatus.newProject: 'new',
   ProjectStatus.ongoing: 'ongoing',
-  ProjectStatus.completed: 'completed',
-  ProjectStatus.suspended: 'suspended',
-  ProjectStatus.cancelled: 'cancelled',
+};
+
+const _$InHouseStatusEnumMap = {
+  InHouseStatus.notStarted: 'notStarted',
+  InHouseStatus.ongoing: 'ongoing',
+  InHouseStatus.completed: 'completed',
+  InHouseStatus.suspended: 'suspended',
+  InHouseStatus.cancelled: 'cancelled',
 };
