@@ -35,7 +35,10 @@ class AppDatabase extends _$AppDatabase {
     return LazyDatabase(() async {
       final dbFolder = await getApplicationSupportDirectory();
       final file = File(
-        p.join(dbFolder.path, 'contrack_${kDebugMode ? 'dev' : 'prod'}.sqlite'),
+        p.join(
+          dbFolder.path,
+          'contrack_${kDebugMode ? 'development' : 'production'}.sqlite',
+        ),
       );
 
       return NativeDatabase.createInBackground(
