@@ -1,30 +1,29 @@
-name: Build macOS Installer
+name: Build and Release
 
 on:
-  workflow_dispatch:  
+  workflow_dispatch:
   push:
     branches:
       - main
     paths:
-      - 'macos/**'                                   
-      - 'lib/**'                                     
-      - 'pubspec.yaml'                               
-      - 'pubspec.lock'                               
-      - 'assets/**'                                  
-      - '.github/workflows/build-macos-installer.yml'
-      - 'flutter_launcher_icons.yaml'      
-
-  pull_request:
-    branches:
-      - main
-    paths:
-      - 'macos/**'
       - 'lib/**'
       - 'pubspec.yaml'
       - 'pubspec.lock'
       - 'assets/**'
-      - '.github/workflows/build-macos-installer.yml'
-      - 'flutter_launcher_icons.yaml'      
+      - 'macos/**'
+      - 'windows/**'
+      - '.github/workflows/build-unified-release.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'lib/**'
+      - 'pubspec.yaml'
+      - 'pubspec.lock'
+      - 'assets/**'
+      - 'macos/**'
+      - 'windows/**'
+      - '.github/workflows/build-unified-release.yml'
 
 permissions:
   contents: write
@@ -32,6 +31,7 @@ permissions:
 
 jobs:
   build-macos:
+    name: Build macOS Installer
     runs-on: macos-latest
     environment: release
     
@@ -112,7 +112,6 @@ jobs:
 
       - name: Create DMG installer
         run: |
-          # Clean up any existing DMG
           rm -f "build/macos/contrack.dmg"
 
           create-dmg \
@@ -160,8 +159,6 @@ jobs:
         run: |
           if [ -n "$APPLE_ID" ] && [ -n "$APPLE_ID_PASSWORD" ] && [ -n "$APPLE_TEAM_ID" ]; then
              echo "📤 Submitting DMG for notarization..."
-             # Only try notarization if we likely signed it (or identity check passed earlier, strictly we should check signature again but presence of secrets is a good proxy in CI)
-             # Actually, if we didn't sign it, notarization will fail.
              if security find-identity -v -p codesigning | grep -q "Developer ID Application"; then
                 xcrun notarytool submit "build/macos/contrack.dmg" \
                   --apple-id "$APPLE_ID" \
@@ -182,30 +179,128 @@ jobs:
              echo "⚠️ Notarization secrets missing. Skipping."
           fi
 
-      - name: Verify DMG creation
-        run: |
-          if [ -f "build/macos/contrack.dmg" ]; then
-            echo "DMG created successfully"
-            ls -lh build/macos/contrack.dmg
-          else
-            echo "DMG creation failed, checking for alternative location"
-            find build/macos -name "*.dmg" -type f
-          fi
-
-      - name: Upload installer artifact
+      - name: Upload macOS Artifact
         uses: actions/upload-artifact@v4
         with:
           name: macos-installer
           path: build/macos/contrack.dmg
-          retention-days: 30
+          retention-days: 1
 
-      - name: Create Release (on main branch only)
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+  build-windows:
+    name: Build Windows Installer
+    runs-on: windows-latest
+    environment: release
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Build Windows release
+        env:
+          PROJECT_URL: ${{ secrets.PROJECT_URL }}
+          PROJECT_KEY: ${{ secrets.PROJECT_KEY }}
+          LOCAL_DB_KEY: ${{ secrets.LOCAL_DB_KEY }}
+        run: |
+          echo "🔍 Debugging Secrets..."
+          if ($env:PROJECT_URL -eq "") { echo "❌ PROJECT_URL is empty" } else { echo "✅ PROJECT_URL is set (length: $($env:PROJECT_URL.Length))" }
+          if ($env:PROJECT_KEY -eq "") { echo "❌ PROJECT_KEY is empty" } else { echo "✅ PROJECT_KEY is set (length: $($env:PROJECT_KEY.Length))" }
+          if ($env:LOCAL_DB_KEY -eq "") { echo "❌ LOCAL_DB_KEY is empty" } else { echo "✅ LOCAL_DB_KEY is set (length: $($env:LOCAL_DB_KEY.Length))" }
+
+          flutter build windows --release `
+            --dart-define=PROJECT_URL="$env:PROJECT_URL" `
+            --dart-define=PROJECT_KEY="$env:PROJECT_KEY" `
+            --dart-define=LOCAL_DB_KEY="$env:LOCAL_DB_KEY"
+
+      - name: Create Inno Setup script
+        run: |
+          $issContent = @"
+          #define MyAppName "Contrack"
+          #define MyAppVersion "1.0.0"
+          #define MyAppPublisher "StoneTech"
+          #define MyAppExeName "contrack.exe"
+
+          [Setup]
+          AppId={{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}}
+          AppName={#MyAppName}
+          AppVersion={#MyAppVersion}
+          AppPublisher={#MyAppPublisher}
+          DefaultDirName={autopf}\{#MyAppName}
+          DefaultGroupName={#MyAppName}
+          OutputDir=..\build\windows\installer
+          OutputBaseFilename=contrack-setup
+          Compression=lzma
+          SolidCompression=yes
+          WizardStyle=modern
+          PrivilegesRequired=admin
+
+          [Languages]
+          Name: "english"; MessagesFile: "compiler:Default.isl"
+
+          [Tasks]
+          Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+
+          [Files]
+          Source: "..\build\windows\x64\runner\Release\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+
+          [Icons]
+          Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
+          Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
+
+          [Run]
+          Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+          "@
+          New-Item -ItemType Directory -Force -Path "windows"
+          Set-Content -Path "windows\installer.iss" -Value $issContent
+
+      - name: Install Inno Setup
+        run: choco install innosetup -y
+
+      - name: Create installer directory
+        run: New-Item -ItemType Directory -Force -Path "build\windows\installer"
+
+      - name: Build installer
+        run: '& "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" "windows\installer.iss"'
+
+      - name: Upload Windows Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-installer
+          path: build/windows/installer/contrack-setup.exe
+          retention-days: 1
+
+  create-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: [build-macos, build-windows]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - name: Download macOS Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: macos-installer
+
+      - name: Download Windows Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-installer
+
+      - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v1.0.0-${{ github.run_number }}
           name: Release v1.0.0-${{ github.run_number }}
-          files: build/macos/contrack.dmg
+          files: |
+            contrack.dmg
+            contrack-setup.exe
           draft: false
           prerelease: false
         env:
