@@ -33,7 +33,7 @@ class AppFailure extends Failure {
     Sentry.captureException(error, stackTrace: stackTrace);
 
     _logger.severe(
-      'Error occurred: $error\nStack: $stackTrace',
+      'Error occurred: $error \nStack: $stackTrace',
       error,
       stackTrace,
     );
