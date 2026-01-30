@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:contrack/src/core/common/enums/project_status.dart';
 import 'package:contrack/src/core/database/tables/export_history.dart';
 import 'package:contrack/src/features/dashboard/domain/entities/project_with_details.dart';
 import 'package:contrack/src/core/services/project_export_service.dart';
@@ -52,13 +53,24 @@ class ProjectExportServiceImpl implements ProjectExportService {
     ExportFormat format, {
     ExportType type = ExportType.preferred,
   }) async {
+    var projectsToExport = projects;
+    if (type == ExportType.preferred) {
+      projectsToExport = projects
+          .where(
+            (p) =>
+                p.inHouseStatus != InHouseStatus.cancelled &&
+                p.inHouseStatus != InHouseStatus.suspended,
+          )
+          .toList();
+    }
+
     switch (format) {
       case ExportFormat.csv:
-        return await _exportMultipleToCsv(projects, type);
+        return await _exportMultipleToCsv(projectsToExport, type);
       case ExportFormat.excel:
-        return await _exportMultipleToExcel(projects, type);
+        return await _exportMultipleToExcel(projectsToExport, type);
       case ExportFormat.pdf:
-        return await _exportMultipleToPdf(projects, type);
+        return await _exportMultipleToPdf(projectsToExport, type);
     }
   }
 
@@ -180,12 +192,10 @@ class ProjectExportServiceImpl implements ProjectExportService {
         .toList();
     sheet.appendRow(data);
 
-    // Add total row
     final totalRow = List<CellValue>.filled(headers.length, TextCellValue(''));
     totalRow[0] = TextCellValue('TOTAL');
     final amountIndex = type == ExportType.preferred ? 4 : 5;
     final colName = type == ExportType.preferred ? 'E' : 'F';
-    // Data is on row 2. Total on row 3. Sum E2:E2.
     totalRow[amountIndex] = FormulaCellValue('SUM(${colName}2:${colName}2)');
     sheet.appendRow(totalRow);
 
@@ -300,12 +310,10 @@ class ProjectExportServiceImpl implements ProjectExportService {
       sheet.appendRow(data);
     }
 
-    // Add total row
     final totalRow = List<CellValue>.filled(headers.length, TextCellValue(''));
     totalRow[0] = TextCellValue('TOTAL');
     final amountIndex = type == ExportType.preferred ? 4 : 5;
     final colName = type == ExportType.preferred ? 'E' : 'F';
-    // Data starts at row 2. Last data row is projects.length + 1.
     final lastRow = projects.length + 1;
     totalRow[amountIndex] = FormulaCellValue(
       'SUM(${colName}2:$colName$lastRow)',

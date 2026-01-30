@@ -45,6 +45,23 @@ jobs:
           channel: 'stable'
           cache: true
 
+      - name: Cache Pub Dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
+
+      - name: Cache CocoaPods
+        uses: actions/cache@v3
+        with:
+          path: macos/Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('macos/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
+
       - name: Get dependencies
         run: flutter pub get
 
@@ -74,11 +91,6 @@ jobs:
           PROJECT_KEY: ${{ secrets.PROJECT_KEY }}
           LOCAL_DB_KEY: ${{ secrets.LOCAL_DB_KEY }}
         run: |
-          echo "🔍 Debugging Secrets..."
-          if [ -z "$PROJECT_URL" ]; then echo "❌ PROJECT_URL is empty"; else echo "✅ PROJECT_URL is set (length: ${#PROJECT_URL})"; fi
-          if [ -z "$PROJECT_KEY" ]; then echo "❌ PROJECT_KEY is empty"; else echo "✅ PROJECT_KEY is set (length: ${#PROJECT_KEY})"; fi
-          if [ -z "$LOCAL_DB_KEY" ]; then echo "❌ LOCAL_DB_KEY is empty"; else echo "✅ LOCAL_DB_KEY is set (length: ${#LOCAL_DB_KEY})"; fi
-          
           flutter build macos --release \
             --dart-define=PROJECT_URL="$PROJECT_URL" \
             --dart-define=PROJECT_KEY="$PROJECT_KEY" \
@@ -108,6 +120,8 @@ jobs:
           fi
 
       - name: Install create-dmg
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: 1
         run: brew install create-dmg
 
       - name: Create DMG installer
@@ -210,11 +224,6 @@ jobs:
           PROJECT_KEY: ${{ secrets.PROJECT_KEY }}
           LOCAL_DB_KEY: ${{ secrets.LOCAL_DB_KEY }}
         run: |
-          echo "🔍 Debugging Secrets..."
-          if ($env:PROJECT_URL -eq "") { echo "❌ PROJECT_URL is empty" } else { echo "✅ PROJECT_URL is set (length: $($env:PROJECT_URL.Length))" }
-          if ($env:PROJECT_KEY -eq "") { echo "❌ PROJECT_KEY is empty" } else { echo "✅ PROJECT_KEY is set (length: $($env:PROJECT_KEY.Length))" }
-          if ($env:LOCAL_DB_KEY -eq "") { echo "❌ LOCAL_DB_KEY is empty" } else { echo "✅ LOCAL_DB_KEY is set (length: $($env:LOCAL_DB_KEY.Length))" }
-
           flutter build windows --release `
             --dart-define=PROJECT_URL="$env:PROJECT_URL" `
             --dart-define=PROJECT_KEY="$env:PROJECT_KEY" `
